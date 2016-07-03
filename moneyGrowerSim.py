@@ -8,6 +8,8 @@ from time import ctime
 #from time import sleep
 #from math import sin
 
+from yahoo_finance import Currency
+
 import csv
 
 Long = True
@@ -40,7 +42,7 @@ def coloredPrint(message, color = 'white', formatting = 'bold'):
 
     print(attributes + message + reset, end = '')
 
-class Currency:
+class CurrencyHoge:
 
     InitRate = 100.000
     sigma = 0.003
@@ -137,11 +139,12 @@ class Position:
         print()
 
         with open('pips.csv', 'a') as f:
-            writer = csv.writer(f)#, lineterminator='\n')
+            writer = csv.writer(f)
             writer.writerow([str(self.gain)])
 
     def displayInfo(self):
-        print(128 * '\b', end='')
+#        print(128 * '\b', end='')
+        print()
 
         if self.position == Long:
             coloredPrint('LONG : ', 'magenta')
@@ -162,8 +165,6 @@ class Position:
             coloredPrint('\ttotal = ' + str(Position.integratedGain) + 'pips', 'red')
         else:
             coloredPrint('\ttotal = +' + str(Position.integratedGain) + 'pips', 'green')
-
-#        print()
 
 def nextPosition(previousPrice, price, previousPosition, previousGain):
 
