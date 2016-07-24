@@ -15,6 +15,7 @@ int OnInit()
   //---
   Print("AccountBalance=", AccountBalance());
   Print("AccountEquity=", AccountEquity());
+  Print("AccountFreeMargin=", AccountFreeMargin());
   Print("AccountCredit=", AccountCredit());
   Print("AccountName=", AccountName());
   Print("AccountNumber=", AccountNumber());
@@ -23,8 +24,6 @@ int OnInit()
   Print("AccountLeverage()=", AccountLeverage());
   Print("IsDemo=", IsDemo());
   Print("IsTradeAllowed()=", IsTradeAllowed());
-  Print("AccountNumber=", AccountNumber());
-  Print("AccountFreeMargin=", AccountFreeMargin());
   Print("TerminalCompany()=", TerminalCompany());
   Print("IsConnected()=", IsConnected());
    
@@ -46,19 +45,28 @@ int OnInit()
 void OnDeinit(const int reason)
 {
   //---   
+  /*
+  Print("sigma 10 M1 = ", sigma10M1 / total);
+  Print("sigma 10 M5 = ", sigma10M5 / total);
+  Print("sigma 10 M15 = ", sigma10M15 / total);
+  Print("sigma 20 M1 = ", sigma20M1 / total);
+  Print("sigma 20 M5 = ", sigma20M5 / total);
+  Print("sigma 20 M15 = ", sigma20M15 / total);
+  */
 }
 
 #define NONE (-1)
 double MIN_MARGIN;
 double spread;
 double margin;
-double previousPrice;
+double previousPrice = NONE;
 int position = NONE;
 bool hasWon = False;
 int Ticket = -1;
 
 #define INITIAL_POSITION (0) //0:BUY, 1:SELL
-#define POS_SIZING_FACTOR (0.00002) //position = AccountEquity() * POS_SIZING_FACTOR
+//#define POS_SIZING_FACTOR (0.00002) //position = AccountEquity() * POS_SIZING_FACTOR
+#define POS_SIZING_FACTOR (0.000001) //position = AccountEquity() * POS_SIZING_FACTOR for OANDA
 #define ACCEPTABLE_SPREAD (4)
 
 extern int INIT_MARGIN = 200;
@@ -67,11 +75,16 @@ extern double MARGIN_FACTOR = 1;
 int nextPosition()
 {
   if(position == NONE) {
-    return(INITIAL_POSITION);
-  }/*
-  else if(hasWon) {
-    return(position);
-  }*/
+    if(previousPrice < Ask) {
+      return OP_BUY;
+    }
+    else if(Ask < previousPrice) {
+      return OP_SELL;
+    }
+    else {
+      return NONE;
+    }
+  }
   else {
     if(position == OP_BUY) {
       return OP_SELL;
@@ -84,17 +97,51 @@ int nextPosition()
     }
   }
 }
+/*
+int total = 0;
+double sigma10M15 = 0.0;
+double sigma10M5 = 0.0;
+double sigma10M1 = 0.0;
+double sigma20M15 = 0.0;
+double sigma20M5 = 0.0;
+double sigma20M1 = 0.0;
+*/
 
-  
 //+------------------------------------------------------------------+
 //| Expert tick function                                             |
 //+------------------------------------------------------------------+
 void OnTick()
 {
+/*
+  sigma10M1 += (iBands(Symbol(), PERIOD_M1, 10, 1, 0, PRICE_WEIGHTED, 1, 0) - iBands(Symbol(), PERIOD_M1, 10, 1, 0, PRICE_WEIGHTED, 0, 0));
+  sigma10M5 += (iBands(Symbol(), PERIOD_M5, 10, 1, 0, PRICE_WEIGHTED, 1, 0) - iBands(Symbol(), PERIOD_M5, 10, 1, 0, PRICE_WEIGHTED, 0, 0));
+  sigma10M15 += (iBands(Symbol(), PERIOD_M15, 10, 1, 0, PRICE_WEIGHTED, 1, 0) - iBands(Symbol(), PERIOD_M15, 10, 1, 0, PRICE_WEIGHTED, 0, 0));
+  sigma20M1 += (iBands(Symbol(), PERIOD_M1, 20, 1, 0, PRICE_WEIGHTED, 1, 0) - iBands(Symbol(), PERIOD_M1, 20, 1, 0, PRICE_WEIGHTED, 0, 0));
+  sigma20M5 += (iBands(Symbol(), PERIOD_M5, 20, 1, 0, PRICE_WEIGHTED, 1, 0) - iBands(Symbol(), PERIOD_M5, 20, 1, 0, PRICE_WEIGHTED, 0, 0));
+  sigma20M15 += (iBands(Symbol(), PERIOD_M15, 20, 1, 0, PRICE_WEIGHTED, 1, 0) - iBands(Symbol(), PERIOD_M15, 20, 1, 0, PRICE_WEIGHTED, 0, 0));
+  total ++;
+
+  Print("sigma 10 M1 = ", sigma10M1 / total);
+  Print("sigma 10 M5 = ", sigma10M5 / total);
+  Print("sigma 10 M15 = ", sigma10M15 / total);
+  Print("sigma 20 M1 = ", sigma20M1 / total);
+  Print("sigma 20 M5 = ", sigma20M5 / total);
+  Print("sigma 20 M15 = ", sigma20M15 / total);
+*/  
   //---
   if(OrdersTotal() == 0) {
   
+//    if(0.03 > (iBands(Symbol(), PERIOD_M1, 20, 1, 0, PRICE_WEIGHTED, 1, 0) - iBands(Symbol(), PERIOD_M1, 20, 1, 0, PRICE_WEIGHTED, 0, 0)))
+//      return;
+  
     if(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD)) {
+      previousPrice = NONE;
+      position = NONE;
+      return;
+    }
+    else if(previousPrice == NONE) {
+      previousPrice = Ask;
+      position = NONE;
       return;
     }
 
