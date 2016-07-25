@@ -45,14 +45,6 @@ int OnInit()
 void OnDeinit(const int reason)
 {
   //---   
-  /*
-  Print("sigma 10 M1 = ", sigma10M1 / total);
-  Print("sigma 10 M5 = ", sigma10M5 / total);
-  Print("sigma 10 M15 = ", sigma10M15 / total);
-  Print("sigma 20 M1 = ", sigma20M1 / total);
-  Print("sigma 20 M5 = ", sigma20M5 / total);
-  Print("sigma 20 M15 = ", sigma20M15 / total);
-  */
 }
 
 #define NONE (-1)
@@ -65,9 +57,10 @@ bool hasWon = False;
 int Ticket = -1;
 
 #define INITIAL_POSITION (0) //0:BUY, 1:SELL
-//#define POS_SIZING_FACTOR (0.00002) //position = AccountEquity() * POS_SIZING_FACTOR
-#define POS_SIZING_FACTOR (0.000001) //position = AccountEquity() * POS_SIZING_FACTOR for OANDA
-#define ACCEPTABLE_SPREAD (4)
+//#define POS_SIZING_FACTOR (0.00002) //position = AccountEquity() * POS_SIZING_FACTOR for USD
+#define POS_SIZING_FACTOR (0.0000005) //position = AccountEquity() * POS_SIZING_FACTOR for JPY
+#define ACCEPTABLE_SPREAD (4) //for OANDA http://files.metaquotes.net/oanda.corporation/mt4/oanda4setup.exe
+//#define ACCEPTABLE_SPREAD (3) //for FXTF http://www.fxtrade.co.jp/system/download/fxtf4setup.exe
 
 extern int INIT_MARGIN = 200;
 extern double MARGIN_FACTOR = 1;
@@ -97,42 +90,13 @@ int nextPosition()
     }
   }
 }
-/*
-int total = 0;
-double sigma10M15 = 0.0;
-double sigma10M5 = 0.0;
-double sigma10M1 = 0.0;
-double sigma20M15 = 0.0;
-double sigma20M5 = 0.0;
-double sigma20M1 = 0.0;
-*/
 
 //+------------------------------------------------------------------+
 //| Expert tick function                                             |
 //+------------------------------------------------------------------+
 void OnTick()
 {
-/*
-  sigma10M1 += (iBands(Symbol(), PERIOD_M1, 10, 1, 0, PRICE_WEIGHTED, 1, 0) - iBands(Symbol(), PERIOD_M1, 10, 1, 0, PRICE_WEIGHTED, 0, 0));
-  sigma10M5 += (iBands(Symbol(), PERIOD_M5, 10, 1, 0, PRICE_WEIGHTED, 1, 0) - iBands(Symbol(), PERIOD_M5, 10, 1, 0, PRICE_WEIGHTED, 0, 0));
-  sigma10M15 += (iBands(Symbol(), PERIOD_M15, 10, 1, 0, PRICE_WEIGHTED, 1, 0) - iBands(Symbol(), PERIOD_M15, 10, 1, 0, PRICE_WEIGHTED, 0, 0));
-  sigma20M1 += (iBands(Symbol(), PERIOD_M1, 20, 1, 0, PRICE_WEIGHTED, 1, 0) - iBands(Symbol(), PERIOD_M1, 20, 1, 0, PRICE_WEIGHTED, 0, 0));
-  sigma20M5 += (iBands(Symbol(), PERIOD_M5, 20, 1, 0, PRICE_WEIGHTED, 1, 0) - iBands(Symbol(), PERIOD_M5, 20, 1, 0, PRICE_WEIGHTED, 0, 0));
-  sigma20M15 += (iBands(Symbol(), PERIOD_M15, 20, 1, 0, PRICE_WEIGHTED, 1, 0) - iBands(Symbol(), PERIOD_M15, 20, 1, 0, PRICE_WEIGHTED, 0, 0));
-  total ++;
-
-  Print("sigma 10 M1 = ", sigma10M1 / total);
-  Print("sigma 10 M5 = ", sigma10M5 / total);
-  Print("sigma 10 M15 = ", sigma10M15 / total);
-  Print("sigma 20 M1 = ", sigma20M1 / total);
-  Print("sigma 20 M5 = ", sigma20M5 / total);
-  Print("sigma 20 M15 = ", sigma20M15 / total);
-*/  
-  //---
   if(OrdersTotal() == 0) {
-  
-//    if(0.03 > (iBands(Symbol(), PERIOD_M1, 20, 1, 0, PRICE_WEIGHTED, 1, 0) - iBands(Symbol(), PERIOD_M1, 20, 1, 0, PRICE_WEIGHTED, 0, 0)))
-//      return;
   
     if(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD)) {
       previousPrice = NONE;
@@ -146,6 +110,10 @@ void OnTick()
     }
 
     double posSize = MathFloor(10.0 * AccountEquity() * POS_SIZING_FACTOR) * 0.1;
+    /*
+    if(10 < posSize) {
+      posSize = 10.0; // for OANDA basic course
+    }*/
 
     if(nextPosition() == OP_BUY) {
       Ticket = OrderSend(Symbol(), OP_BUY, posSize, Ask, 3, Bid - (INIT_MARGIN*Point), 0, NULL, 0, 0, Red);
@@ -223,4 +191,3 @@ void OnTick()
     Print("Something Wrong with OrderSelect(Ticket, SELECT_BY_TICKET), Ticket=", Ticket);
   }
 }
-//+------------------------------------------------------------------+
