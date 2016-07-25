@@ -110,14 +110,13 @@ void OnTick()
     }
 
     double posSize = MathFloor(10.0 * AccountEquity() * POS_SIZING_FACTOR) * 0.1; //for OANDA
-//    double posSize = MathFloor(10.0 * AccountEquity() * POS_SIZING_FACTOR) * 0.01; //for FXTF 1000
     /*
     if(10 < posSize) {
       posSize = 10.0; // for OANDA basic course
     }*/
 
     if(nextPosition() == OP_BUY) {
-      Ticket = OrderSend(Symbol(), OP_BUY, posSize, Ask, 3, Bid - (INIT_MARGIN*Point), 0, NULL, 0, 0, Red); // for OANDA
+      Ticket = OrderSend(Symbol(), OP_BUY, posSize, Ask, 3, Bid - (INIT_MARGIN*Point), 0, NULL, 0, 0, Red);
       previousPrice = Bid;
     }
     else if(nextPosition() == OP_SELL) {
