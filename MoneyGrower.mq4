@@ -59,8 +59,8 @@ int Ticket = -1;
 #define INITIAL_POSITION (0) //0:BUY, 1:SELL
 //#define POS_SIZING_FACTOR (0.00002) //position = AccountEquity() * POS_SIZING_FACTOR for USD
 #define POS_SIZING_FACTOR (0.0000005) //position = AccountEquity() * POS_SIZING_FACTOR for JPY
-#define ACCEPTABLE_SPREAD (4) //for OANDA http://files.metaquotes.net/oanda.corporation/mt4/oanda4setup.exe
-//#define ACCEPTABLE_SPREAD (3) //for FXTF http://www.fxtrade.co.jp/system/download/fxtf4setup.exe
+#define ACCEPTABLE_SPREAD (4) //for OANDA
+//#define ACCEPTABLE_SPREAD (3) //for FXTF
 
 extern int INIT_MARGIN = 200;
 extern double MARGIN_FACTOR = 1;
@@ -109,14 +109,15 @@ void OnTick()
       return;
     }
 
-    double posSize = MathFloor(10.0 * AccountEquity() * POS_SIZING_FACTOR) * 0.1;
+    double posSize = MathFloor(10.0 * AccountEquity() * POS_SIZING_FACTOR) * 0.1; //for OANDA
+//    double posSize = MathFloor(10.0 * AccountEquity() * POS_SIZING_FACTOR) * 0.01; //for FXTF 1000
     /*
     if(10 < posSize) {
       posSize = 10.0; // for OANDA basic course
     }*/
 
     if(nextPosition() == OP_BUY) {
-      Ticket = OrderSend(Symbol(), OP_BUY, posSize, Ask, 3, Bid - (INIT_MARGIN*Point), 0, NULL, 0, 0, Red);
+      Ticket = OrderSend(Symbol(), OP_BUY, posSize, Ask, 3, Bid - (INIT_MARGIN*Point), 0, NULL, 0, 0, Red); // for OANDA
       previousPrice = Bid;
     }
     else if(nextPosition() == OP_SELL) {
