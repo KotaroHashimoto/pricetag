@@ -137,7 +137,7 @@ void OnTick()
          margin *= MARGIN_FACTOR;
          if(margin < MIN_MARGIN) {
       	   margin = MIN_MARGIN;
-        }
+        } //ここを、定数*(previousPrice - Bid)縮めるように変更する
       }
       else if(previousPrice < Bid) {
          margin /= MARGIN_FACTOR;
