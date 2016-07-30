@@ -27,12 +27,13 @@ int OnInit()
   Print("TerminalCompany()=", TerminalCompany());
   Print("IsConnected()=", IsConnected());
    
-  MIN_MARGIN = MarketInfo(Symbol(), MODE_STOPLEVEL);
-  spread = MarketInfo(Symbol(), MODE_SPREAD);
   Print("Symbol()=", Symbol());
-  Print("MIN_MARGIN=", MIN_MARGIN);
-  Print("SPREAD=", spread);
-  Print("Point=", Point);
+  Print("STOPLEVEL=", MarketInfo(Symbol(), MODE_STOPLEVEL));
+  Print("SPREAD=", MarketInfo(Symbol(), MODE_SPREAD));
+  
+  stopLoss = STOP_LOSS * Point;
+  Print("STOP_LOSS=", STOP_LOSS);
+  Print("stopLoss=", stopLoss);
   Print("ASK=", Ask);
   Print("BID=", Bid);
    
@@ -48,22 +49,17 @@ void OnDeinit(const int reason)
 }
 
 #define NONE (-1)
-double MIN_MARGIN;
-double spread;
-double margin;
 double previousPrice = NONE;
 int position = NONE;
-bool hasWon = False;
-int Ticket = -1;
+int ticket = NONE;
+double stopLoss = NONE;
 
-#define INITIAL_POSITION (0) //0:BUY, 1:SELL
-//#define POS_SIZING_FACTOR (0.00002) //position = AccountEquity() * POS_SIZING_FACTOR for USD
-#define POS_SIZING_FACTOR (0.0000005) //position = AccountEquity() * POS_SIZING_FACTOR for JPY
-#define ACCEPTABLE_SPREAD (4) //for OANDA
+#define POS_SIZING_FACTOR (0.00002) //position = AccountEquity() * POS_SIZING_FACTOR for USD
+//#define POS_SIZING_FACTOR (0.0000005) //position = AccountEquity() * POS_SIZING_FACTOR for JPY
+#define ACCEPTABLE_SPREAD (5) //for OANDA
 //#define ACCEPTABLE_SPREAD (3) //for FXTF
 
-extern int INIT_MARGIN = 200;
-extern double MARGIN_FACTOR = 1;
+extern int STOP_LOSS = 200;
 
 int nextPosition()
 {
@@ -109,77 +105,39 @@ void OnTick()
       return;
     }
 
-    double posSize = MathFloor(10.0 * AccountEquity() * POS_SIZING_FACTOR) * 0.1; //for OANDA
+    double posSize = MathFloor(10.0 * AccountEquity() * POS_SIZING_FACTOR) * 0.1;
     /*
     if(10 < posSize) {
       posSize = 10.0; // for OANDA basic course
     }*/
-
+    
     if(nextPosition() == OP_BUY) {
-      Ticket = OrderSend(Symbol(), OP_BUY, posSize, Ask, 3, Bid - (INIT_MARGIN*Point), 0, NULL, 0, 0, Red);
+      ticket = OrderSend(Symbol(), OP_BUY, posSize, Ask, 3, Bid - stopLoss, 0, NULL, 0, 0, Red);
+      position = OP_BUY;
       previousPrice = Bid;
     }
     else if(nextPosition() == OP_SELL) {
-      Ticket = OrderSend(Symbol(), OP_SELL, posSize, Bid, 3, Ask + (INIT_MARGIN*Point), 0, NULL, 0, 0, Blue); 
+      ticket = OrderSend(Symbol(), OP_SELL, posSize, Bid, 3, Ask + stopLoss, 0, NULL, 0, 0, Blue); 
+      position = OP_SELL;
       previousPrice = Ask;
     }
     else {
       Print("Something Wrong with nextPositon() !!");
     }
-    hasWon = False;
-    margin = INIT_MARGIN;
   }
-
-  else if(OrderSelect(Ticket, SELECT_BY_TICKET) == True) {      
   
-    if(OrderType() == OP_BUY) {
-      if(Bid < previousPrice) {
-         margin *= MARGIN_FACTOR;
-         if(margin < MIN_MARGIN) {
-      	   margin = MIN_MARGIN;
-        } //ここを、定数*(previousPrice - Bid)縮めるように変更する
-      }
-      else if(previousPrice < Bid) {
-         margin /= MARGIN_FACTOR;
-         if(INIT_MARGIN < margin) {
-      	   margin = INIT_MARGIN;
-        }
-      }
-       
-      if(OrderStopLoss() < Bid - (margin*Point)) {
-        bool modified = OrderModify(Ticket, OrderOpenPrice(), Bid - (margin*Point), 0, 0, Red);
+  else if(OrderSelect(ticket, SELECT_BY_TICKET) == True) {      
 
-        if(modified && OrderOpenPrice() < OrderStopLoss()) {
-          hasWon = True;
-        }
+    if(OrderType() == OP_BUY) {       
+      if(OrderStopLoss() < Bid - stopLoss) {
+        bool modified = OrderModify(ticket, OrderOpenPrice(), Bid - stopLoss, 0, 0, Red);
       }
-
-      position = OP_BUY;
       previousPrice = Bid;
     }
     else if(OrderType() == OP_SELL) {
-      if(previousPrice < Ask) {
-         margin *= MARGIN_FACTOR;
-         if(margin < MIN_MARGIN) {
-      	   margin = MIN_MARGIN;
-        }
+      if(Ask + stopLoss < OrderStopLoss()) {
+        bool modified = OrderModify(ticket, OrderOpenPrice(), Ask + stopLoss, 0, 0, Blue);
       }
-      else if(Ask < previousPrice) {
-         margin /= MARGIN_FACTOR;
-         if(INIT_MARGIN < margin) {
-      	   margin = INIT_MARGIN;
-        }
-      }
-
-      if(Ask + (margin*Point) < OrderStopLoss()) {
-        bool modified = OrderModify(Ticket, OrderOpenPrice(), Ask + (margin*Point), 0, 0, Blue);
-
-        if(modified && OrderStopLoss() < OrderOpenPrice()) {
-          hasWon = True;
-        }
-      }
-                     
-      position = OP_SELL;
       previousPrice = Ask;
     }
     else {
@@ -188,6 +146,6 @@ void OnTick()
   }
 
   else {
-    Print("Something Wrong with OrderSelect(Ticket, SELECT_BY_TICKET), Ticket=", Ticket);
+    Print("Something Wrong with OrderSelect(Ticket, SELECT_BY_TICKET), ticket=", ticket);
   }
 }
