@@ -55,11 +55,11 @@ int ticket = NONE;
 double stopLoss = NONE;
 
 //#define POS_SIZING_FACTOR (0.00002) //position = AccountEquity() * POS_SIZING_FACTOR for USD
-#define POS_SIZING_FACTOR (0.0000005) //position = AccountEquity() * POS_SIZING_FACTOR for JPY
+#define POS_SIZING_FACTOR (0.000001) //position = AccountEquity() * POS_SIZING_FACTOR for JPY
 #define ACCEPTABLE_SPREAD (4) //for OANDA
 //#define ACCEPTABLE_SPREAD (3) //for FXTF
 
-extern int STOP_LOSS = 200;
+extern int STOP_LOSS = 100;
 
 int nextPosition()
 {
