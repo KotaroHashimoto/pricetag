@@ -131,6 +131,7 @@ void OnTick()
     }
     else {
       Print("Something Wrong with nextPositon() !!");
+      Print("LastError=", GetLastError());
     }
   }
   
@@ -150,12 +151,12 @@ void OnTick()
     }
     else {
       Print("Something Wrong with OrderType() !!");
+      Print("LastError=", GetLastError());
     }
   }
 
   else {
     Print("Something Wrong with OrderSelect(ticket, SELECT_BY_TICKET), ticket=", ticket);
+    Print("LastError=", GetLastError());
   }
-
-  Print("LastError=", GetLastError());
 }
