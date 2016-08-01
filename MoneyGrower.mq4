@@ -18,7 +18,7 @@ double posSizeFactor = NONE;
 
 #define MAX_LOT (2.0)
 #define ACCEPTABLE_LOSS (0.01)
-#define C (0.1) //JPY
+#define C (0.01) //for FXTF
 //#define C (10) //USD
 //#define ACCEPTABLE_SPREAD (5) //for OANDA
 #define ACCEPTABLE_SPREAD (3) //for FXTF
@@ -158,5 +158,5 @@ void OnTick()
     Print("Something Wrong with OrderSelect(ticket, SELECT_BY_TICKET), ticket=", ticket);
   }
 
-  Print("LastErro=", GetLastError());
+  Print("LastError=", GetLastError());
 }
