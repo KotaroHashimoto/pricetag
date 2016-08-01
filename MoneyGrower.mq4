@@ -101,7 +101,7 @@ int nextPosition()
 void OnTick()
 {
   if(OrdersTotal() == 0) {
-    if(DayOfWeek() == 5 && 18 < Hour()) {
+    if((DayOfWeek() == 5 && 18 < Hour()) || DayOfWeek() == 6) {
       return;
     }
     else if(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD)) {
