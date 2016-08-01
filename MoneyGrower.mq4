@@ -7,7 +7,6 @@
 #property link      "https://www.mql5.com"
 #property version   "1.00"
 #property strict
-//http://www.fxtrade.co.jp/system/download/fxtf4setup.exe
 
 #define NONE (-1)
 double previousPrice = NONE;
