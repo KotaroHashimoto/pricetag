@@ -14,8 +14,8 @@ int position = NONE;
 int ticket = NONE;
 double stopLoss = NONE;
 double posSizeFactor = NONE;
+double MAX_LOT = NONE;
 
-#define MAX_LOT (2.0) //for FXTF1000
 #define ACCEPTABLE_LOSS (0.01)
 #define C (0.01) //for FXTF1000
 //#define C (10)
@@ -53,6 +53,9 @@ int OnInit()
   Print("stopLoss=", stopLoss);
   Print("ASK=", Ask);
   Print("BID=", Bid);
+  
+  MAX_LOT = MarketInfo(Symbol(), MODE_MAXLOT);
+  Print("MAX_LOT=", MAX_LOT);
   
   posSizeFactor = C * ACCEPTABLE_LOSS / STOP_LOSS;
   Print("posSizeFactor=", posSizeFactor);
