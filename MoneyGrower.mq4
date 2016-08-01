@@ -7,7 +7,7 @@
 #property link      "https://www.mql5.com"
 #property version   "1.00"
 #property strict
-
+//http://www.fxtrade.co.jp/system/download/fxtf4setup.exe
 
 #define NONE (-1)
 double previousPrice = NONE;
@@ -102,7 +102,7 @@ int nextPosition()
 void OnTick()
 {
   if(OrdersTotal() == 0) {
-    if(DayOfWeek() == 6) {
+    if(DayOfWeek() == 5 && 18 < Hour()) {
       return;
     }
     else if(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD)) {
@@ -161,7 +161,4 @@ void OnTick()
     Print("Something Wrong with OrderSelect(ticket, SELECT_BY_TICKET), ticket=", ticket);
     Print("LastError=", GetLastError());
   }
-  
-  Print("DayOfWeek()=", DayOfWeek());
-  Print("Hour()=", Hour());
 }
