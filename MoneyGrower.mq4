@@ -16,12 +16,12 @@ int ticket = NONE;
 double stopLoss = NONE;
 double posSizeFactor = NONE;
 
-#define MAX_LOT (2.0)
+#define MAX_LOT (2.0) //for FXTF1000
 #define ACCEPTABLE_LOSS (0.01)
-#define C (0.01) //for FXTF
-//#define C (10) //USD
-//#define ACCEPTABLE_SPREAD (5) //for OANDA
-#define ACCEPTABLE_SPREAD (3) //for FXTF
+#define C (0.01) //for FXTF1000
+//#define C (10)
+//#define ACCEPTABLE_SPREAD (4) //for OANDA
+#define ACCEPTABLE_SPREAD (3) //for FXTF1000
 
 extern int STOP_LOSS = 100;
 
@@ -57,7 +57,7 @@ int OnInit()
   
   posSizeFactor = C * ACCEPTABLE_LOSS / STOP_LOSS;
   Print("posSizeFactor=", posSizeFactor);
-  Print("initial lot=", MathFloor(10.0 * AccountEquity() * posSizeFactor) / 10);
+  Print("Initial Lot=", MathFloor(10.0 * AccountEquity() * posSizeFactor) / 10);
   
   //---
   return(INIT_SUCCEEDED);
@@ -115,7 +115,6 @@ void OnTick()
     }
 
     double posSize = MathFloor(10.0 * AccountEquity() * posSizeFactor) / 10;
-    Print("posSize=", posSize);
     if(MAX_LOT < posSize) {
       posSize = MAX_LOT;
     }
