@@ -102,8 +102,10 @@ int nextPosition()
 void OnTick()
 {
   if(OrdersTotal() == 0) {
-  
-    if(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD)) {
+    if(DayOfWeek() == 6) {
+      return;
+    }
+    else if(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD)) {
       previousPrice = NONE;
       position = NONE;
       return;
@@ -159,4 +161,7 @@ void OnTick()
     Print("Something Wrong with OrderSelect(ticket, SELECT_BY_TICKET), ticket=", ticket);
     Print("LastError=", GetLastError());
   }
+  
+  Print("DayOfWeek()=", DayOfWeek());
+  Print("Hour()=", Hour());
 }
