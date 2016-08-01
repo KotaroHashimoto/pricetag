@@ -7,6 +7,24 @@
 #property link      "https://www.mql5.com"
 #property version   "1.00"
 #property strict
+
+
+#define NONE (-1)
+double previousPrice = NONE;
+int position = NONE;
+int ticket = NONE;
+double stopLoss = NONE;
+double posSizeFactor = NONE;
+
+#define MAX_LOT (2.0)
+#define ACCEPTABLE_LOSS (0.01)
+#define C (0.1) //JPY
+//#define C (10) //USD
+//#define ACCEPTABLE_SPREAD (5) //for OANDA
+#define ACCEPTABLE_SPREAD (3) //for FXTF
+
+extern int STOP_LOSS = 100;
+
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
 //+------------------------------------------------------------------+
@@ -36,7 +54,11 @@ int OnInit()
   Print("stopLoss=", stopLoss);
   Print("ASK=", Ask);
   Print("BID=", Bid);
-   
+  
+  posSizeFactor = C * ACCEPTABLE_LOSS / STOP_LOSS;
+  Print("posSizeFactor=", posSizeFactor);
+  Print("initial lot=", MathFloor(10.0 * AccountEquity() * posSizeFactor) / 10);
+  
   //---
   return(INIT_SUCCEEDED);
 }
@@ -47,19 +69,6 @@ void OnDeinit(const int reason)
 {
   //---   
 }
-
-#define NONE (-1)
-double previousPrice = NONE;
-int position = NONE;
-int ticket = NONE;
-double stopLoss = NONE;
-
-//#define POS_SIZING_FACTOR (0.00002) //position = AccountEquity() * POS_SIZING_FACTOR for USD
-#define POS_SIZING_FACTOR (0.000001) //position = AccountEquity() * POS_SIZING_FACTOR for JPY
-#define ACCEPTABLE_SPREAD (4) //for OANDA
-//#define ACCEPTABLE_SPREAD (3) //for FXTF
-
-extern int STOP_LOSS = 100;
 
 int nextPosition()
 {
@@ -105,11 +114,11 @@ void OnTick()
       return;
     }
 
-    double posSize = MathFloor(10.0 * AccountEquity() * POS_SIZING_FACTOR) * 0.1;
-    /*
-    if(10 < posSize) {
-      posSize = 10.0; // for OANDA basic course
-    }*/
+    double posSize = MathFloor(10.0 * AccountEquity() * posSizeFactor) / 10;
+    Print("posSize=", posSize);
+    if(MAX_LOT < posSize) {
+      posSize = MAX_LOT;
+    }
     
     if(nextPosition() == OP_BUY) {
       ticket = OrderSend(Symbol(), OP_BUY, posSize, Ask, 3, Bid - stopLoss, 0, NULL, 0, 0, Red);
@@ -137,7 +146,7 @@ void OnTick()
     else if(OrderType() == OP_SELL) {
       if(Ask + stopLoss < OrderStopLoss()) {
         bool modified = OrderModify(ticket, OrderOpenPrice(), Ask + stopLoss, 0, 0, Blue);
-      }
+      }                     
       previousPrice = Ask;
     }
     else {
@@ -146,6 +155,8 @@ void OnTick()
   }
 
   else {
-    Print("Something Wrong with OrderSelect(Ticket, SELECT_BY_TICKET), ticket=", ticket);
+    Print("Something Wrong with OrderSelect(ticket, SELECT_BY_TICKET), ticket=", ticket);
   }
+
+  Print("LastErro=", GetLastError());
 }
