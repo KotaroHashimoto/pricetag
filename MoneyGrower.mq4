@@ -59,7 +59,7 @@ int OnInit()
   
   posSizeFactor = C * ACCEPTABLE_LOSS / STOP_LOSS;
   Print("posSizeFactor=", posSizeFactor);
-  Print("Initial Lot=", MathFloor(100.0 * AccountEquity() * posSizeFactor) / 100);
+  Print("Initial Lot=", MathFloor(100.0 * AccountEquity() * posSizeFactor) / 100.0);
   
   //---
   return(INIT_SUCCEEDED);
@@ -118,7 +118,7 @@ void OnTick()
       return;
     }
 
-    double posSize = MathFloor(100.0 * AccountEquity() * posSizeFactor) / 100; //for FXTF1000
+    double posSize = MathFloor(100.0 * AccountEquity() * posSizeFactor) / 100.0; //for FXTF1000
     if(MAX_LOT < posSize) {
       posSize = MAX_LOT;
     }
