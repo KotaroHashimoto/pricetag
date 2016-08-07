@@ -9,18 +9,18 @@
 #property strict
 
 #define NONE (-1)
-double previousPrice = NONE;
 int position = NONE;
 int ticket = NONE;
 double stopLoss = NONE;
-double posSizeFactor = NONE;
+double lotSizeFactor = NONE;
 double MAX_LOT = NONE;
 
 #define ACCEPTABLE_LOSS (0.01)
 #define C (0.01) //for FXTF1000
-//#define C (10)
+//#define C (1) //for back test
 //#define ACCEPTABLE_SPREAD (4) //for OANDA
 #define ACCEPTABLE_SPREAD (3) //for FXTF1000
+#define IND_PERIOD (3)
 
 extern int STOP_LOSS = 100;
 
@@ -57,9 +57,9 @@ int OnInit()
   MAX_LOT = MarketInfo(Symbol(), MODE_MAXLOT);
   Print("MAX_LOT=", MAX_LOT);
   
-  posSizeFactor = C * ACCEPTABLE_LOSS / STOP_LOSS;
-  Print("posSizeFactor=", posSizeFactor);
-  Print("Initial Lot=", MathFloor(100.0 * AccountEquity() * posSizeFactor) / 100.0);
+  lotSizeFactor = C * ACCEPTABLE_LOSS / STOP_LOSS;
+  Print("lotSizeFactor=", lotSizeFactor);
+  Print("Initial Lot=", MathFloor(100.0 * AccountEquity() * lotSizeFactor) / 100.0);
   
   //---
   return(INIT_SUCCEEDED);
@@ -72,13 +72,19 @@ void OnDeinit(const int reason)
   //---   
 }
 
-int nextPosition()
+int nextPosition(int current)
 {
-  if(position == NONE) {
-    if(previousPrice < Ask) {
+  if(current == NONE) {
+  
+    double pDI = iADX(Symbol(), PERIOD_M15, IND_PERIOD, PRICE_WEIGHTED, 1, 0);
+    double nDI = iADX(Symbol(), PERIOD_M15, IND_PERIOD, PRICE_WEIGHTED, 2, 0);
+    Print("+DI(M15, 3)=", pDI);
+    Print("-DI(M15, 3)=", nDI);
+    
+    if(nDI < pDI) {
       return OP_BUY;
     }
-    else if(Ask < previousPrice) {
+    else if(pDI < nDI) {
       return OP_SELL;
     }
     else {
@@ -86,10 +92,10 @@ int nextPosition()
     }
   }
   else {
-    if(position == OP_BUY) {
+    if(current == OP_BUY) {
       return OP_SELL;
     }
-    else if(position == OP_SELL) {
+    else if(current == OP_SELL) {
       return OP_BUY;
     }
     else {
@@ -103,35 +109,36 @@ int nextPosition()
 //+------------------------------------------------------------------+
 void OnTick()
 {
+  double atr = iATR(Symbol(), PERIOD_M15, IND_PERIOD, 0);
+  
   if(OrdersTotal() == 0) {
     if((DayOfWeek() == 5 && 18 < Hour()) || DayOfWeek() == 6) {
-      return;
-    }
-    else if(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD)) {
-      previousPrice = NONE;
+      Print("No entry on Friday night. Hour()=", Hour());
       position = NONE;
       return;
     }
-    else if(previousPrice == NONE) {
-      previousPrice = Ask;
+    else if(atr < stopLoss) {
+      Print("No entry on low volatility. ATR(M15, 3)=", atr);
+      position = NONE;
+      return;
+    }
+    else if(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD)) {
+      Print("No entry on wide spread: ", MarketInfo(Symbol(), MODE_SPREAD));
       position = NONE;
       return;
     }
 
-    double posSize = MathFloor(100.0 * AccountEquity() * posSizeFactor) / 100.0; //for FXTF1000
-    if(MAX_LOT < posSize) {
-      posSize = MAX_LOT;
+    double lotSize = MathFloor(100.0 * AccountEquity() * lotSizeFactor) / 100.0; //for FXTF1000
+    if(MAX_LOT < lotSize) {
+      lotSize = MAX_LOT;
     }
     
-    if(nextPosition() == OP_BUY) {
-      ticket = OrderSend(Symbol(), OP_BUY, posSize, Ask, 3, Bid - stopLoss, 0, NULL, 0, 0, Red);
-      position = OP_BUY;
-      previousPrice = Bid;
+    position = nextPosition(position);
+    if(position == OP_BUY) {
+      ticket = OrderSend(Symbol(), OP_BUY, lotSize, Ask, 3, Bid - stopLoss, 0, DoubleToString(atr), 0, 0, Red);
     }
-    else if(nextPosition() == OP_SELL) {
-      ticket = OrderSend(Symbol(), OP_SELL, posSize, Bid, 3, Ask + stopLoss, 0, NULL, 0, 0, Blue); 
-      position = OP_SELL;
-      previousPrice = Ask;
+    else if(position == OP_SELL) {
+      ticket = OrderSend(Symbol(), OP_SELL, lotSize, Bid, 3, Ask + stopLoss, 0, DoubleToString(atr), 0, 0, Blue); 
     }
     else {
       Print("Something Wrong with nextPositon() !!");
@@ -145,13 +152,11 @@ void OnTick()
       if(OrderStopLoss() < Bid - stopLoss) {
         bool modified = OrderModify(ticket, OrderOpenPrice(), Bid - stopLoss, 0, 0, Red);
       }
-      previousPrice = Bid;
     }
     else if(OrderType() == OP_SELL) {
       if(Ask + stopLoss < OrderStopLoss()) {
         bool modified = OrderModify(ticket, OrderOpenPrice(), Ask + stopLoss, 0, 0, Blue);
       }                     
-      previousPrice = Ask;
     }
     else {
       Print("Something Wrong with OrderType() !!");
