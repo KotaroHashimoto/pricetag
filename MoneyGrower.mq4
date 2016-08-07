@@ -144,6 +144,11 @@ void OnTick()
       Print("Something Wrong with nextPositon() !!");
       Print("LastError=", GetLastError());
     }
+    
+    if(ticket == NONE) {
+      position = NONE;
+      Print("OrderSend() failed. LastError=", GetLastError());
+    }
   }
   
   else if(OrderSelect(ticket, SELECT_BY_TICKET) == True) {      
