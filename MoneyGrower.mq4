@@ -16,10 +16,14 @@ double lotSizeFactor = NONE;
 double MAX_LOT = NONE;
 
 #define ACCEPTABLE_LOSS (0.01)
+
+//#define C (0.1) //for OANDA
 #define C (0.01) //for FXTF1000
-//#define C (1) //for back test
+//#define C (1) //for XM back test
+
 //#define ACCEPTABLE_SPREAD (4) //for OANDA
 #define ACCEPTABLE_SPREAD (3) //for FXTF1000
+
 #define IND_PERIOD (3)
 
 extern int STOP_LOSS = 100;
@@ -78,8 +82,8 @@ int nextPosition(int current)
   
     double pDI = iADX(Symbol(), PERIOD_M15, IND_PERIOD, PRICE_WEIGHTED, 1, 0);
     double nDI = iADX(Symbol(), PERIOD_M15, IND_PERIOD, PRICE_WEIGHTED, 2, 0);
-    Print("+DI(M15, 3)=", pDI);
-    Print("-DI(M15, 3)=", nDI);
+//    Print("+DI(M15, 3)=", pDI);
+//    Print("-DI(M15, 3)=", nDI);
     
     if(nDI < pDI) {
       return OP_BUY;
@@ -128,7 +132,7 @@ void OnTick()
       return;
     }
 
-    double lotSize = MathFloor(100.0 * AccountEquity() * lotSizeFactor) / 100.0; //for FXTF1000
+    double lotSize = MathFloor(100.0 * AccountEquity() * lotSizeFactor) / 100.0;
     if(MAX_LOT < lotSize) {
       lotSize = MAX_LOT;
     }
