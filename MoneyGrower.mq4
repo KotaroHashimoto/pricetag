@@ -113,17 +113,17 @@ void OnTick()
   
   if(OrdersTotal() == 0) {
     if((DayOfWeek() == 5 && 18 < Hour()) || DayOfWeek() == 6) {
-      Print("No entry on Friday night. Hour()=", Hour());
+//      Print("No entry on Friday night. Hour()=", Hour());
       position = NONE;
       return;
     }
     else if(atr < stopLoss) {
-      Print("No entry on low volatility. ATR(M15, 3)=", atr);
+//      Print("No entry on low volatility. ATR(M15, 3)=", atr);
       position = NONE;
       return;
     }
     else if(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD)) {
-      Print("No entry on wide spread: ", MarketInfo(Symbol(), MODE_SPREAD));
+//      Print("No entry on wide spread: ", MarketInfo(Symbol(), MODE_SPREAD));
       position = NONE;
       return;
     }
@@ -147,7 +147,7 @@ void OnTick()
     
     if(ticket == NONE) {
       position = NONE;
-      Print("OrderSend() failed. LastError=", GetLastError());
+//      Print("OrderSend() failed. LastError=", GetLastError());
     }
   }
   
