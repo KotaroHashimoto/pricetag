@@ -17,8 +17,7 @@ double MAX_LOT = NONE;
 
 #define ACCEPTABLE_LOSS (0.01)
 
-//#define C (0.1) //for OANDA
-#define C (0.01) //for FXTF1000
+#define C (0.01)
 //#define C (1) //for XM back test
 
 //#define ACCEPTABLE_SPREAD (4) //for OANDA
