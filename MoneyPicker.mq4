@@ -163,7 +163,7 @@ void OnTick()
           ticket = NONE;
         }
       } */
-      if(0 < OrderProfit()) {
+      if(OrderOpenPrice() < Bid) {
         if(OrderClose(ticket, OrderLots(), Bid, 0, NONE)) {
           ticket = NONE;
         }
@@ -179,7 +179,7 @@ void OnTick()
           ticket = NONE;
         }
       } */
-      if(0 < OrderProfit()) {
+      if(Ask < OrderOpenPrice()) {
         if(OrderClose(ticket, OrderLots(), Ask, 0, NONE)) {
           ticket = NONE;
         }
