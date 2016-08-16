@@ -164,7 +164,12 @@ void OnTick()
       if(stopPrice <= Bid - stopLoss) {
         stopPrice = Bid - stopLoss;
         closeFlag = False;
-      }
+      }/*
+      else if(Bid < stopPrice) {
+        if(!OrderClose(ticket, OrderLots(), Bid, 100, NONE)) {
+          Print("close failed err=", GetLastError());
+        }
+      }*/
       else if(closeFlag && previousPrice <= Bid) {
         if(!OrderClose(ticket, OrderLots(), Bid, 100, NONE)) {
           Print("close failed err=", GetLastError());
@@ -179,7 +184,12 @@ void OnTick()
       if(Ask + stopLoss <= stopPrice) {
         stopPrice = Ask + stopLoss;
         closeFlag = False;
-      }
+      }/*
+      else if(stopPrice < Ask) {
+        if(!OrderClose(ticket, OrderLots(), Ask, 100, NONE)) {
+          Print("close failed err=", GetLastError());
+        }
+      }*/
       else if(closeFlag && Ask <= previousPrice) {
         if(!OrderClose(ticket, OrderLots(), Ask, 100, NONE)) {
           Print("close failed err=", GetLastError());
