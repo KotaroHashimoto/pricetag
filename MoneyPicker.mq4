@@ -15,6 +15,8 @@ double stopLoss = NONE;
 double lotSizeFactor = NONE;
 double MAX_LOT = NONE;
 double stopPrice = NONE;
+double previousPrice = NONE;
+bool closeFlag = False;
 
 #define ACCEPTABLE_LOSS (0.01)
 
@@ -59,7 +61,7 @@ int OnInit()
   Print("BID=", Bid);
   
   MAX_LOT = MarketInfo(Symbol(), MODE_MAXLOT);
-  MAX_LOT = 2.0;
+  MAX_LOT = 1.0;
   Print("MAX_LOT=", MAX_LOT);
   
   lotSizeFactor = C * ACCEPTABLE_LOSS / STOP_LOSS;
@@ -135,10 +137,14 @@ void OnTick()
     if(position == OP_BUY) {
       ticket = OrderSend(Symbol(), OP_BUY, lotSize, Ask, 0, 0, 0, NULL, 0, 0, NONE);
       stopPrice = Bid - stopLoss;
+      previousPrice = Bid;
+      closeFlag = False;
     }
     else if(position == OP_SELL) {
       ticket = OrderSend(Symbol(), OP_SELL, lotSize, Bid, 0, 0, 0, NULL, 0, 0, NONE); 
       stopPrice = Ask + stopLoss;
+      previousPrice = Ask;
+      closeFlag = False;
     }
     else {
       Print("Something Wrong with nextPositon() !!");
@@ -154,41 +160,40 @@ void OnTick()
   
   else if(OrderSelect(ticket, SELECT_BY_TICKET) == True) {      
 
-    if(OrderType() == OP_BUY) { /*
-      if(stopPrice < Bid - stopLoss) {
+    if(OrderType() == OP_BUY) {
+      if(stopPrice <= Bid - stopLoss) {
         stopPrice = Bid - stopLoss;
+        closeFlag = False;
       }
-      else if(Bid < stopPrice) {
-        if(OrderClose(ticket, OrderLots(), Bid, 100, NONE)) {
-          ticket = NONE;
-        }
-      } */
-      if(OrderOpenPrice() < Bid) {
-        if(OrderClose(ticket, OrderLots(), Bid, 0, NONE)) {
-          ticket = NONE;
+      else if(closeFlag && previousPrice <= Bid) {
+        if(!OrderClose(ticket, OrderLots(), Bid, 100, NONE)) {
+          Print("close failed err=", GetLastError());
         }
       }
-
+      else if(Bid <= stopPrice) {
+        closeFlag = True;
+      }
+      previousPrice = Bid;
     }
-    else if(OrderType() == OP_SELL) { /*
-      if(Ask + stopLoss < stopPrice) {
+    else if(OrderType() == OP_SELL) {
+      if(Ask + stopLoss <= stopPrice) {
         stopPrice = Ask + stopLoss;
+        closeFlag = False;
       }
-      else if(stopPrice < Ask) {
-        if(OrderClose(ticket, OrderLots(), Ask, 100, NONE)) {
-          ticket = NONE;
-        }
-      } */
-      if(Ask < OrderOpenPrice()) {
-        if(OrderClose(ticket, OrderLots(), Ask, 0, NONE)) {
-          ticket = NONE;
+      else if(closeFlag && Ask <= previousPrice) {
+        if(!OrderClose(ticket, OrderLots(), Ask, 100, NONE)) {
+          Print("close failed err=", GetLastError());
         }
       }
+      else if(stopPrice <= Ask) {
+        closeFlag = True;
+      }
+      previousPrice = Ask;
     }
     else {
       Print("Something Wrong with OrderType() !!");
       Print("LastError=", GetLastError());
-    } 
+    }
   }
 
   else {
