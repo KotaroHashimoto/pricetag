@@ -23,8 +23,8 @@ bool closeFlag = False;
 //#define C (0.01)
 #define C (1) //for XM back test
 
-//#define ACCEPTABLE_SPREAD (4) //for OANDA
-#define ACCEPTABLE_SPREAD (3) //for FXTF1000
+#define ACCEPTABLE_SPREAD (4) //for OANDA
+//#define ACCEPTABLE_SPREAD (3) //for FXTF1000
 
 #define IND_PERIOD (3)
 
@@ -171,7 +171,7 @@ void OnTick()
         }
       }*/
       else if(closeFlag && previousPrice <= Bid) {
-        if(!OrderClose(ticket, OrderLots(), Bid, 100, NONE)) {
+        if(!OrderClose(ticket, OrderLots(), Bid, 0, NONE)) {
           Print("close failed err=", GetLastError());
         }
       }
@@ -191,7 +191,7 @@ void OnTick()
         }
       }*/
       else if(closeFlag && Ask <= previousPrice) {
-        if(!OrderClose(ticket, OrderLots(), Ask, 100, NONE)) {
+        if(!OrderClose(ticket, OrderLots(), Ask, 0, NONE)) {
           Print("close failed err=", GetLastError());
         }
       }
