@@ -21,8 +21,8 @@ double stopPrice = NONE;
 //#define C (0.01)
 #define C (1) //for XM back test
 
-#define ACCEPTABLE_SPREAD (4) //for OANDA
-//#define ACCEPTABLE_SPREAD (3) //for FXTF1000
+//#define ACCEPTABLE_SPREAD (4) //for OANDA
+#define ACCEPTABLE_SPREAD (3) //for FXTF1000
 
 #define IND_PERIOD (3)
 
@@ -77,29 +77,12 @@ void OnDeinit(const int reason)
   //---   
 }
 
-int direction1M() {
-
-  double pDI = iADX(Symbol(), PERIOD_M15, IND_PERIOD, PRICE_WEIGHTED, 1, 0);
-  double nDI = iADX(Symbol(), PERIOD_M15, IND_PERIOD, PRICE_WEIGHTED, 2, 0);
-    
-  if(nDI < pDI) {
-    return OP_BUY;
-  }
-  else if(pDI < nDI) {
-    return OP_SELL;
-  }
-  else {
-    return NONE;
-  }
-}
-
-
 int nextPosition(int current)
 {
   if(current == NONE) {
   
-    double pDI = iADX(Symbol(), PERIOD_M15, IND_PERIOD, PRICE_WEIGHTED, 1, 0);
-    double nDI = iADX(Symbol(), PERIOD_M15, IND_PERIOD, PRICE_WEIGHTED, 2, 0);
+    double pDI = iADX(Symbol(), PERIOD_M1, IND_PERIOD, PRICE_WEIGHTED, 1, 0);
+    double nDI = iADX(Symbol(), PERIOD_M1, IND_PERIOD, PRICE_WEIGHTED, 2, 0);
 //    Print("+DI(M15, 3)=", pDI);
 //    Print("-DI(M15, 3)=", nDI);
     
@@ -136,12 +119,7 @@ void OnTick()
 //      Print("No entry on Friday night. Hour()=", Hour());
       position = NONE;
       return;
-    }/*
-    else if(atr < stopLoss) {
-//      Print("No entry on low volatility. ATR(M15, 3)=", atr);
-      position = NONE;
-      return;
-    }*/
+    }
     else if(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD)) {
 //      Print("No entry on wide spread: ", MarketInfo(Symbol(), MODE_SPREAD));
       position = NONE;
@@ -155,11 +133,11 @@ void OnTick()
     
     position = nextPosition(position);
     if(position == OP_BUY) {
-      ticket = OrderSend(Symbol(), OP_BUY, lotSize, Ask, 0, 0, 0, NULL, 0, 0, Red);
+      ticket = OrderSend(Symbol(), OP_BUY, lotSize, Ask, 0, 0, 0, NULL, 0, 0, NONE);
       stopPrice = Bid - stopLoss;
     }
     else if(position == OP_SELL) {
-      ticket = OrderSend(Symbol(), OP_SELL, lotSize, Bid, 0, 0, 0, NULL, 0, 0, Blue); 
+      ticket = OrderSend(Symbol(), OP_SELL, lotSize, Bid, 0, 0, 0, NULL, 0, 0, NONE); 
       stopPrice = Ask + stopLoss;
     }
     else {
@@ -176,26 +154,41 @@ void OnTick()
   
   else if(OrderSelect(ticket, SELECT_BY_TICKET) == True) {      
 
-    if(OrderType() == OP_BUY) {
+    if(OrderType() == OP_BUY) { /*
       if(stopPrice < Bid - stopLoss) {
         stopPrice = Bid - stopLoss;
       }
       else if(Bid < stopPrice) {
-        bool closed = OrderClose(ticket, OrderLots(), Bid, 0, Cyan);
+        if(OrderClose(ticket, OrderLots(), Bid, 100, NONE)) {
+          ticket = NONE;
+        }
+      } */
+      if(0 < OrderProfit()) {
+        if(OrderClose(ticket, OrderLots(), Bid, 0, NONE)) {
+          ticket = NONE;
+        }
       }
+
     }
-    else if(OrderType() == OP_SELL) {
+    else if(OrderType() == OP_SELL) { /*
       if(Ask + stopLoss < stopPrice) {
         stopPrice = Ask + stopLoss;
       }
       else if(stopPrice < Ask) {
-        bool closed = OrderClose(ticket, OrderLots(), Ask, 0, Magenta);
+        if(OrderClose(ticket, OrderLots(), Ask, 100, NONE)) {
+          ticket = NONE;
+        }
+      } */
+      if(0 < OrderProfit()) {
+        if(OrderClose(ticket, OrderLots(), Ask, 0, NONE)) {
+          ticket = NONE;
+        }
       }
     }
     else {
       Print("Something Wrong with OrderType() !!");
       Print("LastError=", GetLastError());
-    }
+    } 
   }
 
   else {
