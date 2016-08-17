@@ -170,7 +170,7 @@ void OnTick()
         }
       }*/
 //      if(OrderOpenPrice() < Bid || (closeLimit < GetTickCount() - time)) {
-      if(Ask + ACCEPTABLE_SPREAD < OrderOpenPrice() || (closeLimit < GetTickCount() - time)) {
+      if(Ask + ACCEPTABLE_SPREAD*Point < OrderOpenPrice() || (closeLimit < GetTickCount() - time)) {
         if(OrderClose(ticket, OrderLots(), Bid, 0, NONE)) {
           ticket = NONE;
         }
@@ -186,7 +186,7 @@ void OnTick()
         }
       }*/
 //      if(Ask < OrderOpenPrice() || (closeLimit < GetTickCount() - time)) {
-      if(OrderOpenPrice() < Bid - ACCEPTABLE_SPREAD || (closeLimit < GetTickCount() - time)) {
+      if(OrderOpenPrice() < Bid - ACCEPTABLE_SPREAD*Point || (closeLimit < GetTickCount() - time)) {
         if(OrderClose(ticket, OrderLots(), Ask, 0, NONE)) {
           ticket = NONE;
         }
