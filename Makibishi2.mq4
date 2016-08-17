@@ -25,7 +25,7 @@ double spread = NONE;
 
 #define IND_PERIOD (3)
 
-extern uint closeLimit = 30000; // in ms
+extern uint closeLimit = 10000; // in ms
 
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
@@ -176,7 +176,7 @@ void OnTick()
 //          Print("Timer: ", closeLimit / 1000 - (GetTickCount() - time) / 1000);
       }
 
-      if(OrderOpenPrice() < Bid || (timerStart && (closeLimit <= GetTickCount() - time))) {
+      if((OrderOpenPrice() < Bid && OrderOpenPrice() < previousPrice - spread) || (timerStart && (closeLimit <= GetTickCount() - time))) {
         if(OrderProfit() < 0) {
           position = OP_SELL;
         }
@@ -204,7 +204,7 @@ void OnTick()
 //          Print("Timer: ", closeLimit / 1000 - (GetTickCount() - time) / 1000);
       }
       
-      if(Ask < OrderOpenPrice() || (timerStart && (closeLimit <= GetTickCount() - time))) {
+      if((Ask < OrderOpenPrice() && previousPrice + spread < OrderOpenPrice()) || (timerStart && (closeLimit <= GetTickCount() - time))) {
         if(OrderProfit() < 0) {
           position = OP_BUY;
         }
