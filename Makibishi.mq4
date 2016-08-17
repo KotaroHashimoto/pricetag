@@ -26,7 +26,7 @@ double stopPrice = NONE;
 
 #define IND_PERIOD (3)
 
-extern int STOP_LOSS = 1;
+extern int STOP_LOSS = 100;
 
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
@@ -59,7 +59,7 @@ int OnInit()
   Print("BID=", Bid);
   
   MAX_LOT = MarketInfo(Symbol(), MODE_MAXLOT);
-  MAX_LOT = 2.0;
+  MAX_LOT = 1.0;
   Print("MAX_LOT=", MAX_LOT);
   
   lotSizeFactor = C * ACCEPTABLE_LOSS / STOP_LOSS;
@@ -130,14 +130,15 @@ void OnTick()
     if(MAX_LOT < lotSize) {
       lotSize = MAX_LOT;
     }
+    lotSize = MAX_LOT;
     
     position = nextPosition(position);
     if(position == OP_BUY) {
-      ticket = OrderSend(Symbol(), OP_BUY, lotSize, Ask, 0, Ask - 100 * Point, Ask + Point, NULL, 0, 0, NONE);
+      ticket = OrderSend(Symbol(), OP_BUY, lotSize, Ask, 0, Ask - stopLoss, 0, NULL, 0, 0, NONE);
 //      stopPrice = Bid - stopLoss;
     }
     else if(position == OP_SELL) {
-      ticket = OrderSend(Symbol(), OP_SELL, lotSize, Bid, 0, Bid + 100 * Point, Bid - Point, NULL, 0, 0, NONE); 
+      ticket = OrderSend(Symbol(), OP_SELL, lotSize, Bid, 0, Bid + stopLoss, 0, NULL, 0, 0, NONE); 
 //      stopPrice = Ask + stopLoss;
     }
     else {
@@ -153,8 +154,8 @@ void OnTick()
   }
   
   else if(OrderSelect(ticket, SELECT_BY_TICKET) == True) {      
-/*
-    if(OrderType() == OP_BUY) {
+
+    if(OrderType() == OP_BUY) {/*
       if(stopPrice < Bid - stopLoss) {
         stopPrice = Bid - stopLoss;
       }
@@ -162,7 +163,7 @@ void OnTick()
         if(OrderClose(ticket, OrderLots(), Bid, 100, NONE)) {
           ticket = NONE;
         }
-      }
+      }*/
       if(OrderOpenPrice() < Bid) {
         if(OrderClose(ticket, OrderLots(), Bid, 0, NONE)) {
           ticket = NONE;
@@ -170,7 +171,7 @@ void OnTick()
       }
 
     }
-    else if(OrderType() == OP_SELL) {
+    else if(OrderType() == OP_SELL) {/*
       if(Ask + stopLoss < stopPrice) {
         stopPrice = Ask + stopLoss;
       }
@@ -178,7 +179,7 @@ void OnTick()
         if(OrderClose(ticket, OrderLots(), Ask, 100, NONE)) {
           ticket = NONE;
         }
-      }
+      }*/
       if(Ask < OrderOpenPrice()) {
         if(OrderClose(ticket, OrderLots(), Ask, 0, NONE)) {
           ticket = NONE;
@@ -188,7 +189,7 @@ void OnTick()
     else {
       Print("Something Wrong with OrderType() !!");
       Print("LastError=", GetLastError());
-    }*/
+    }
   }
 
   else {
