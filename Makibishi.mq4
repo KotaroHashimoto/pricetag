@@ -15,6 +15,7 @@ double stopLoss = NONE;
 double lotSizeFactor = NONE;
 double MAX_LOT = NONE;
 double stopPrice = NONE;
+uint time = 0;
 
 #define ACCEPTABLE_LOSS (0.01)
 
@@ -27,6 +28,7 @@ double stopPrice = NONE;
 #define IND_PERIOD (3)
 
 extern int STOP_LOSS = 100;
+extern uint closeLimit = 3 * 60 * 1000; // in ms
 
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
@@ -151,6 +153,9 @@ void OnTick()
 //      stopPrice = NONE;
 //      Print("OrderSend() failed. LastError=", GetLastError());
     }
+    else {
+      time = GetTickCount();
+    }
   }
   
   else if(OrderSelect(ticket, SELECT_BY_TICKET) == True) {      
@@ -164,12 +169,11 @@ void OnTick()
           ticket = NONE;
         }
       }*/
-      if(OrderOpenPrice() < Bid) {
+      if(OrderOpenPrice() < Bid || (closeLimit < GetTickCount() - time)) {
         if(OrderClose(ticket, OrderLots(), Bid, 0, NONE)) {
           ticket = NONE;
         }
       }
-
     }
     else if(OrderType() == OP_SELL) {/*
       if(Ask + stopLoss < stopPrice) {
@@ -180,7 +184,7 @@ void OnTick()
           ticket = NONE;
         }
       }*/
-      if(Ask < OrderOpenPrice()) {
+      if(Ask < OrderOpenPrice() || (closeLimit < GetTickCount() - time)) {
         if(OrderClose(ticket, OrderLots(), Ask, 0, NONE)) {
           ticket = NONE;
         }
@@ -190,6 +194,7 @@ void OnTick()
       Print("Something Wrong with OrderType() !!");
       Print("LastError=", GetLastError());
     }
+    
   }
 
   else {
