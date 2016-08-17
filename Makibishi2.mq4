@@ -164,16 +164,16 @@ void OnTick()
       if((!timerStart) && Ask < OrderOpenPrice() - spread) {
         time = GetTickCount();
         timerStart = True;
-        Print("Timer started.");
+//        Print("Timer started.");
       }
       else if(OrderOpenPrice() - spread <= Ask) {
         if(timerStart) {
-          Print("Timer canceled: ", closeLimit / 1000 - (GetTickCount() - time) / 1000);
+//          Print("Timer canceled: ", closeLimit / 1000 - (GetTickCount() - time) / 1000);
         }
         timerStart = False;
       }
       else if(timerStart) {
-          Print("Timer: ", closeLimit / 1000 - (GetTickCount() - time) / 1000);
+//          Print("Timer: ", closeLimit / 1000 - (GetTickCount() - time) / 1000);
       }
 
       if(OrderOpenPrice() < Bid || (timerStart && (closeLimit <= GetTickCount() - time))) {
@@ -192,16 +192,16 @@ void OnTick()
       if((!timerStart) && OrderOpenPrice() + spread < Bid) {
         time = GetTickCount();
         timerStart = True;
-        Print("Timer started.");
+//        Print("Timer started.");
       }
       else if(Bid <= OrderOpenPrice() + spread) {
         if(timerStart) {
-          Print("Timer canceled: ", closeLimit / 1000 - (GetTickCount() - time) / 1000);
+//          Print("Timer canceled: ", closeLimit / 1000 - (GetTickCount() - time) / 1000);
         }
         timerStart = False;
       }
       else if(timerStart) {
-          Print("Timer: ", closeLimit / 1000 - (GetTickCount() - time) / 1000);
+//          Print("Timer: ", closeLimit / 1000 - (GetTickCount() - time) / 1000);
       }
       
       if(Ask < OrderOpenPrice() || (timerStart && (closeLimit <= GetTickCount() - time))) {
