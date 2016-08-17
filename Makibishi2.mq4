@@ -110,6 +110,26 @@ int nextPosition(int current)
   }
 }
 
+void status() {
+  
+  int profit = (int)OrderProfit();
+  string p;
+  if(0 < profit) {
+    p = ", Profit = +";
+  }
+  else {
+    p = ", Profit = ";
+  }
+  
+  if(timerStart) {
+    Comment("Equity = ", AccountEquity(), p, profit, ", Time = ", closeLimit / 1000 - (GetTickCount() - time) / 1000);
+  }
+  else {
+    Comment("Equity = ", AccountEquity(), p, profit);
+  }
+  
+}
+
 //+------------------------------------------------------------------+
 //| Expert tick function                                             |
 //+------------------------------------------------------------------+
@@ -219,6 +239,8 @@ void OnTick()
       Print("Something Wrong with OrderType() !!");
       Print("LastError=", GetLastError());
     }
+    
+//    status();
   }
 
   else {
