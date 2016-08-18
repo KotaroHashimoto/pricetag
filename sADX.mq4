@@ -14,6 +14,10 @@ int ticket = NONE;
 double stopLoss = NONE;
 double lotSizeFactor = NONE;
 double MAX_LOT = NONE;
+bool onTrend = False;
+
+#define UPPER (75.0)
+#define BOTTOM (65.0)
 
 #define ACCEPTABLE_LOSS (0.01)
 
@@ -63,6 +67,13 @@ int OnInit()
   Print("lotSizeFactor=", lotSizeFactor);
   Print("Initial Lot=", MathFloor(100.0 * AccountEquity() * lotSizeFactor) / 100.0);
   
+  if((UPPER + BOTTOM) / 2.0 < iADX(Symbol(), PERIOD_M1, IND_PERIOD, PRICE_TYPICAL, 0, 0)) {
+    onTrend = True;
+  }
+  else {
+    onTrend = False;
+  }
+  
   //---
   return(INIT_SUCCEEDED);
 }
@@ -83,13 +94,22 @@ int getDirection()
 //  Print("+DI(M1, 3)=", pDI);
 //  Print("-DI(M1, 3)=", nDI);
 
-  if(50.0 < adx) { // trend follow
+  double thresh = NONE;
+  if(onTrend) {
+    thresh = BOTTOM;
+  }
+  else {
+    thresh = UPPER;
+  }
+
+  if(thresh < adx) { // trend follow
     if(nDI < pDI) {
       return OP_BUY;
     }
     else if(pDI < nDI) {
       return OP_SELL;
     }
+    onTrend = True;
   }
   else { // range
     if(nDI < pDI) {
@@ -98,6 +118,7 @@ int getDirection()
     else if(pDI < nDI) {
       return OP_BUY;
     }
+    onTrend = False;
   }
 
   return NONE;
