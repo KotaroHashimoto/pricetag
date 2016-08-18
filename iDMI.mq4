@@ -84,8 +84,8 @@ int getDirection()
 //  Print("+DI(M1, 3)=", pDI);
 //  Print("-DI(M1, 3)=", nDI);
  
-  adx = 100.0; // ignore ADX
-  if(adx < 50.0) {
+//  if(adx < 50.0) {
+  if(50.0 < adx) {
     return NONE;
   }
   else if(nDI < pDI) {
