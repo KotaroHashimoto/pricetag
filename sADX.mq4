@@ -140,12 +140,12 @@ void OnTick()
   else if(OrderSelect(ticket, SELECT_BY_TICKET) == True) {      
 
     if(OrderType() == OP_BUY && direction != OP_BUY) {
-      if(OrderClose(ticket, OrderLots(), Bid, 0, Cyan)) {
+      if(OrderClose(ticket, OrderLots(), Bid, 0, Magenta)) {
         ticket = NONE;
       }
     }
     else if(OrderType() == OP_SELL && direction != OP_SELL) {
-      if(OrderClose(ticket, OrderLots(), Ask, 0, Magenta)) {
+      if(OrderClose(ticket, OrderLots(), Ask, 0, Cyan)) {
         ticket = NONE;
       }
     }
