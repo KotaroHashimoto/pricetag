@@ -20,9 +20,8 @@ double MAX_LOT = NONE;
 //#define C (0.01)
 #define C (0.01) //for XM back test
 
-//#define ACCEPTABLE_SPREAD (4) //for OANDA
-#define ACCEPTABLE_SPREAD (3) //for FXTF1000
-#define ACCEPTABLE_SPREAD (100)
+#define ACCEPTABLE_SPREAD (4) //for OANDA
+//#define ACCEPTABLE_SPREAD (3) //for FXTF1000
 
 #define IND_PERIOD (3)
 
@@ -135,12 +134,12 @@ void OnTick()
   
   else if(OrderSelect(ticket, SELECT_BY_TICKET) == True) {      
 
-    if(OrderType() == OP_BUY && direction == OP_SELL) {
+    if((OrderType() == OP_BUY && direction == OP_SELL) || direction == NONE) {
       if(OrderClose(ticket, OrderLots(), Bid, 0, Cyan)) {
         ticket = NONE;
       }
     }
-    else if(OrderType() == OP_SELL && direction == OP_BUY) {
+    else if((OrderType() == OP_SELL && direction == OP_BUY) || direction == NONE) {
       if(OrderClose(ticket, OrderLots(), Ask, 0, Magenta)) {
         ticket = NONE;
       }
