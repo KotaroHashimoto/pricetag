@@ -114,17 +114,27 @@ void OnTick()
 {
   double atr = iATR(Symbol(), PERIOD_M15, IND_PERIOD, 0);
   
+  if(atr < Point * MarketInfo(Symbol(), MODE_STOPLEVEL)) {
+    stopLoss = Point * MarketInfo(Symbol(), MODE_STOPLEVEL);
+  }
+  else if(Point * STOP_LOSS < atr) {
+    stopLoss = Point * STOP_LOSS;
+  }
+  else {
+    stopLoss = atr;
+  }
+  
   if(OrdersTotal() == 0) {
     if((DayOfWeek() == 5 && 18 < Hour()) || DayOfWeek() == 6) {
 //      Print("No entry on Friday night. Hour()=", Hour());
       position = NONE;
       return;
-    }
+    }/*
     else if(atr < stopLoss) {
 //      Print("No entry on low volatility. ATR(M15, 3)=", atr);
       position = NONE;
       return;
-    }
+    }*/
     else if(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD)) {
 //      Print("No entry on wide spread: ", MarketInfo(Symbol(), MODE_SPREAD));
       position = NONE;
