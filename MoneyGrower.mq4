@@ -112,7 +112,7 @@ int nextPosition(int current)
 //+------------------------------------------------------------------+
 void OnTick()
 {
-  double atr = iATR(Symbol(), PERIOD_M15, IND_PERIOD, 0);
+  double atr = iATR(Symbol(), PERIOD_M15, IND_PERIOD - 1, 1);
   
   if(atr < Point * MarketInfo(Symbol(), MODE_STOPLEVEL)) {
     stopLoss = Point * MarketInfo(Symbol(), MODE_STOPLEVEL);
