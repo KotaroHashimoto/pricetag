@@ -17,8 +17,8 @@ double MAX_LOT = NONE;
 
 #define ACCEPTABLE_LOSS (0.01)
 
-#define C (0.01)
-//#define C (1) //for XM back test
+//#define C (0.01)
+#define C (0.01) //for XM back test
 
 //#define ACCEPTABLE_SPREAD (4) //for OANDA
 #define ACCEPTABLE_SPREAD (3) //for FXTF1000
@@ -77,8 +77,8 @@ void OnDeinit(const int reason)
 
 int getDirection()
 {
-  double pDI = iADX(Symbol(), PERIOD_M1, IND_PERIOD, PRICE_WEIGHTED, 1, 0);
-  double nDI = iADX(Symbol(), PERIOD_M1, IND_PERIOD, PRICE_WEIGHTED, 2, 0);
+  double pDI = iADX(Symbol(), PERIOD_M1, IND_PERIOD, PRICE_MEDIAN, 1, 0);
+  double nDI = iADX(Symbol(), PERIOD_M1, IND_PERIOD, PRICE_MEDIAN, 2, 0);
 //  Print("+DI(M1, 3)=", pDI);
 //  Print("-DI(M1, 3)=", nDI);
  
