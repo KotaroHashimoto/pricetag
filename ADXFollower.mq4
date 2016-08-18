@@ -22,6 +22,7 @@ double MAX_LOT = NONE;
 
 //#define ACCEPTABLE_SPREAD (4) //for OANDA
 #define ACCEPTABLE_SPREAD (3) //for FXTF1000
+#define ACCEPTABLE_SPREAD (100)
 
 #define IND_PERIOD (3)
 
@@ -77,12 +78,17 @@ void OnDeinit(const int reason)
 
 int getDirection()
 {
+  double adx = iADX(Symbol(), PERIOD_M1, IND_PERIOD, PRICE_MEDIAN, 0, 0);
   double pDI = iADX(Symbol(), PERIOD_M1, IND_PERIOD, PRICE_MEDIAN, 1, 0);
   double nDI = iADX(Symbol(), PERIOD_M1, IND_PERIOD, PRICE_MEDIAN, 2, 0);
+//  Print("ADX(M1, 3)=", adx);
 //  Print("+DI(M1, 3)=", pDI);
 //  Print("-DI(M1, 3)=", nDI);
  
-  if(nDI < pDI) {
+  if(adx < 50.0) {
+    return NONE;
+  }
+  else if(nDI < pDI) {
     return OP_BUY;
   }
   else if(pDI < nDI) {
