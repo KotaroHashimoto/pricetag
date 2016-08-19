@@ -16,8 +16,11 @@ double lotSizeFactor = NONE;
 double MAX_LOT = NONE;
 bool onTrend = False;
 
-#define UPPER (75.0)
-#define BOTTOM (65.0)
+#define ADX_UPPER (81.0)
+#define ADX_BOTTOM (79.0)
+
+#define DMI_UPPER (51.0)
+#define DMI_BOTTOM (49.0)
 
 #define ACCEPTABLE_LOSS (0.01)
 
@@ -67,7 +70,7 @@ int OnInit()
   Print("lotSizeFactor=", lotSizeFactor);
   Print("Initial Lot=", MathFloor(100.0 * AccountEquity() * lotSizeFactor) / 100.0);
   
-  if((UPPER + BOTTOM) / 2.0 < iADX(Symbol(), PERIOD_M1, IND_PERIOD, PRICE_TYPICAL, 0, 0)) {
+  if((ADX_UPPER + ADX_BOTTOM) / 2.0 < iADX(Symbol(), PERIOD_M1, IND_PERIOD, PRICE_TYPICAL, 0, 0)) {
     onTrend = True;
   }
   else {
@@ -94,28 +97,31 @@ int getDirection()
 //  Print("+DI(M1, 3)=", pDI);
 //  Print("-DI(M1, 3)=", nDI);
 
-  double thresh = NONE;
+  double adxThresh = NONE;
+  double dmiThresh = NONE;
   if(onTrend) {
-    thresh = BOTTOM;
+    adxThresh = ADX_BOTTOM;
+    dmiThresh = DMI_BOTTOM;
   }
   else {
-    thresh = UPPER;
+    adxThresh = ADX_UPPER;
+    dmiThresh = DMI_UPPER;
   }
 
-  if(thresh < adx) { // trend follow
-    if(nDI < pDI) {
+  if(adxThresh < adx || dmiThresh < pDI || dmiThresh < pDI) { // trend follow
+    if(nDI < pDI && (1.0 < pDI - nDI)) {
       return OP_BUY;
     }
-    else if(pDI < nDI) {
+    else if(pDI < nDI && (1.0 < nDI - pDI)) {
       return OP_SELL;
     }
     onTrend = True;
   }
   else { // range
-    if(nDI < pDI) {
+    if(nDI < pDI && (1.0 < pDI - nDI)) {
       return OP_SELL;
     }
-    else if(pDI < nDI) {
+    else if(pDI < nDI && (1.0 < nDI - pDI)) {
       return OP_BUY;
     }
     onTrend = False;
