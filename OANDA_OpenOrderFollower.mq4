@@ -13,7 +13,9 @@
 int OnInit()
   {
 //---
-   
+   double oanda = iCustom(Symbol(), 0, "OANDA_OpenOrder", 0, 0);
+   Print("oanda: ", oanda);
+
 //---
    return(INIT_SUCCEEDED);
   }
@@ -35,16 +37,7 @@ void OnTick()
    double[100] d0, d1, d2, d3, d4;
    String s;
    
-   OrderBook_Price_Points(a, b, d0, d1, d2, d3, d4, c, s);   
-
-   Print("a: ", a);
-   Print("b: ", b);
-   Print("c: ", c);
-   Print("s: ", s);
-   Print("d0: ", d0);
-   Print("d1: ", d1);
-   Print("d2: ", d2);
-   Print("d3: ", d3);
-   Print("d4: ", d4);
+   double oanda = iCustom(Symbol(), 0, "OANDA_OpenOrder", 0, 0);
+   Print("oanda: ", oanda);
   }
 //+------------------------------------------------------------------+
