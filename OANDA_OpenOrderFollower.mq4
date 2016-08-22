@@ -10,7 +10,13 @@
 
 #import "fxlabsnet.dll"
    void Orderbook_Price_Points(int, int, double&[], double&[], double&[], double&[], double&[], int, string&);
+   void InitAccount(int);
+   void InitTimeZoneInfo(string&);
 #import
+
+int a = 1, b = 1, c = 1;
+double d0[100], d1[100], d2[100], d3[100], d4[100];
+string s;
 
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
@@ -18,6 +24,8 @@
 int OnInit()
   {
 //---
+   InitAccount(a);
+   InitTimeZoneInfo(s);
 //---
    return(INIT_SUCCEEDED);
   }
@@ -35,9 +43,6 @@ void OnDeinit(const int reason)
 void OnTick()
   {
 //---
-   int a = 1, b = 1, c = 1;
-   double d0[100], d1[100], d2[100], d3[100], d4[100];
-   string s;
    
    Orderbook_Price_Points(a, b, d0, d1, d2, d3, d4, c, s);
    Print("d0: ", d0[0]);
