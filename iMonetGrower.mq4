@@ -126,21 +126,21 @@ void OnTick()
   }
   
   if(OrdersTotal() == 0) {
-    if((DayOfWeek() == 5 && 18 < Hour()) || DayOfWeek() == 6) {
-//      Print("No entry on Friday night. Hour()=", Hour());
+    if(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD)) {
+//      Print("No entry on wide spread: ", MarketInfo(Symbol(), MODE_SPREAD));
       position = NONE;
       return;
     }/*
+    else if((DayOfWeek() == 5 && 18 < Hour()) || DayOfWeek() == 6) {
+//      Print("No entry on Friday night. Hour()=", Hour());
+      position = NONE;
+      return;
+    }
     else if(atr < stopLoss) {
 //      Print("No entry on low volatility. ATR(M15, 3)=", atr);
       position = NONE;
       return;
     }*/
-    else if(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD)) {
-//      Print("No entry on wide spread: ", MarketInfo(Symbol(), MODE_SPREAD));
-      position = NONE;
-      return;
-    }
 
     double lotSize = MathFloor(100.0 * AccountEquity() * lotSizeFactor) / 100.0;
     if(MAX_LOT < lotSize) {
@@ -172,14 +172,18 @@ void OnTick()
   else if(OrderSelect(ticket, SELECT_BY_TICKET) == True) {      
 
     if(OrderType() == OP_BUY) {       
-      if(Bid + stopLoss < OrderTakeProfit()) {
-         tp = Bid + stopLoss;
+//      if(Bid + stopLoss < OrderTakeProfit()) {
+//           tp = Bid + stopLoss;
+      if(2 * Bid - sl < OrderTakeProfit()) {
+        tp = 2 * Bid - sl;
         bool modified = OrderModify(ticket, OrderOpenPrice(), sl, tp, 0, Red);
       }
     }
     else if(OrderType() == OP_SELL) {
-      if(OrderTakeProfit() < Ask - stopLoss) {
-         tp = Ask - stopLoss;
+//      if(OrderTakeProfit() < Ask - stopLoss) {
+//         tp = Ask - stopLoss;
+      if(OrderTakeProfit() < 2 * Ask - sl) {
+         tp = 2 * Ask - sl;
         bool modified = OrderModify(ticket, OrderOpenPrice(), sl, tp, 0, Blue);
       }                     
     }
