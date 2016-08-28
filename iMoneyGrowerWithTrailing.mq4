@@ -26,7 +26,8 @@ double trailMargin = NONE;
 #define C (1)
 
 //#define ACCEPTABLE_SPREAD (4) //for OANDA
-#define ACCEPTABLE_SPREAD (3) //for FXTF1000
+//#define ACCEPTABLE_SPREAD (3) //for FXTF1000
+#define ACCEPTABLE_SPREAD (5) //for ICMarket
 
 #define IND_PERIOD (3)
 
