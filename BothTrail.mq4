@@ -176,16 +176,16 @@ void OnTick()
       if(Bid + stopLoss < OrderTakeProfit()) {
         tp = Bid + stopLoss;
       }
-      else if(OrderStopLoss() < 2 * Bid - stopLoss) {
-        sl = 2 * Bid - stopLoss;
+      else if(OrderStopLoss() < 2 * Bid - (OrderOpenPrice() + stopLoss)) {
+        sl = 2 * Bid - (OrderOpenPrice() + stopLoss);
       }
     }
     else if(OrderType() == OP_SELL) {
       if(OrderTakeProfit() < Ask - stopLoss) {
         tp = Ask - stopLoss;
       }
-      else if(2 * Ask + stopLoss < OrderStopLoss()) {
-        sl = 2 + Ask + stopLoss;
+      else if(2 * Ask + (OrderOpenPrice() - stopLoss) < OrderStopLoss()) {
+        sl = 2 + Ask + (OrderOpenPrice() - stopLoss);
       }
     }
     else {
