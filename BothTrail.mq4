@@ -185,7 +185,7 @@ void OnTick()
         tp = Ask - stopLoss;
       }
       else if(2 * Ask + (OrderOpenPrice() - stopLoss) < OrderStopLoss()) {
-        sl = 2 + Ask + (OrderOpenPrice() - stopLoss);
+        sl = 2 * Ask + (OrderOpenPrice() - stopLoss);
       }
     }
     else {
