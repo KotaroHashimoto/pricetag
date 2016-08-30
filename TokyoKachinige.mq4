@@ -94,7 +94,7 @@ int nextPosition(int current)
     Print("iClose(Symbol(), PERIOD_H1, 1=", close);
     Print("iOpen(Symbol(), PERIOD_H1, 1)", open);
     
-    if(close <= open) {
+    if(open <= close) {
       return OP_BUY;
     }
     else {
@@ -147,7 +147,7 @@ void OnTick()
       position = NONE;
       return;
     }
-    else if(targetProfit < 0.0 || 8 < Hour()) {
+    else if(targetProfit < 0.0 || 7 < Hour()) {
       return;
     }
     /*
