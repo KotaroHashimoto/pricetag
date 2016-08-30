@@ -70,6 +70,7 @@ int OnInit()
   Print("Initial Lot=", MathFloor(100.0 * AccountEquity() * lotSizeFactor) / 100.0);
   
   targetProfit = AccountEquity() * ACCEPTABLE_LOSS;
+  position = NONE;
   
   Print("OrderProfit() = ", OrderProfit());
   //---
@@ -90,8 +91,8 @@ int nextPosition(int current)
     double close = iClose(Symbol(), PERIOD_H1, 1);
     double open = iOpen(Symbol(), PERIOD_H1, 1);
   
-//    Print("iClose(Symbol(), PERIOD_H1, 1=", close);
-//    Print("iOpen(Symbol(), PERIOD_H1, 1)", open);
+    Print("iClose(Symbol(), PERIOD_H1, 1=", close);
+    Print("iOpen(Symbol(), PERIOD_H1, 1)", open);
     
     if(close <= open) {
       return OP_BUY;
@@ -146,7 +147,7 @@ void OnTick()
       position = NONE;
       return;
     }
-    else if(targetProfit < 0.0 || 9 + 8 < Hour()) {
+    else if(targetProfit < 0.0 || 8 < Hour()) {
       return;
     }
     /*
