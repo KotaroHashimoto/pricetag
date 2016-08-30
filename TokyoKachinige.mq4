@@ -140,7 +140,7 @@ void OnTick()
     }
     else if(Hour() < 4) { // make entry only during 10-14 in Tokyo time.
 //      Print("No entry except 10-14 in Tokyo time. Hour()=", Hour());
-      targetProfit = AccountEquity() * ACCEPTABLE_LOSS;
+      targetProfit = AccountEquity() * ACCEPTABLE_LOSS + OrderProfit();
       position = NONE;
       return;
     }
