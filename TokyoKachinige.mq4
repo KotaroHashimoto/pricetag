@@ -133,9 +133,6 @@ void OnTick()
 
   if(OrdersTotal() == 0) {
   
-    Print("TargetProfit = ", targetProfit, " LatestTrade = ", OrderProfit());
-    targetProfit -= OrderProfit();
-
     if(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD)) {
 //      Print("No entry on wide spread: ", MarketInfo(Symbol(), MODE_SPREAD));
       position = NONE;
@@ -150,6 +147,10 @@ void OnTick()
     else if(targetProfit < 0.0 || 7 < Hour()) {
       return;
     }
+    
+    Print("TargetProfit = ", targetProfit, " LatestTrade = ", OrderProfit());
+    targetProfit -= OrderProfit();
+
     /*
     else if(atr < stopLoss) {
 //      Print("No entry on low volatility. ATR(M15, 3)=", atr);
