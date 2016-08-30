@@ -181,20 +181,29 @@ void OnTick()
     
     if(ticket == NONE) {
 //      position = NONE;
+      targetProfit += OrderProfit();
       Print("OrderSend() failed. LastError=", GetLastError());
     }
   }
   
   else if(OrderSelect(ticket, SELECT_BY_TICKET) == True) {      
-
+  
     if(OrderType() == OP_BUY) {       
-      if(Bid + stopLoss < OrderTakeProfit()) {
+      if(targetProfit - OrderProfit() < 0) {
+        targetProfit -= OrderProfit();
+        bool modified = OrderClose(ticket, OrderLots(), Bid, 0);
+      }
+      else if(Bid + stopLoss < OrderTakeProfit()) {
         tp = Bid + stopLoss;
         bool modified = OrderModify(ticket, OrderOpenPrice(), sl, tp, 0, Red);
       }
     }
     else if(OrderType() == OP_SELL) {
-      if(OrderTakeProfit() < Ask - stopLoss) {
+      if(targetProfit - OrderProfit() < 0) {
+        targetProfit -= OrderProfit();
+        bool modified = OrderClose(ticket, OrderLots(), Ask, 0);
+      }
+      else if(OrderTakeProfit() < Ask - stopLoss) {
         tp = Ask - stopLoss;
         bool modified = OrderModify(ticket, OrderOpenPrice(), sl, tp, 0, Blue);
       }                     
