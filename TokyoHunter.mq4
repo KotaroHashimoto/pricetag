@@ -1,5 +1,5 @@
 //+------------------------------------------------------------------+
-//|                                               TokyoKachinige.mq4 |
+//|                                                  TokyoHunter.mq4 |
 //|                        Copyright 2016, MetaQuotes Software Corp. |
 //|                                             https://www.mql5.com |
 //+------------------------------------------------------------------+
@@ -144,7 +144,7 @@ void OnTick()
       position = NONE;
       return;
     }
-    else if(targetProfit - OrderProfit() < 0.0 || 7 < Hour()) {
+    else if(/*targetProfit - OrderProfit() < 0.0 || */7 < Hour()) {
       return;
     }
     
@@ -188,20 +188,20 @@ void OnTick()
   
   else if(OrderSelect(ticket, SELECT_BY_TICKET) == True) {      
   
-    if(OrderType() == OP_BUY) {       
+    if(OrderType() == OP_BUY) {/*
       if(targetProfit - OrderProfit() < 0) {
         bool modified = OrderClose(ticket, OrderLots(), Bid, 0);
       }
-      else if(Bid + stopLoss < OrderTakeProfit()) {
+      else */if(Bid + stopLoss < OrderTakeProfit()) {
         tp = Bid + stopLoss;
         bool modified = OrderModify(ticket, OrderOpenPrice(), sl, tp, 0, Red);
       }
     }
-    else if(OrderType() == OP_SELL) {
+    else if(OrderType() == OP_SELL) {/*
       if(targetProfit - OrderProfit() < 0) {
         bool modified = OrderClose(ticket, OrderLots(), Ask, 0);
       }
-      else if(OrderTakeProfit() < Ask - stopLoss) {
+      else */if(OrderTakeProfit() < Ask - stopLoss) {
         tp = Ask - stopLoss;
         bool modified = OrderModify(ticket, OrderOpenPrice(), sl, tp, 0, Blue);
       }                     
