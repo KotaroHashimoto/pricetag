@@ -19,7 +19,8 @@ double MAX_LOT = NONE;
 
 #define ACCEPTABLE_LOSS (0.01)
 
-#define C (0.01)
+//#define C (0.01)
+#define C (1)
 
 //#define ACCEPTABLE_SPREAD (4) //for OANDA
 #define ACCEPTABLE_SPREAD (3) //for FXTF1000
@@ -124,7 +125,7 @@ void OnTick()
   else {
     stopLoss = atr;
   }
-  
+
   if(OrdersTotal() == 0) {
     if(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD)) {
 //      Print("No entry on wide spread: ", MarketInfo(Symbol(), MODE_SPREAD));
@@ -164,7 +165,7 @@ void OnTick()
     }
     
     if(ticket == NONE) {
-      position = NONE;
+//      position = NONE;
 //      Print("OrderSend() failed. LastError=", GetLastError());
     }
   }
@@ -172,18 +173,18 @@ void OnTick()
   else if(OrderSelect(ticket, SELECT_BY_TICKET) == True) {      
 
     if(OrderType() == OP_BUY) {       
-//      if(Bid + stopLoss < OrderTakeProfit()) {
-//           tp = Bid + stopLoss;
-      if(2 * Bid - sl < OrderTakeProfit()) {
-        tp = 2 * Bid - sl;
+      if(Bid + stopLoss < OrderTakeProfit()) {
+           tp = Bid + stopLoss;
+//      if(2 * Bid - sl < OrderTakeProfit()) {
+//        tp = 2 * Bid - sl;
         bool modified = OrderModify(ticket, OrderOpenPrice(), sl, tp, 0, Red);
       }
     }
     else if(OrderType() == OP_SELL) {
-//      if(OrderTakeProfit() < Ask - stopLoss) {
-//         tp = Ask - stopLoss;
-      if(OrderTakeProfit() < 2 * Ask - sl) {
-         tp = 2 * Ask - sl;
+      if(OrderTakeProfit() < Ask - stopLoss) {
+         tp = Ask - stopLoss;
+//      if(OrderTakeProfit() < 2 * Ask - sl) {
+//         tp = 2 * Ask - sl;
         bool modified = OrderModify(ticket, OrderOpenPrice(), sl, tp, 0, Blue);
       }                     
     }
