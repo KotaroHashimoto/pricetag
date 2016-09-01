@@ -19,7 +19,8 @@ double previousAsk = NONE;
 double previousBid = NONE;
 
 //#define ACCEPTABLE_SPREAD (4) //for OANDA
-#define ACCEPTABLE_SPREAD (3) //for FXTF1000
+//#define ACCEPTABLE_SPREAD (3) //for FXTF1000
+#define ACCEPTABLE_SPREAD (0) //for ICMarket
 
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
@@ -82,7 +83,7 @@ void OnTick()
     if(OrderSelect(i, SELECT_BY_POS)) {
       if(OrderType() == OP_BUY) {
         bool closed = False;
-        if(0 < OrderProfit() && Bid < previousBid) {
+        if(0 < OrderProfit() + OrderCommission() && Bid < previousBid) {
           closed = OrderClose(OrderTicket(), MIN_LOT, Bid, 0);
         }
         if(!closed) {
@@ -91,7 +92,7 @@ void OnTick()
       }
       else if(OrderType() == OP_SELL) {
         bool closed = False;
-        if(0 < OrderProfit() && previousAsk < Ask) {
+        if(0 < OrderProfit() + OrderCommission() && previousAsk < Ask) {
           closed = OrderClose(OrderTicket(), MIN_LOT, Ask, 0);
         }
         if(!closed) {
