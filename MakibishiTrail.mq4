@@ -83,7 +83,7 @@ void OnTick()
     if(OrderSelect(i, SELECT_BY_POS)) {
       if(OrderType() == OP_BUY) {
         bool closed = False;
-        if(0 < OrderProfit() + OrderCommission() && Bid < previousBid) {
+        if(0 < OrderProfit() + OrderCommission() + OrderSwap() && Bid < previousBid) {
           closed = OrderClose(OrderTicket(), MIN_LOT, Bid, 0);
         }
         if(!closed) {
@@ -92,7 +92,7 @@ void OnTick()
       }
       else if(OrderType() == OP_SELL) {
         bool closed = False;
-        if(0 < OrderProfit() + OrderCommission() && previousAsk < Ask) {
+        if(0 < OrderProfit() + OrderCommission() + OrderSwap() && previousAsk < Ask) {
           closed = OrderClose(OrderTicket(), MIN_LOT, Ask, 0);
         }
         if(!closed) {
