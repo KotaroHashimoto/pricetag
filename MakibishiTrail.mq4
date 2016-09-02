@@ -79,13 +79,10 @@ void OnTick()
   if(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD)) {
     return;
   }
-  else if(MAX_POSITIONS < longPositions + shortPositions) {
-    return;
-  }
-  
-  double atr = iATR(Symbol(), PERIOD_M15, 2, 1);
 
+  double atr = iATR(Symbol(), PERIOD_M15, 2, 1);
   longPositions = shortPositions = 0;
+  
   for(int i = 0; i < OrdersTotal(); i++) {
     bool closed = False;
     if(OrderSelect(i, SELECT_BY_POS)) {
@@ -109,14 +106,19 @@ void OnTick()
       }
     }
   }
-    
-  if(shortPositions < longPositions) {
-    ticket = OrderSend(Symbol(), OP_SELL, MIN_LOT, Bid, 0, 0, 0);
-  }
-  else {
-    ticket = OrderSend(Symbol(), OP_BUY, MIN_LOT, Ask, 0, 0, 0);
-  }
   
   previousAsk = Ask;
   previousBid = Bid;
+
+  if(MAX_POSITIONS < longPositions + shortPositions) {
+    return;
+  }
+  else {
+    if(shortPositions < longPositions) {
+      ticket = OrderSend(Symbol(), OP_SELL, MIN_LOT, Bid, 0, 0, 0);
+    }
+    else {
+      ticket = OrderSend(Symbol(), OP_BUY, MIN_LOT, Ask, 0, 0, 0);
+    }
+  }
 }
