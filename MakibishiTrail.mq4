@@ -14,7 +14,6 @@ int shortPositions = NONE;
 int ticket = NONE;
 double MIN_LOT = NONE;
 double MIN_POINT = NONE;
-bool clearFlag = False;
 
 double previousAsk = NONE;
 double previousBid = NONE;
@@ -23,7 +22,7 @@ double previousBid = NONE;
 #define ACCEPTABLE_SPREAD (3) //for FXTF1000
 //#define ACCEPTABLE_SPREAD (0) //for ICMarket
 
-#define CLEAR_POSITION_THREASH (128)
+#define MAX_POSITIONS (128)
 
 
 //+------------------------------------------------------------------+
@@ -72,30 +71,6 @@ void OnDeinit(const int reason)
   //---   
 }
 
-bool clearPositions()
-{
-  bool closed = False;
-  clearFlag = True;
-
-  for(int i = 0; i < OrdersTotal(); i++) {
-    if(OrderSelect(i, SELECT_BY_POS)) {
-      if(OrderType() == OP_BUY) {
-        closed = OrderClose(OrderTicket(), MIN_LOT, Bid, 0);
-      }
-      else if(OrderType() == OP_SELL) {
-        closed = OrderClose(OrderTicket(), MIN_LOT, Ask, 0);
-      }
-    }
-  }
-
-  if(0 < OrdersTotal()) {
-    return True;
-  }
-  else {
-    return False;
-  }
-}
-
 //+------------------------------------------------------------------+
 //| Expert tick function                                             |
 //+------------------------------------------------------------------+
@@ -104,18 +79,19 @@ void OnTick()
   if(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD)) {
     return;
   }
-  else if(CLEAR_POSITION_THREASH < longPositions + shortPositions || clearFlag) {
-    longPositions = shortPositions = 0;
-    clearFlag = clearPositions();
+  else if(MAX_POSITIONS < longPositions + shortPositions) {
     return;
   }
-      
+  
+  double atr = iATR(Symbol(), PERIOD_M15, 2, 1);
+
   longPositions = shortPositions = 0;
   for(int i = 0; i < OrdersTotal(); i++) {
     bool closed = False;
     if(OrderSelect(i, SELECT_BY_POS)) {
       if(OrderType() == OP_BUY) {
-        if(0 < OrderProfit() + OrderCommission() + OrderSwap() && Bid < previousBid) {
+        if((0 < OrderProfit() + OrderCommission() + OrderSwap() && Bid < previousBid) 
+          || atr < OrderOpenPrice() - Bid) {
           closed = OrderClose(OrderTicket(), MIN_LOT, Bid, 0);
         }
         if(!closed) {
@@ -123,7 +99,8 @@ void OnTick()
         }
       }
       else if(OrderType() == OP_SELL) {
-        if(0 < OrderProfit() + OrderCommission() + OrderSwap() && previousAsk < Ask) {
+        if((0 < OrderProfit() + OrderCommission() + OrderSwap() && previousAsk < Ask)
+          || atr < Ask - OrderOpenPrice()) {
           closed = OrderClose(OrderTicket(), MIN_LOT, Ask, 0);
         }
         if(!closed) {
