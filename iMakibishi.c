@@ -14,6 +14,7 @@ int shortPositions = NONE;
 int ticket = NONE;
 double MIN_LOT = NONE;
 double STOP_LOSS = NONE;
+bool clearFlag = False;
 
 //#define ACCEPTABLE_SPREAD (4) //for OANDA
 //#define ACCEPTABLE_SPREAD (3) //for FXTF1000
@@ -54,6 +55,7 @@ int OnInit()
   Print("MIN_LOT=", MIN_LOT);
 
   STOP_LOSS = -2.0 * ACCEPTABLE_SPREAD * 1.0; //temporary
+  clearFlag = False;
   
   //---
   return(INIT_SUCCEEDED);
@@ -66,9 +68,11 @@ void OnDeinit(const int reason)
   //---   
 }
 
-void clearPositions()
+bool clearPositions()
 {
   bool closed = False;
+
+  clearFlag = True;
 
   for(int i = 0; i < OrdersTotal(); i++) {
     if(OrderSelect(i, SELECT_BY_POS)) {
@@ -80,6 +84,13 @@ void clearPositions()
       }
     }
   }
+
+  if(0 < OrdersTotal()) {
+    return True;
+  }
+  else {
+    return False;
+  }
 }
 
 //+------------------------------------------------------------------+
@@ -90,8 +101,8 @@ void OnTick()
   if(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD)) {
     return;
   }
-  else if(CLEAR_POSITION_THREASH < longPositions + shortPositions) {
-    clearPositions();
+  else if(CLEAR_POSITION_THREASH < longPositions + shortPositions || clearFlag) {
+    clearFlag = clearPositions();
     return;
   }
     
