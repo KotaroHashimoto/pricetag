@@ -9,18 +9,22 @@
 #property strict
 
 #define NONE (-1)
-int longPositios = NONE;
-int shortPosition = NONE;
+int longPositions = NONE;
+int shortPositions = NONE;
 int ticket = NONE;
 double MIN_LOT = NONE;
 double MIN_POINT = NONE;
+bool clearFlag = False;
 
 double previousAsk = NONE;
 double previousBid = NONE;
 
 //#define ACCEPTABLE_SPREAD (4) //for OANDA
-//#define ACCEPTABLE_SPREAD (3) //for FXTF1000
-#define ACCEPTABLE_SPREAD (0) //for ICMarket
+#define ACCEPTABLE_SPREAD (3) //for FXTF1000
+//#define ACCEPTABLE_SPREAD (0) //for ICMarket
+
+#define CLEAR_POSITION_THREASH (128)
+
 
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
@@ -68,6 +72,30 @@ void OnDeinit(const int reason)
   //---   
 }
 
+bool clearPositions()
+{
+  bool closed = False;
+  clearFlag = True;
+
+  for(int i = 0; i < OrdersTotal(); i++) {
+    if(OrderSelect(i, SELECT_BY_POS)) {
+      if(OrderType() == OP_BUY) {
+        closed = OrderClose(OrderTicket(), MIN_LOT, Bid, 0);
+      }
+      else if(OrderType() == OP_SELL) {
+        closed = OrderClose(OrderTicket(), MIN_LOT, Ask, 0);
+      }
+    }
+  }
+
+  if(0 < OrdersTotal()) {
+    return True;
+  }
+  else {
+    return False;
+  }
+}
+
 //+------------------------------------------------------------------+
 //| Expert tick function                                             |
 //+------------------------------------------------------------------+
@@ -76,33 +104,36 @@ void OnTick()
   if(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD)) {
     return;
   }
-    
-  longPositios = 0;
-  shortPosition = 0;
+  else if(CLEAR_POSITION_THREASH < longPositions + shortPositions || clearFlag) {
+    longPositions = shortPositions = 0;
+    clearFlag = clearPositions();
+    return;
+  }
+      
+  longPositions = shortPositions = 0;
   for(int i = 0; i < OrdersTotal(); i++) {
+    bool closed = False;
     if(OrderSelect(i, SELECT_BY_POS)) {
       if(OrderType() == OP_BUY) {
-        bool closed = False;
         if(0 < OrderProfit() + OrderCommission() + OrderSwap() && Bid < previousBid) {
           closed = OrderClose(OrderTicket(), MIN_LOT, Bid, 0);
         }
         if(!closed) {
-          longPositios ++;
+          longPositions ++;
         }
       }
       else if(OrderType() == OP_SELL) {
-        bool closed = False;
         if(0 < OrderProfit() + OrderCommission() + OrderSwap() && previousAsk < Ask) {
           closed = OrderClose(OrderTicket(), MIN_LOT, Ask, 0);
         }
         if(!closed) {
-          shortPosition ++;
+          shortPositions ++;
         }
       }
     }
   }
     
-  if(shortPosition < longPositios) {
+  if(shortPositions < longPositions) {
     ticket = OrderSend(Symbol(), OP_SELL, MIN_LOT, Bid, 0, 0, 0);
   }
   else {
