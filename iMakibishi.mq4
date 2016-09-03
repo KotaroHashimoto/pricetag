@@ -1,5 +1,5 @@
 //+------------------------------------------------------------------+
-//|                                                   iMakibishi.mq4 |
+//|                                                  MoneyGrower.mq4 |
 //|                        Copyright 2016, MetaQuotes Software Corp. |
 //|                                             https://www.mql5.com |
 //+------------------------------------------------------------------+
@@ -9,18 +9,23 @@
 #property strict
 
 #define NONE (-1)
-int longPositios = NONE;
+int longPositions = NONE;
 int shortPositions = NONE;
 int ticket = NONE;
 double MIN_LOT = NONE;
-double STOP_LOSS = NONE;
-bool clearFlag = False;
+double MIN_POINT = NONE;
+
+#define STOP_LOSS (-0.14)
+
+double previousAsk = NONE;
+double previousBid = NONE;
 
 //#define ACCEPTABLE_SPREAD (4) //for OANDA
 //#define ACCEPTABLE_SPREAD (3) //for FXTF1000
 #define ACCEPTABLE_SPREAD (0) //for ICMarket
 
-#define CLEAR_POSITION_THRESH (128)
+#define MAX_POSITIONS (128)
+
 
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
@@ -46,6 +51,9 @@ int OnInit()
   Print("STOPLEVEL=", MarketInfo(Symbol(), MODE_STOPLEVEL));
   Print("SPREAD=", MarketInfo(Symbol(), MODE_SPREAD));
   
+  MIN_POINT = MarketInfo(Symbol(), MODE_POINT);
+  Print("POINT=", MIN_POINT);
+  
   previousAsk = Ask;
   previousBid = Bid;
   Print("ASK=", Ask);
@@ -53,9 +61,6 @@ int OnInit()
   
   MIN_LOT = MarketInfo(Symbol(), MODE_MINLOT);
   Print("MIN_LOT=", MIN_LOT);
-
-  STOP_LOSS = -2.0 * ACCEPTABLE_SPREAD * 1.0; //temporary
-  clearFlag = False;
   
   //---
   return(INIT_SUCCEEDED);
@@ -68,31 +73,6 @@ void OnDeinit(const int reason)
   //---   
 }
 
-bool clearPositions()
-{
-  bool closed = False;
-
-  clearFlag = True;
-
-  for(int i = 0; i < OrdersTotal(); i++) {
-    if(OrderSelect(i, SELECT_BY_POS)) {
-      if(OrderType() == OP_BUY) {
-        closed = OrderClose(OrderTicket(), MIN_LOT, Bid, 0);
-      }
-      else if(OrderType() == OP_SELL) {
-        closed = OrderClose(OrderTicket(), MIN_LOT, Ask, 0);
-      }
-    }
-  }
-
-  if(0 < OrdersTotal()) {
-    return True;
-  }
-  else {
-    return False;
-  }
-}
-
 //+------------------------------------------------------------------+
 //| Expert tick function                                             |
 //+------------------------------------------------------------------+
@@ -101,25 +81,25 @@ void OnTick()
   if(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD)) {
     return;
   }
-  else if(CLEAR_POSITION_THREASH < longPositions + shortPositions || clearFlag) {
-    clearFlag = clearPositions();
-    return;
-  }
-    
-  longPositios = 0;
-  shortPositions = 0;
+
+  double atr = iATR(Symbol(), PERIOD_M15, 2, 1);
+  longPositions = shortPositions = 0;
+  
   for(int i = 0; i < OrdersTotal(); i++) {
     bool closed = False;
-
     if(OrderSelect(i, SELECT_BY_POS)) {
-      if(OrderProfit() + OrderCommission() + OrderSwap() < STOP_LOSS) {
-        if(OrderType() == OP_BUY) {
+      if(OrderType() == OP_BUY) {
+        if(OrderProfit() + OrderCommission() + OrderSwap() < STOP_LOSS
+          || atr < Bid - OrderOpenPrice()) {
           closed = OrderClose(OrderTicket(), MIN_LOT, Bid, 0);
         }
         if(!closed) {
-          longPositios ++;
+          longPositions ++;
         }
-        else if(OrderType() == OP_SELL) {
+      }
+      else if(OrderType() == OP_SELL) {
+        if(OrderProfit() + OrderCommission() + OrderSwap() < STOP_LOSS
+          || atr < OrderOpenPrice() - Ask) {
           closed = OrderClose(OrderTicket(), MIN_LOT, Ask, 0);
         }
         if(!closed) {
@@ -128,11 +108,19 @@ void OnTick()
       }
     }
   }
-    
-  if(shortPositions < longPositios) {
-    ticket = OrderSend(Symbol(), OP_SELL, MIN_LOT, Bid, 0, 0, 0);
+  
+  previousAsk = Ask;
+  previousBid = Bid;
+
+  if(MAX_POSITIONS < longPositions + shortPositions) {
+    return;
   }
   else {
-    ticket = OrderSend(Symbol(), OP_BUY, MIN_LOT, Ask, 0, 0, 0);
+    if(shortPositions < longPositions) {
+      ticket = OrderSend(Symbol(), OP_SELL, MIN_LOT, Bid, 0, 0, 0);
+    }
+    else {
+      ticket = OrderSend(Symbol(), OP_BUY, MIN_LOT, Ask, 0, 0, 0);
+    }
   }
 }
