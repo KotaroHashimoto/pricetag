@@ -22,7 +22,7 @@ double previousBid = NONE;
 #define ACCEPTABLE_SPREAD (3) //for FXTF1000
 //#define ACCEPTABLE_SPREAD (0) //for ICMarket
 
-#define MAX_POSITIONS (128)
+#define MAX_POSITIONS (1024)
 
 
 //+------------------------------------------------------------------+
