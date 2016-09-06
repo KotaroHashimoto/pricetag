@@ -12,6 +12,8 @@
 //#define ACCEPTABLE_SPREAD (4) //for OANDA
 #define ACCEPTABLE_SPREAD (3) //for FXTF1000
 //#define ACCEPTABLE_SPREAD (0) //for ICMarket
+//#define ACCEPTABLE_SPREAD (16) //for XMTrading
+
 
 #define MAX_POSITIONS (1024)
 #define NONE (-1)
@@ -39,6 +41,7 @@ int OnInit()
   Print("IsTradeAllowed()=", IsTradeAllowed());
   Print("TerminalCompany()=", TerminalCompany());
   Print("IsConnected()=", IsConnected());
+  Print("AccountInfoDouble(ACCOUNT_MARGIN_LEVEL)=", AccountInfoDouble(ACCOUNT_MARGIN_LEVEL));
    
   Print("Symbol()=", Symbol());
 
@@ -105,14 +108,17 @@ void OnTick()
 
   if(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD)) {
     return;
-  }
+  }/*
   else if(MAX_POSITIONS < OrdersTotal()) {
+    return;
+  }
+  else if(AccountInfoDouble(ACCOUNT_MARGIN_LEVEL) < 100.0) {
     return;
   }
   else if((DayOfWeek() == 5 && 18 < Hour()) || DayOfWeek() == 6) {
 //      Print("No entry on Friday night. Hour()=", Hour());
     return;
-  }
+  }*/
   else {
     if(longProfit < shortProfit) {
       int ticket = OrderSend(Symbol(), OP_SELL, MIN_LOT, Bid, 0, Ask + stopLoss, 0);
