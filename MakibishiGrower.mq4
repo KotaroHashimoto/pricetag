@@ -109,9 +109,6 @@ void OnTick()
   else if(MAX_POSITIONS < OrdersTotal()) {
     return;
   }
-  else if(AccountInfoDouble(ACCOUNT_MARGIN_LEVEL) < 100.0) {
-    return;
-  }
   else if((DayOfWeek() == 5 && 18 < Hour()) || DayOfWeek() == 6) {
 //      Print("No entry on Friday night. Hour()=", Hour());
     return;
