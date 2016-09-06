@@ -18,7 +18,7 @@
 #define MAX_SL (0.100)
 
 double MIN_LOT = NONE;
-int MIN_SL = NONE;
+double MIN_SL = NONE;
 
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
@@ -42,7 +42,7 @@ int OnInit()
    
   Print("Symbol()=", Symbol());
 
-  MIN_SL = Point * MarketInfo(Symbol(), MODE_STOPLEVEL)
+  MIN_SL = Point * MarketInfo(Symbol(), MODE_STOPLEVEL);
   Print("MIN_SL=", MIN_SL);
 
   Print("SPREAD=", MarketInfo(Symbol(), MODE_SPREAD));
@@ -82,7 +82,6 @@ void OnTick()
     stopLoss = atr;
   }
 
-
   double longProfit = 0;
   double shortProfit = 0;
 
@@ -90,15 +89,15 @@ void OnTick()
     if(OrderSelect(i, SELECT_BY_POS)) {
       if(OrderType() == OP_BUY) {
         if(OrderStopLoss() < Bid - stopLoss) {
-	  bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Bid - stopLoss, 0);
-	}
-	longProfit += OrderProfit();
+          bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Bid - stopLoss, 0, 0);
+        }
+        longProfit += OrderProfit();
       }
       else if(OrderType() == OP_SELL) {
         if(Ask + stopLoss < OrderStopLoss()) {
-	  bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Ask + stopLoss, 0);
-	}
-	shortProfit += OrderProfit();
+          bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Ask + stopLoss, 0, 0);
+     	  }
+        shortProfit += OrderProfit();
       }
     }
   }
