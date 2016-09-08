@@ -120,10 +120,11 @@ void OnTick()
     return;
   }*/
   else {
-    if(longProfit < shortProfit) {
-      int ticket = OrderSend(Symbol(), OP_BUY, MIN_LOT, Ask, 0, Bid - stopLoss, 0);
+    if(longProfit > shortProfit) {
+      int ticket = OrderSend(Symbol(), OP_SELL, MIN_LOT, Bid, 0, Ask + stopLoss, 0);
     }
     else {
-      int ticket = OrderSend(Symbol(), OP_SELL, MIN_LOT, Bid, 0, Ask + stopLoss, 0);    }
+      int ticket = OrderSend(Symbol(), OP_BUY, MIN_LOT, Ask, 0, Bid - stopLoss, 0);
+    }
   }
 }
