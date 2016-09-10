@@ -99,8 +99,8 @@ void OnTick()
         if(OrderStopLoss() < Bid - stopLoss) {
           bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Bid - stopLoss, 0, 0);
         }
-        if(OrderProfit() < lMin) {
-          lMin = OrderProfit();
+        if(MathAbs(OrderProfit()) < lMin) {
+          lMin = MathAbs(OrderProfit());
           lTicket = OrderTicket();
         }
         longProfit += OrderProfit();
@@ -109,8 +109,8 @@ void OnTick()
         if(Ask + stopLoss < OrderStopLoss()) {
           bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Ask + stopLoss, 0, 0);
      	  }
-        if(OrderProfit() < sMin) {
-          sMin = OrderProfit();
+        if(MathAbs(OrderProfit()) < sMin) {
+          sMin = MathAbs(OrderProfit());
           sTicket = OrderTicket();
         }
         shortProfit += OrderProfit();
