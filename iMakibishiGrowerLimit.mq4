@@ -14,10 +14,13 @@
 //#define ACCEPTABLE_SPREAD (0) //for ICMarket
 //#define ACCEPTABLE_SPREAD (16) //for XMTrading
 
+#define MAX_SL (0.100) //for USDJPY
+//#define MAX_SL (0.00100) //for GBPUSD
+//#define MAX_SL (0.00075) //for EURUSD
+
 
 #define MAX_POSITIONS (128)
 #define NONE (-1)
-#define MAX_SL (0.100)
 
 double MIN_LOT = NONE;
 double MIN_SL = NONE;
@@ -95,25 +98,26 @@ void OnTick()
 
   for(int i = 0; i < OrdersTotal(); i++) {
     if(OrderSelect(i, SELECT_BY_POS)) {
+      double profit = OrderProfit();
       if(OrderType() == OP_BUY) {
         if(OrderStopLoss() < Bid - stopLoss) {
           bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Bid - stopLoss, 0, 0);
         }
-        if(MathAbs(OrderProfit()) < lMin) {
-          lMin = MathAbs(OrderProfit());
+        if(0 < profit && profit < lMin) {
+          lMin = profit;
           lTicket = OrderTicket();
         }
-        longProfit += OrderProfit();
+        longProfit += profit;
       }
       else if(OrderType() == OP_SELL) {
         if(Ask + stopLoss < OrderStopLoss()) {
           bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Ask + stopLoss, 0, 0);
      	  }
-        if(MathAbs(OrderProfit()) < sMin) {
-          sMin = MathAbs(OrderProfit());
+        if(0 < profit && profit < sMin) {
+          sMin = profit;
           sTicket = OrderTicket();
         }
-        shortProfit += OrderProfit();
+        shortProfit += profit;
       }
     }
   }
@@ -142,10 +146,14 @@ void OnTick()
   }
   else {
     if(longProfit > shortProfit) {
-      bool closed = OrderClose(lTicket, MIN_LOT, Bid, 0);
+      if(lTicket != NONE) {
+        bool closed = OrderClose(lTicket, MIN_LOT, Bid, 0);
+      }
     }
     else {
-      bool closed = OrderClose(sTicket, MIN_LOT, Ask, 0);
+      if(sTicket != NONE) {
+        bool closed = OrderClose(sTicket, MIN_LOT, Ask, 0);
+      }
     }
   }
 }
