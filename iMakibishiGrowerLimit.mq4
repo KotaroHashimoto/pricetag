@@ -8,9 +8,9 @@
 #property version   "1.00"
 #property strict
 
-//#define ACCEPTABLE_SPREAD (5) //for Rakuten
+#define ACCEPTABLE_SPREAD (5) //for Rakuten
 //#define ACCEPTABLE_SPREAD (4) //for OANDA
-#define ACCEPTABLE_SPREAD (3) //for FXTF1000
+//#define ACCEPTABLE_SPREAD (3) //for FXTF1000
 //#define ACCEPTABLE_SPREAD (0) //for ICMarket
 //#define ACCEPTABLE_SPREAD (16) //for XMTrading
 
@@ -99,12 +99,14 @@ void OnTick()
   for(int i = 0; i < OrdersTotal(); i++) {
     if(OrderSelect(i, SELECT_BY_POS)) {
       double profit = OrderProfit();
+      double aProfit = MathAbs(profit);
+      
       if(OrderType() == OP_BUY) {
         if(OrderStopLoss() < Bid - stopLoss) {
           bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Bid - stopLoss, 0, 0);
         }
-        if(0 < profit && profit < lMin) {
-          lMin = profit;
+        if(aProfit < lMin) {
+          lMin = aProfit;
           lTicket = OrderTicket();
         }
         longProfit += profit;
@@ -113,8 +115,8 @@ void OnTick()
         if(Ask + stopLoss < OrderStopLoss()) {
           bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Ask + stopLoss, 0, 0);
      	  }
-        if(0 < profit && profit < sMin) {
-          sMin = profit;
+        if(aProfit < sMin) {
+          sMin = aProfit;
           sTicket = OrderTicket();
         }
         shortProfit += profit;
@@ -137,7 +139,7 @@ void OnTick()
     return;
   }*/
   else if(OrdersTotal() < MAX_POSITIONS){
-    if(longProfit > shortProfit) {
+    if(MathAbs(longProfit) > MathAbs(shortProfit)) {
       int ticket = OrderSend(Symbol(), OP_SELL, MIN_LOT, Bid, 0, Ask + stopLoss, 0);
     }
     else {
@@ -145,7 +147,7 @@ void OnTick()
     }
   }
   else {
-    if(longProfit > shortProfit) {
+    if(MathAbs(longProfit) > MathAbs(shortProfit)) {
       if(lTicket != NONE) {
         bool closed = OrderClose(lTicket, MIN_LOT, Bid, 0);
       }
