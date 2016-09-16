@@ -116,14 +116,14 @@ void OnTick()
   }*/
 
 
-  if(OrdersTotal() < MAX_POSITIONS){
+//  if(OrdersTotal() < MAX_POSITIONS){
     if(previousBid < Bid && previousAsk < Ask) {
       int ticket = OrderSend(Symbol(), OP_SELL, MIN_LOT, Bid, 0, 0, 0);
     }
     else {
       int ticket = OrderSend(Symbol(), OP_BUY, MIN_LOT, Ask, 0, 0, 0);
     }
-  }
+//  }
 
   previousBid = Bid;
   previousAsk = Ask;
