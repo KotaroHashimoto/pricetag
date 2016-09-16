@@ -45,8 +45,8 @@ int OnInit()
    
   Print("Symbol()=", Symbol());
 
-  MIN_SL = Point * MarketInfo(Symbol(), MODE_STOPLEVEL);
-  Print("MIN_SL=", MIN_SL);
+//  MIN_SL = Point * MarketInfo(Symbol(), MODE_STOPLEVEL);
+//  Print("MIN_SL=", MIN_SL);
 
   Print("SPREAD=", MarketInfo(Symbol(), MODE_SPREAD));
   Print("POINT=", MarketInfo(Symbol(), MODE_POINT));
@@ -76,20 +76,6 @@ void OnDeinit(const int reason)
 //+------------------------------------------------------------------+
 void OnTick()
 {  
-  if(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD)) {
-    return;
-  }/*
-  else if(MAX_POSITIONS < OrdersTotal()) {
-    return;
-  }
-  else if(AccountInfoDouble(ACCOUNT_MARGIN_LEVEL) < 100.0) {
-    return;
-  }
-  else if((DayOfWeek() == 5 && 18 < Hour()) || DayOfWeek() == 6) {
-//      Print("No entry on Friday night. Hour()=", Hour());
-    return;
-  }*/
-
   double longProfit = 0;
   double shortProfit = 0;
 
@@ -106,7 +92,7 @@ void OnTick()
 
   for(int i = 0; i < OrdersTotal(); i++) {
     if(OrderSelect(i, SELECT_BY_POS)) {
-      if(OrderType() == OP_BUY && 0 < longProgit) {
+      if(OrderType() == OP_BUY && 0 < longProfit) {
         bool closed = OrderClose(OrderTicket(), MIN_LOT, Bid, 0);
       }
       else if(OrderType() == OP_SELL && 0 < shortProfit) {
@@ -114,6 +100,21 @@ void OnTick()
       }
     }
   }
+
+  if(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD)) {
+    return;
+  }/*
+  else if(MAX_POSITIONS < OrdersTotal()) {
+    return;
+  }
+  else if(AccountInfoDouble(ACCOUNT_MARGIN_LEVEL) < 100.0) {
+    return;
+  }
+  else if((DayOfWeek() == 5 && 18 < Hour()) || DayOfWeek() == 6) {
+//      Print("No entry on Friday night. Hour()=", Hour());
+    return;
+  }*/
+
 
   if(OrdersTotal() < MAX_POSITIONS){
     if(previousBid < Bid && previousAsk < Ask) {
