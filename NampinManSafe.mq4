@@ -93,13 +93,13 @@ void OnTick()
   bool closed = False;
   for(int i = 0; i < OrdersTotal(); i++) {
     if(OrderSelect(i, SELECT_BY_POS)) {
-      if((OrderType() == OP_BUY && 0 < longProfit) || (0 < longProfit + shortProfit)) {
-        if(!(shortProfit < 0 && shortProfit < -2 * longProfit)) {
+      if(OrderType() == OP_BUY) {
+        if(0 < longProfit + shortProfit || (0 < longProfit && -2 * longProfit < shortProfit)) {
           closed = OrderClose(OrderTicket(), MIN_LOT, Bid, 0) || True;
         }
       }
-      else if((OrderType() == OP_SELL && 0 < shortProfit) || (0 < longProfit + shortProfit)) {
-        if(!(longProfit < 0 && longProfit < -2 * shortProfit)) {
+      else if(OrderType() == OP_SELL) {
+        if(0 < longProfit + shortProfit || (0 < shortProfit && -2 * shortProfit < longProfit)) {
           closed = OrderClose(OrderTicket(), MIN_LOT, Ask, 0) || True;
         }
       }
