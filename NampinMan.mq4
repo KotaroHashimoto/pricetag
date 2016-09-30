@@ -102,13 +102,8 @@ void OnTick()
           closed = OrderClose(OrderTicket(), MIN_LOT, Bid, 0) | True;
         }
         if(!closed) {
-<<<<<<< HEAD
           if(OrderOpenPrice() < lowestLong) {
             lowestLong = OrderOpenPrice();
-=======
-          if(OrderOpen() < lowestLong) {
-            lowestLong = OrderOpen();
->>>>>>> bfbce429659515ec278bbc857973a3227fc4b219
 	  }
 	}
       }
@@ -117,13 +112,8 @@ void OnTick()
           closed = OrderClose(OrderTicket(), MIN_LOT, Ask, 0) | True;
         }
         if(!closed) {
-<<<<<<< HEAD
           if(highestShort < OrderOpenPrice()) {
             highestShort = OrderOpenPrice();
-=======
-          if(highestShort < OrderOpen()) {
-            highestShort = OrderOpen();
->>>>>>> bfbce429659515ec278bbc857973a3227fc4b219
 	  }
 	}
       }
