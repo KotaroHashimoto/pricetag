@@ -8,13 +8,14 @@
 #property version   "1.00"
 #property strict
 
-#define ACCEPTABLE_SPREAD (5) //for Rakuten
+//#define ACCEPTABLE_SPREAD (5) //for Rakuten
 //#define ACCEPTABLE_SPREAD (4) //for OANDA
-//#define ACCEPTABLE_SPREAD (3) //for FXTF1000
+#define ACCEPTABLE_SPREAD (3) //for FXTF1000
 //#define ACCEPTABLE_SPREAD (0) //for ICMarket
 //#define ACCEPTABLE_SPREAD (16) //for XMTrading
 
-#define MAX_POSITIONS (100000)
+#define MAX_POSITIONS (1000000)
+#define NAMPIN_MARGIN (0.01)
 #define NONE (-1)
 
 double MIN_LOT = NONE;
@@ -90,24 +91,42 @@ void OnTick()
     }
   }
 
+  double highestShort = 0;
+  double lowestLong = 10000;
+  bool closed = False;
+
   for(int i = 0; i < OrdersTotal(); i++) {
     if(OrderSelect(i, SELECT_BY_POS)) {
-      if(OrderType() == OP_BUY && 0 < longProfit) {
-        bool closed = OrderClose(OrderTicket(), MIN_LOT, Bid, 0);
+      if(OrderType() == OP_BUY) {
+        if(0 < longProfit + shortProfit || 0 < longProfit) {
+          closed = OrderClose(OrderTicket(), MIN_LOT, Bid, 0) | True;
+        }
+        if(!closed) {
+          if(OrderOpen() < lowestLong) {
+            lowestLong = OrderOpen();
+	  }
+	}
       }
-      else if(OrderType() == OP_SELL && 0 < shortProfit) {
-        bool closed = OrderClose(OrderTicket(), MIN_LOT, Ask, 0);
+      else if(OrderType() == OP_SELL) {
+        if(0 < longProfit + shortProfit || 0 < shortProfit) {
+          closed = OrderClose(OrderTicket(), MIN_LOT, Ask, 0) | True;
+        }
+        if(!closed) {
+          if(highestShort < OrderOpen()) {
+            highestShort = OrderOpen();
+	  }
+	}
       }
     }
   }
 
-  if(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD)) {
-    return;
-  }/*
-  else if(MAX_POSITIONS < OrdersTotal()) {
+  if(closed || (ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD))) {
+    previousBid = Bid;
+    previousAsk = Ask;
     return;
   }
-  else if(AccountInfoDouble(ACCOUNT_MARGIN_LEVEL) < 100.0) {
+/*
+  else if(MAX_POSITIONS < OrdersTotal()) {
     return;
   }
   else if((DayOfWeek() == 5 && 18 < Hour()) || DayOfWeek() == 6) {
@@ -115,16 +134,19 @@ void OnTick()
     return;
   }*/
 
-
-  if(OrdersTotal() < MAX_POSITIONS){
-    if(previousBid < Bid && previousAsk < Ask) {
-      int ticket = OrderSend(Symbol(), OP_SELL, MIN_LOT, Bid, 0, 0, 0);
+  else if(OrdersTotal() < MAX_POSITIONS){
+    if(previousBid < Bid/* && previousAsk < Ask*/) {
+      if(highestShort + NAMPIN_MARGIN < Bid) {
+        int ticket = OrderSend(Symbol(), OP_SELL, MIN_LOT, Bid, 0, 0, 0);
+      }
     }
     else {
-      int ticket = OrderSend(Symbol(), OP_BUY, MIN_LOT, Ask, 0, 0, 0);
+      if(Ask < lowestLong - NAMPIN_MARGIN) {
+        int ticket = OrderSend(Symbol(), OP_BUY, MIN_LOT, Ask, 0, 0, 0);
+      }
     }
   }
-
+  
   previousBid = Bid;
   previousAsk = Ask;
 }
