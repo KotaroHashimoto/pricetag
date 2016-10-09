@@ -94,9 +94,10 @@ void OnTick()
 */
   double highestShort = 0;
   double lowestLong = 10000;
-  bool closed = False;
 
   for(int i = 0; i < OrdersTotal(); i++) {
+    bool closed = False;
+
     if(OrderSelect(i, SELECT_BY_POS)) {
       if(OrderType() == OP_BUY) {
 //        if(0 < longProfit + shortProfit || 0 < longProfit) {
