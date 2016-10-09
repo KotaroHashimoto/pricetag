@@ -1,5 +1,5 @@
 //+------------------------------------------------------------------+
-//|                                                  MoneyGrower.mq4 |
+//|                                              MakibishiGrower.mq4 |
 //|                        Copyright 2016, MetaQuotes Software Corp. |
 //|                                             https://www.mql5.com |
 //+------------------------------------------------------------------+
@@ -8,27 +8,20 @@
 #property version   "1.00"
 #property strict
 
-#define NONE (-1)
-int position = NONE;
-int ticket = NONE;
-double stopLoss = NONE;
-double lotSizeFactor = NONE;
-double MAX_LOT = NONE;
-double stopPrice = NONE;
-uint time = 0;
-
-#define ACCEPTABLE_LOSS (0.01)
-
-//#define C (0.01)
-#define C (1) //for XM back test
-
+//#define ACCEPTABLE_SPREAD (5) //for Rakuten
 //#define ACCEPTABLE_SPREAD (4) //for OANDA
 #define ACCEPTABLE_SPREAD (3) //for FXTF1000
+//#define ACCEPTABLE_SPREAD (0) //for ICMarket
+//#define ACCEPTABLE_SPREAD (16) //for XMTrading
 
-#define IND_PERIOD (3)
+#define MAX_POSITIONS (1000000)
+#define NAMPIN_MARGIN (0.01)
+#define NONE (-1)
 
-extern int STOP_LOSS = 100;
-extern uint closeLimit = 3 * 60 * 1000; // in ms
+double MIN_LOT = NONE;
+
+double previousAsk = NONE;
+double previousBid = NONE;
 
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
@@ -49,24 +42,24 @@ int OnInit()
   Print("IsTradeAllowed()=", IsTradeAllowed());
   Print("TerminalCompany()=", TerminalCompany());
   Print("IsConnected()=", IsConnected());
+  Print("AccountInfoDouble(ACCOUNT_MARGIN_LEVEL)=", AccountInfoDouble(ACCOUNT_MARGIN_LEVEL));
    
   Print("Symbol()=", Symbol());
-  Print("STOPLEVEL=", MarketInfo(Symbol(), MODE_STOPLEVEL));
+
+//  MIN_SL = Point * MarketInfo(Symbol(), MODE_STOPLEVEL);
+//  Print("MIN_SL=", MIN_SL);
+
   Print("SPREAD=", MarketInfo(Symbol(), MODE_SPREAD));
+  Print("POINT=", MarketInfo(Symbol(), MODE_POINT));
   
-  stopLoss = STOP_LOSS * Point;
-  Print("STOP_LOSS=", STOP_LOSS);
-  Print("stopLoss=", stopLoss);
   Print("ASK=", Ask);
   Print("BID=", Bid);
+
+  previousAsk = Ask;
+  previousBid = Bid;
   
-  MAX_LOT = MarketInfo(Symbol(), MODE_MAXLOT);
-  MAX_LOT = 1.0;
-  Print("MAX_LOT=", MAX_LOT);
-  
-  lotSizeFactor = C * ACCEPTABLE_LOSS / STOP_LOSS;
-  Print("lotSizeFactor=", lotSizeFactor);
-  Print("Initial Lot=", MathFloor(100.0 * AccountEquity() * lotSizeFactor) / 100.0);
+  MIN_LOT = MarketInfo(Symbol(), MODE_MINLOT);
+  Print("MIN_LOT=", MIN_LOT);
   
   //---
   return(INIT_SUCCEEDED);
@@ -79,127 +72,84 @@ void OnDeinit(const int reason)
   //---   
 }
 
-int nextPosition(int current)
-{
-  if(current == NONE) {
-  
-    double pDI = iADX(Symbol(), PERIOD_M1, IND_PERIOD, PRICE_WEIGHTED, 1, 0);
-    double nDI = iADX(Symbol(), PERIOD_M1, IND_PERIOD, PRICE_WEIGHTED, 2, 0);
-//    Print("+DI(M15, 3)=", pDI);
-//    Print("-DI(M15, 3)=", nDI);
-    
-    if(nDI < pDI) {
-      return OP_BUY;
-    }
-    else if(pDI < nDI) {
-      return OP_SELL;
-    }
-    else {
-      return NONE;
-    }
-  }
-  else {
-    if(current == OP_BUY) {
-      return OP_SELL;
-    }
-    else if(current == OP_SELL) {
-      return OP_BUY;
-    }
-    else {
-      return NONE;
-    }
-  }
-}
-
 //+------------------------------------------------------------------+
 //| Expert tick function                                             |
 //+------------------------------------------------------------------+
 void OnTick()
 {  
-  if(OrdersTotal() == 0) {
-    if((DayOfWeek() == 5 && 18 < Hour()) || DayOfWeek() == 6) {
+/*
+  double longProfit = 0;
+  double shortProfit = 0;
+
+  for(int i = 0; i < OrdersTotal(); i++) {
+    if(OrderSelect(i, SELECT_BY_POS)) {
+      if(OrderType() == OP_BUY) {
+        longProfit += OrderProfit();
+      }
+      else if(OrderType() == OP_SELL) {
+        shortProfit += OrderProfit();
+      }
+    }
+  }
+*/
+  double highestShort = 0;
+  double lowestLong = 10000;
+  bool closed = False;
+
+  for(int i = 0; i < OrdersTotal(); i++) {
+    if(OrderSelect(i, SELECT_BY_POS)) {
+      if(OrderType() == OP_BUY) {
+//        if(0 < longProfit + shortProfit || 0 < longProfit) {
+        if(0 < OrderProfit()) {
+          closed = OrderClose(OrderTicket(), MIN_LOT, Bid, 0) | True;
+        }
+        if(!closed) {
+          if(OrderOpenPrice() < lowestLong) {
+            lowestLong = OrderOpenPrice();
+          }
+	     }
+      }
+      else if(OrderType() == OP_SELL) {
+//        if(0 < longProfit + shortProfit || 0 < shortProfit) {
+        if(0 < OrderProfit()) {
+          closed = OrderClose(OrderTicket(), MIN_LOT, Ask, 0) | True;
+        }
+        if(!closed) {
+          if(highestShort < OrderOpenPrice()) {
+            highestShort = OrderOpenPrice();
+   	    }
+	     }
+      }
+    }
+  }
+
+  if(/*closed || */(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD))) {
+    previousBid = Bid;
+    previousAsk = Ask;
+    return;
+  }
+/*
+  else if(MAX_POSITIONS < OrdersTotal()) {
+    return;
+  }
+  else if((DayOfWeek() == 5 && 18 < Hour()) || DayOfWeek() == 6) {
 //      Print("No entry on Friday night. Hour()=", Hour());
-      position = NONE;
-      return;
-    }
-    else if(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD)) {
-//      Print("No entry on wide spread: ", MarketInfo(Symbol(), MODE_SPREAD));
-      position = NONE;
-      return;
-    }
+    return;
+  }*/
 
-    double lotSize = MathFloor(100.0 * AccountEquity() * lotSizeFactor) / 100.0;
-    if(MAX_LOT < lotSize) {
-      lotSize = MAX_LOT;
-    }
-    lotSize = MAX_LOT;
-    
-    position = nextPosition(position);
-    if(position == OP_BUY) {
-      ticket = OrderSend(Symbol(), OP_BUY, lotSize, Ask, 0, Ask - stopLoss, 0, NULL, 0, 0, NONE);
-//      stopPrice = Bid - stopLoss;
-    }
-    else if(position == OP_SELL) {
-      ticket = OrderSend(Symbol(), OP_SELL, lotSize, Bid, 0, Bid + stopLoss, 0, NULL, 0, 0, NONE); 
-//      stopPrice = Ask + stopLoss;
-    }
-    else {
-      Print("Something Wrong with nextPositon() !!");
-      Print("LastError=", GetLastError());
-    }
-    
-    if(ticket == NONE) {
-      position = NONE;
-//      stopPrice = NONE;
-//      Print("OrderSend() failed. LastError=", GetLastError());
-    }
-    else {
-      time = GetTickCount();
+//  else if(OrdersTotal() < MAX_POSITIONS){
+  if(previousBid < Bid/* && previousAsk < Ask*/) {
+    if(highestShort + NAMPIN_MARGIN <= Bid) {
+      int ticket = OrderSend(Symbol(), OP_SELL, MIN_LOT, Bid, 0, 0, 0);
     }
   }
-  
-  else if(OrderSelect(ticket, SELECT_BY_TICKET) == True) {      
-
-    if(OrderType() == OP_BUY) {/*
-      if(stopPrice < Bid - stopLoss) {
-        stopPrice = Bid - stopLoss;
-      }
-      else if(Bid < stopPrice) {
-        if(OrderClose(ticket, OrderLots(), Bid, 100, NONE)) {
-          ticket = NONE;
-        }
-      }*/
-//      if(OrderOpenPrice() < Bid || (closeLimit < GetTickCount() - time)) {
-      if(Ask + ACCEPTABLE_SPREAD*Point < OrderOpenPrice() || (closeLimit < GetTickCount() - time)) {
-        if(OrderClose(ticket, OrderLots(), Bid, 0, NONE)) {
-          ticket = NONE;
-        }
-      }
-    }
-    else if(OrderType() == OP_SELL) {/*
-      if(Ask + stopLoss < stopPrice) {
-        stopPrice = Ask + stopLoss;
-      }
-      else if(stopPrice < Ask) {
-        if(OrderClose(ticket, OrderLots(), Ask, 100, NONE)) {
-          ticket = NONE;
-        }
-      }*/
-//      if(Ask < OrderOpenPrice() || (closeLimit < GetTickCount() - time)) {
-      if(OrderOpenPrice() < Bid - ACCEPTABLE_SPREAD*Point || (closeLimit < GetTickCount() - time)) {
-        if(OrderClose(ticket, OrderLots(), Ask, 0, NONE)) {
-          ticket = NONE;
-        }
-      }
-    }
-    else {
-      Print("Something Wrong with OrderType() !!");
-      Print("LastError=", GetLastError());
-    }
-  }
-
   else {
-    Print("Something Wrong with OrderSelect(ticket, SELECT_BY_TICKET), ticket=", ticket);
-    Print("LastError=", GetLastError());
+    if(Ask <= lowestLong - NAMPIN_MARGIN) {
+      int ticket = OrderSend(Symbol(), OP_BUY, MIN_LOT, Ask, 0, 0, 0);
+    }
   }
+//  }
+  
+  previousBid = Bid;
+  previousAsk = Ask;
 }
