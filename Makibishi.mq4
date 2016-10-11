@@ -10,12 +10,12 @@
 
 //#define ACCEPTABLE_SPREAD (5) //for Rakuten
 //#define ACCEPTABLE_SPREAD (4) //for OANDA
-#define ACCEPTABLE_SPREAD (3) //for FXTF1000
+#define ACCEPTABLE_SPREAD (3) //for FXTF1000, Gaitame
 //#define ACCEPTABLE_SPREAD (0) //for ICMarket
 //#define ACCEPTABLE_SPREAD (16) //for XMTrading
 
 #define MAX_POSITIONS (1000000)
-#define NAMPIN_MARGIN (0.01)
+#define NAMPIN_MARGIN (0.0001)
 #define NONE (-1)
 
 double MIN_LOT = NONE;
@@ -139,16 +139,16 @@ void OnTick()
   }*/
 
 //  else if(OrdersTotal() < MAX_POSITIONS){
-  if(previousBid < Bid/* && previousAsk < Ask*/) {
+//  if(previousBid < Bid/* && previousAsk < Ask*/) {
     if(highestShort + NAMPIN_MARGIN <= Bid) {
       int ticket = OrderSend(Symbol(), OP_SELL, MIN_LOT, Bid, 0, 0, 0);
     }
-  }
-  else {
+//  }
+//  else {
     if(Ask <= lowestLong - NAMPIN_MARGIN) {
       int ticket = OrderSend(Symbol(), OP_BUY, MIN_LOT, Ask, 0, 0, 0);
     }
-  }
+//  }
 //  }
   
   previousBid = Bid;
