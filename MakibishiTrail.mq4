@@ -15,7 +15,7 @@
 //#define ACCEPTABLE_SPREAD (16) //for XMTrading
 
 #define MAX_POSITIONS (1000000)
-#define NAMPIN_MARGIN (0.0001)
+#define NAMPIN_MARGIN (0.01)
 #define NONE (-1)
 
 double MIN_LOT = NONE;
