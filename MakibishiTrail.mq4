@@ -112,10 +112,10 @@ void OnTick()
     }
   }
 
-  if(highestShort + NAMPIN_MARGIN <= Bid && previousBid < Bid) {
+  if(highestShort + NAMPIN_MARGIN < Bid && previousBid < Bid) {
     int ticket = OrderSend(Symbol(), OP_SELL, MIN_LOT, Bid, 0, 0, 0);
   }
-  if(Ask <= lowestLong - NAMPIN_MARGIN && Ask < previousAsk) {
+  if(Ask < lowestLong - NAMPIN_MARGIN && Ask < previousAsk) {
     int ticket = OrderSend(Symbol(), OP_BUY, MIN_LOT, Ask, 0, 0, 0);
   }
   
