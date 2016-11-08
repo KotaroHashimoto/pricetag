@@ -8,9 +8,9 @@
 #property version   "1.00"
 #property strict
 
-#define ACCEPTABLE_SPREAD (5) //for Rakuten
+//#define ACCEPTABLE_SPREAD (5) //for Rakuten
 //#define ACCEPTABLE_SPREAD (4) //for OANDA
-//#define ACCEPTABLE_SPREAD (3) //for FXTF1000, Gaitame
+#define ACCEPTABLE_SPREAD (3) //for FXTF1000, Gaitame
 //#define ACCEPTABLE_SPREAD (0) //for ICMarket
 //#define ACCEPTABLE_SPREAD (16) //for XMTrading
 
@@ -75,6 +75,13 @@ void OnDeinit(const int reason)
 //+------------------------------------------------------------------+
 void OnTick()
 {  
+
+  if(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD)) {
+    previousBid = Bid;
+    previousAsk = Ask;
+    return;
+  }
+
   double highestShort = 0;
   double lowestLong = 10000;
 
@@ -83,7 +90,7 @@ void OnTick()
 
     if(OrderSelect(i, SELECT_BY_POS)) {
       if(OrderType() == OP_BUY) {
-        if(0 < OrderProfit() && (Bid < previousBid)) {
+        if(0 < OrderProfit() && Bid < previousBid) {
           closed = OrderClose(OrderTicket(), MIN_LOT, Bid, 0) | True;
         }
         if(!closed) {
@@ -93,7 +100,7 @@ void OnTick()
         }
       }
       else if(OrderType() == OP_SELL) {
-        if(0 < OrderProfit() && (previousAsk < Ask)) {
+        if(0 < OrderProfit() && previousAsk < Ask) {
           closed = OrderClose(OrderTicket(), MIN_LOT, Ask, 0) | True;
         }
         if(!closed) {
@@ -105,16 +112,10 @@ void OnTick()
     }
   }
 
-  if(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD)) {
-    previousBid = Bid;
-    previousAsk = Ask;
-    return;
-  }
-
-  if(highestShort + NAMPIN_MARGIN <= Bid) {
+  if(highestShort + NAMPIN_MARGIN <= Bid && previousBid < Bid) {
     int ticket = OrderSend(Symbol(), OP_SELL, MIN_LOT, Bid, 0, 0, 0);
   }
-  if(Ask <= lowestLong - NAMPIN_MARGIN) {
+  if(Ask <= lowestLong - NAMPIN_MARGIN && Ask < previousAsk) {
     int ticket = OrderSend(Symbol(), OP_BUY, MIN_LOT, Ask, 0, 0, 0);
   }
   
