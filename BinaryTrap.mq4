@@ -78,37 +78,52 @@ void OnDeinit(const int reason)
 //+------------------------------------------------------------------+
 void OnTick()
 {
-  if(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD)) {
-    previousBid = Bid;
-    previousAsk = Ask;
-    return;
-  }
 
   double highestShort = 0;
   double lowestShort = 10000;
   double highestLong = 0;
   double lowestLong = 10000;
 
-  for(int i = 0; i < OrdersTotal(); i++) {
-  
-    if(OrderSelect(i, SELECT_BY_POS)) {
+  for(int i = 0; i < OrdersTotal(); i++) {  
+    if(OrderSelect(i, SELECT_BY_POS)) {    
+    
       if(OrderType() == OP_BUY) {
-        if(OrderOpenPrice() < lowestLong) {
-          lowestLong = OrderOpenPrice();
+        if(OrderTakeProfit() == 0 || OrderStopLoss() == 0 || OrderLots() != MIN_LOT) {
+          if(0 <= OrderProfit() + OrderCommission() + OrderSwap()) {
+            bool closed = OrderClose(OrderTicket(), OrderLots(), Bid, 0);
+          }
         }
-        if(highestLong < OrderOpenPrice()) {
-          highestLong = OrderOpenPrice();
+        else {
+          if(OrderOpenPrice() < lowestLong) {
+            lowestLong = OrderOpenPrice();
+          }
+          if(highestLong < OrderOpenPrice()) {
+            highestLong = OrderOpenPrice();
+          }
         }
       }
       else if(OrderType() == OP_SELL) {
-        if(highestShort < OrderOpenPrice()) {
-          highestShort = OrderOpenPrice();
+        if(OrderTakeProfit() == 0 || OrderStopLoss() == 0 || OrderLots() != MIN_LOT) {
+          if(0 <= OrderProfit() + OrderCommission() + OrderSwap()) {
+            bool closed = OrderClose(OrderTicket(), OrderLots(), Ask, 0);
+          }
         }
-        if(OrderOpenPrice() < lowestShort) {
-          lowestShort = OrderOpenPrice();
+        else {
+          if(highestShort < OrderOpenPrice()) {
+            highestShort = OrderOpenPrice();
+          }
+          if(OrderOpenPrice() < lowestShort) {
+            lowestShort = OrderOpenPrice();
+          }
         }
       }
     }
+  }
+
+  if(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD)) {
+    previousBid = Bid;
+    previousAsk = Ask;
+    return;
   }
 
   if(previousBid < Bid) {
