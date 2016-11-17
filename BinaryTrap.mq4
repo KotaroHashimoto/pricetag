@@ -85,41 +85,44 @@ void OnTick()
   }
 
   double highestShort = 0;
+  double lowestShort = 10000;
+  double highestLong = 0;
   double lowestLong = 10000;
 
   for(int i = 0; i < OrdersTotal(); i++) {
-//    bool closed = False;
-
+  
     if(OrderSelect(i, SELECT_BY_POS)) {
-      if(OrderType() == OP_BUY) {/*
-        if(0 < OrderProfit() && Bid < previousBid) {
-          closed = OrderClose(OrderTicket(), MIN_LOT, Bid, 0) | True;
+      if(OrderType() == OP_BUY) {
+        if(OrderOpenPrice() < lowestLong) {
+          lowestLong = OrderOpenPrice();
         }
-        if(!closed) {*/
-          if(OrderOpenPrice() < lowestLong) {
-            lowestLong = OrderOpenPrice();
-          }
-//        }
+        if(highestLong < OrderOpenPrice()) {
+          highestLong = OrderOpenPrice();
+        }
       }
-      else if(OrderType() == OP_SELL) {/*
-        if(0 < OrderProfit() + OrderSwap() && Ask < previousAsk) {
-          bool closed = OrderClose(OrderTicket(), OrderLots(), Ask, 0) | True;
+      else if(OrderType() == OP_SELL) {
+        if(highestShort < OrderOpenPrice()) {
+          highestShort = OrderOpenPrice();
         }
-        if(!closed) {*/
-          if(highestShort < OrderOpenPrice()) {
-            highestShort = OrderOpenPrice();
-          }
+        if(OrderOpenPrice() < lowestShort) {
+          lowestShort = OrderOpenPrice();
         }
+      }
     }
   }
 
-  if(highestShort + NAMPIN_MARGIN < Bid && previousBid < Bid) {
-    int ticket = OrderSend(Symbol(), OP_SELL, MIN_LOT, Bid, 0, Bid + SL, Bid - TP);
-  }
-  if(Ask < lowestLong - NAMPIN_MARGIN && Ask < previousAsk) {
-    int ticket = OrderSend(Symbol(), OP_BUY, MIN_LOT, Ask, 0, Ask - SL, Ask + TP);
+  if(previousBid < Bid) {
+    if(Bid < lowestShort - NAMPIN_MARGIN || highestShort + NAMPIN_MARGIN < Bid) {
+      int ticket = OrderSend(Symbol(), OP_SELL, MIN_LOT, Bid, 0, Bid + SL, Bid - TP);
+    }
   }
   
+  if(Ask < previousAsk) {
+    if(Ask < lowestLong - NAMPIN_MARGIN || highestLong + NAMPIN_MARGIN < Ask ) {
+      int ticket = OrderSend(Symbol(), OP_BUY, MIN_LOT, Ask, 0, Ask - SL, Ask + TP);
+    }
+  }
+
   previousBid = Bid;
   previousAsk = Ask;
 }
