@@ -16,6 +16,9 @@
 
 #define MAX_POSITIONS (1000000)
 #define NAMPIN_MARGIN (0.01)
+#define SL (1.00)
+#define TP (0.05)
+
 #define NONE (-1)
 
 double MIN_LOT = NONE;
@@ -111,10 +114,10 @@ void OnTick()
   }
 
   if(highestShort + NAMPIN_MARGIN < Bid && previousBid < Bid) {
-    int ticket = OrderSend(Symbol(), OP_SELL, MIN_LOT, Bid, 0, 0, Bid - 0.05);
+    int ticket = OrderSend(Symbol(), OP_SELL, MIN_LOT, Bid, 0, Bid + SL, Bid - TP);
   }
   if(Ask < lowestLong - NAMPIN_MARGIN && Ask < previousAsk) {
-    int ticket = OrderSend(Symbol(), OP_BUY, MIN_LOT, Ask, 0, 0, Ask + 0.05);
+    int ticket = OrderSend(Symbol(), OP_BUY, MIN_LOT, Ask, 0, Ask - SL, Ask + TP);
   }
   
   previousBid = Bid;
