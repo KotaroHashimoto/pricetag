@@ -26,6 +26,16 @@ double MIN_LOT = NONE;
 double previousAsk = NONE;
 double previousBid = NONE;
 
+#define HEDGE_LOT (0.75)
+#define HEDGE_SL (0.10)
+
+#define HEDGE_OFF (0)
+#define SHORT_HEDGE_ON (1)
+#define LONG_HEDGE_ON (2)
+#define HEDGE_ON_TH (-950)
+#define HEDGE_OFF_TH (-850)
+
+
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
 //+------------------------------------------------------------------+
@@ -61,7 +71,7 @@ int OnInit()
   
   MIN_LOT = MarketInfo(Symbol(), MODE_MINLOT);
   Print("MIN_LOT=", MIN_LOT);
-  
+
   //---
   return(INIT_SUCCEEDED);
 }
@@ -71,6 +81,26 @@ int OnInit()
 void OnDeinit(const int reason)
 {
   //---   
+}
+
+int hedgeControl(double longMinProfit, double shortMinProfit, int hedgeStatus)
+{
+  if(hedgeStatus == NONE) {
+    if(longMinProfit < HEDGE_ON_TH) {
+      return LONG_HEDGE_ON;
+    }
+    else if (shortMinProfit < HEDGE_ON_TH) {
+      return SHORT_HEDGE_ON;
+    }
+  }
+  else if(hedgeStatus == LONG_HEDGE_ON && HEDGE_OFF_TH < longMinProfit) {
+    return HEDGE_OFF;
+  }
+  else if(hedgeStatus == SHORT_HEDGE_ON && HEDGE_OFF_TH < shortMinProfit) {
+    return HEDGE_OFF;
+  }
+
+  return NONE;
 }
 
 //+------------------------------------------------------------------+
@@ -84,6 +114,11 @@ void OnTick()
   double highestLong = 0;
   double lowestLong = 10000;
 
+  double longMinProfit = 1000000;
+  double shortMinProfit = 1000000;
+  int hedgeTicket = NONE;
+  int hedgeStatus = NONE;
+
   for(int i = 0; i < OrdersTotal(); i++) {  
     if(OrderSelect(i, SELECT_BY_POS)) {    
     
@@ -93,12 +128,20 @@ void OnTick()
             bool closed = OrderClose(OrderTicket(), OrderLots(), Bid, 0);
           }
         }
+        else if(OrderLots() == HEDGE_LOT) {
+          hedgeStatus = LONG_HEDGE_ON;
+          hedgeTicket = OrderTicket();
+        }
         else {
           if(OrderOpenPrice() < lowestLong) {
             lowestLong = OrderOpenPrice();
           }
           if(highestLong < OrderOpenPrice()) {
             highestLong = OrderOpenPrice();
+          }
+
+          if(OrderProfit() < longMinProfit) {
+            longMinProfit = OrderProfit();
           }
         }
       }
@@ -108,12 +151,20 @@ void OnTick()
             bool closed = OrderClose(OrderTicket(), OrderLots(), Ask, 0);
           }
         }
+        else if(OrderLots() == HEDGE_LOT) {
+          hedgeStatus = SHORT_HEDGE_ON;
+          hedgeTicket = OrderTicket();
+        }
         else {
           if(highestShort < OrderOpenPrice()) {
             highestShort = OrderOpenPrice();
           }
           if(OrderOpenPrice() < lowestShort) {
             lowestShort = OrderOpenPrice();
+          }
+
+          if(OrderProfit() < shortMinProfit) {
+            shortMinProfit = OrderProfit();
           }
         }
       }
@@ -124,6 +175,26 @@ void OnTick()
     previousBid = Bid;
     previousAsk = Ask;
     return;
+  }
+
+  int nextHedge = hedgeControl(longMinProfit, shortMinProfit, hedgeStatus);
+  if(nextHedge != NONE) {
+    if(nextHedge == HEDGE_OFF && OrderSelect(hedgeTicket, SELECT_BY_TICKET)) {
+      if(0 <= OrderProfit() + OrderCommission() + OrderSwap()) {
+        if(hedgeStatus == SHORT_HEDGE_ON) {
+          bool closed = OrderClose(OrderTicket(), OrderLots(), Bid, 0);
+        }
+        else if(hedgeStatus == LONG_HEDGE_ON) {
+          bool closed = OrderClose(OrderTicket(), OrderLots(), Ask, 0);
+        }
+      }      
+    }
+    else if(nextHedge == SHORT_HEDGE_ON) {
+      int ticket = OrderSend(Symbol(), OP_BUY, HEDGE_LOT, Ask, 0, Ask - HEDGE_SL, 0);      
+    }
+    else if(nextHedge == LONG_HEDGE_ON) {
+      int ticket = OrderSend(Symbol(), OP_SELL, HEDGE_LOT, Bid, 0, Bid + HEDGE_SL, 0);      
+    }    
   }
 
   if(previousBid < Bid) {
