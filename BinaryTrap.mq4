@@ -27,7 +27,7 @@ double previousAsk = NONE;
 double previousBid = NONE;
 
 #define HEDGE_LOT (0.75)
-#define HEDGE_SL (0.10)
+#define HEDGE_SL (0.20)
 
 #define HEDGE_OFF (0)
 #define SHORT_HEDGE_ON (1)
