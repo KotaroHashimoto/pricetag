@@ -33,7 +33,7 @@ double previousBid = NONE;
 #define SHORT_HEDGE_ON (1)
 #define LONG_HEDGE_ON (2)
 #define HEDGE_ON_TH (-950)
-#define HEDGE_OFF_TH (-750)
+#define HEDGE_OFF_TH (-800)
 
 
 //+------------------------------------------------------------------+
@@ -180,14 +180,15 @@ void OnTick()
   int nextHedge = hedgeControl(longMinProfit, shortMinProfit, hedgeStatus);
   if(nextHedge != NONE) {
     if(nextHedge == HEDGE_OFF && OrderSelect(hedgeTicket, SELECT_BY_Ticket)) {
-      //      if(0 <= OrderProfit() + OrderCommission() + OrderSwap()) {
+      if(0 <= OrderProfit() + OrderCommission() + OrderSwap()) {
         if(hedgeStatus == SHORT_HEDGE_ON) {
-          bool closed = OrderClose(OrderTicket(), OrderLots(), Bid, 0);
+            bool closed = OrderClose(OrderTicket(), OrderLots(), Bid, 0);
+          }
 	}
         else if(hedgeStatus == LONG_HEDGE_ON) {
           bool closed = OrderClose(OrderTicket(), OrderLots(), Ask, 0);
 	}
-	//      }      
+      }      
     }
     else if(nextHedge == SHORT_HEDGE_ON) {
       int ticket = OrderSend(Symbol(), OP_BUY, HEDGE_LOT, Ask, 0, Ask - HEDGE_SL, 0);      
