@@ -32,8 +32,8 @@ double previousBid = NONE;
 #define HEDGE_OFF (0)
 #define SHORT_HEDGE_ON (1)
 #define LONG_HEDGE_ON (2)
-#define HEDGE_ON_TH (-900)
-#define HEDGE_OFF_TH (-800)
+#define HEDGE_ON_TH (-950)
+#define HEDGE_OFF_TH (-750)
 
 
 //+------------------------------------------------------------------+
