@@ -14,12 +14,12 @@
 //#define ACCEPTABLE_SPREAD (0) //for ICMarket
 //#define ACCEPTABLE_SPREAD (16) //for XMTrading
 
-#define SPREAD_USDJPY (0.4)
-#define SPREAD_EURUSD (0.5)
-#define SPREAD_EURJPY (0.7)
+#define SPREAD_USDJPY (4)
+#define SPREAD_EURUSD (5)
+#define SPREAD_EURJPY (13)
 
-#define N_CONDITION (-0.1)
-#define P_CONDITION (0.1)
+#define N_CONDITION (-0.01)
+#define P_CONDITION (0.01)
 #define LOT (1.0)
 
 int t_usdjpy = -1;
@@ -81,17 +81,17 @@ void OnDeinit(const int reason)
 //+------------------------------------------------------------------+
 void OnTick()
 {
+  double usdjpy = MarketInfo("USDJPY", MODE_BID);
+  double eurusd = MarketInfo("EURUSD", MODE_BID);
+  double eurjpy = MarketInfo("EURJPY", MODE_BID);
+    
+  double price = usdjpy - eurjpy / eurusd;
+//  Print("USDJPY - EURJPY/EURUSD = ", price);
+
   if(SPREAD_USDJPY < MarketInfo("USDJPY", MODE_SPREAD) || SPREAD_EURUSD < MarketInfo("EURUSD", MODE_SPREAD) || SPREAD_EURJPY < MarketInfo("EURJPY", MODE_SPREAD)) {
     return;
   }
 
-  double usdjpy = MarketInfo("USDJPY", MODE_BID);
-  double eurusd = MarketInfo("EURUSD", MODE_BID);
-  double eurjpy = MarketInfo("EURJPY", MODE_BID);
-  
-  double price = usdjpy - eurjpy / eurusd;
-  Print("USDJPY - EURJPY/EURUSD", price);
-  
   if(t_usdjpy == -1 && t_eurjpy == -1 && t_eurusd == -1) {
     if(price < N_CONDITION) {
       t_usdjpy = OrderSend("USDJPY", OP_BUY, LOT, MarketInfo("USDJPY", MODE_ASK), 0, 0, 0);
