@@ -86,8 +86,8 @@ void OnTick()
   double eurjpy = MarketInfo("EURJPY", MODE_BID);
     
   double price = usdjpy - eurjpy / eurusd;
-//  Print("USDJPY - EURJPY/EURUSD = ", price);
-//  return;
+  Print("USDJPY - EURJPY/EURUSD = ", price);
+  return;
 
   if(SPREAD_USDJPY < MarketInfo("USDJPY", MODE_SPREAD) || SPREAD_EURUSD < MarketInfo("EURUSD", MODE_SPREAD) || SPREAD_EURJPY < MarketInfo("EURJPY", MODE_SPREAD)) {
     return;
@@ -96,14 +96,14 @@ void OnTick()
   if(t_usdjpy == -1 && t_eurjpy == -1 && t_eurusd == -1) {
     if(price < N_CONDITION) {
       t_usdjpy = OrderSend("USDJPY", OP_BUY, LOT, MarketInfo("USDJPY", MODE_ASK), 0, 0, 0);
-      t_eurjpy = OrderSend("EURJPY", OP_BUY, LOT, MarketInfo("EURJPY", MODE_ASK), 0, 0, 0);
-      t_eurusd = OrderSend("EURUSD", OP_SELL, LOT, MarketInfo("EURUSD", MODE_BID), 0, 0, 0);
+      t_eurjpy = OrderSend("EURJPY", OP_SELL, LOT, MarketInfo("EURJPY", MODE_BID), 0, 0, 0);
+      t_eurusd = OrderSend("EURUSD", OP_BUY, LOT, MarketInfo("EURUSD", MODE_ASK), 0, 0, 0);
       aCondition = 1;
     }
     else if(P_CONDITION < price) {
       t_usdjpy = OrderSend("USDJPY", OP_SELL, LOT, MarketInfo("USDJPY", MODE_BID), 0, 0, 0);
-      t_eurjpy = OrderSend("EURJPY", OP_SELL, LOT, MarketInfo("EURJPY", MODE_BID), 0, 0, 0);
-      t_eurusd = OrderSend("EURUSD", OP_BUY, LOT, MarketInfo("EURUSD", MODE_ASK), 0, 0, 0);
+      t_eurjpy = OrderSend("EURJPY", OP_BUY, LOT, MarketInfo("EURJPY", MODE_ASK), 0, 0, 0);
+      t_eurusd = OrderSend("EURUSD", OP_SELL, LOT, MarketInfo("EURUSD", MODE_BID), 0, 0, 0);
       aCondition = -1;
     }
   }
@@ -116,32 +116,32 @@ void OnTick()
       }
     }
     if(0 < profit) {
-      if(N_CONDITION < price && price < P_CONDITION) {
+//      if(N_CONDITION < price && price < P_CONDITION) {
         bool closed;
         if(aCondition == 1) {
           closed = OrderClose(t_usdjpy, LOT, MarketInfo("USDJPY", MODE_BID), 0);
-          closed = OrderClose(t_eurjpy, LOT, MarketInfo("EURJPY", MODE_BID), 0);
-          closed = OrderClose(t_eurusd, LOT, MarketInfo("EURUSD", MODE_ASK), 0);
-        }
-        else if(aCondition == -1) {
-          closed = OrderClose(t_usdjpy, LOT, MarketInfo("USDJPY", MODE_ASK), 0);
           closed = OrderClose(t_eurjpy, LOT, MarketInfo("EURJPY", MODE_ASK), 0);
           closed = OrderClose(t_eurusd, LOT, MarketInfo("EURUSD", MODE_BID), 0);
         }
-      }
+        else if(aCondition == -1) {
+          closed = OrderClose(t_usdjpy, LOT, MarketInfo("USDJPY", MODE_ASK), 0);
+          closed = OrderClose(t_eurjpy, LOT, MarketInfo("EURJPY", MODE_BID), 0);
+          closed = OrderClose(t_eurusd, LOT, MarketInfo("EURUSD", MODE_ASK), 0);
+        }
+//      }
     }
   }
   else { //error case
     bool closed;
     if(aCondition == 1) {
       if(t_usdjpy != -1){closed = OrderClose(t_usdjpy, LOT, MarketInfo("USDJPY", MODE_BID), 0);}
-      if(t_eurjpy != -1){closed = OrderClose(t_eurjpy, LOT, MarketInfo("EURJPY", MODE_BID), 0);}
-      if(t_eurusd != -1){closed = OrderClose(t_eurusd, LOT, MarketInfo("EURUSD", MODE_ASK), 0);}
+      if(t_eurjpy != -1){closed = OrderClose(t_eurjpy, LOT, MarketInfo("EURJPY", MODE_ASK), 0);}
+      if(t_eurusd != -1){closed = OrderClose(t_eurusd, LOT, MarketInfo("EURUSD", MODE_BID), 0);}
     }
     else if(aCondition == -1) {
       if(t_usdjpy != -1){closed = OrderClose(t_usdjpy, LOT, MarketInfo("USDJPY", MODE_ASK), 0);}
-      if(t_eurjpy != -1){closed = OrderClose(t_eurjpy, LOT, MarketInfo("EURJPY", MODE_ASK), 0);}
-      if(t_eurusd != -1){closed = OrderClose(t_eurusd, LOT, MarketInfo("EURUSD", MODE_BID), 0);}
+      if(t_eurjpy != -1){closed = OrderClose(t_eurjpy, LOT, MarketInfo("EURJPY", MODE_BID), 0);}
+      if(t_eurusd != -1){closed = OrderClose(t_eurusd, LOT, MarketInfo("EURUSD", MODE_ASK), 0);}
     }
   }
 }
