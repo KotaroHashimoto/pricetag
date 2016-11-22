@@ -8,9 +8,10 @@
 #property version   "1.00"
 #property strict
 
+#define ACCEPTABLE_SPREAD (3) //for FXTF1000
+//#define ACCEPTABLE_SPREAD (4) //for Gaitame
 //#define ACCEPTABLE_SPREAD (5) //for Rakuten
 //#define ACCEPTABLE_SPREAD (4) //for OANDA
-#define ACCEPTABLE_SPREAD (3) //for FXTF1000, Gaitame
 //#define ACCEPTABLE_SPREAD (0) //for ICMarket
 //#define ACCEPTABLE_SPREAD (16) //for XMTrading
 
@@ -18,13 +19,9 @@
 #define SL (1.00)
 #define TP (0.05)
 
-#define NONE (-1)
-
-double MIN_LOT = NONE;
-
-double previousAsk = NONE;
-double previousBid = NONE;
-
+double MIN_LOT;
+double previousAsk;
+double previousBid;
 
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
@@ -53,11 +50,10 @@ int OnInit()
   Print("SPREAD=", MarketInfo(Symbol(), MODE_SPREAD));
   Print("POINT=", MarketInfo(Symbol(), MODE_POINT));
   
-  Print("ASK=", Ask);
-  Print("BID=", Bid);
-
   previousAsk = Ask;
   previousBid = Bid;
+  Print("ASK=", Ask);
+  Print("BID=", Bid);
   
   MIN_LOT = MarketInfo(Symbol(), MODE_MINLOT);
   Print("MIN_LOT=", MIN_LOT);
