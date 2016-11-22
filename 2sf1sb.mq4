@@ -19,7 +19,7 @@
 #define SL (1.00)
 #define TP (0.05)
 
-double MIN_LOT;
+double MINLOT;
 double previousAsk;
 double previousBid;
 
@@ -55,8 +55,8 @@ int OnInit()
   Print("ASK=", Ask);
   Print("BID=", Bid);
   
-  MIN_LOT = MarketInfo(Symbol(), MODE_MINLOT);
-  Print("MIN_LOT=", MIN_LOT);
+  MINLOT = MarketInfo(Symbol(), MODE_MINLOT);
+  Print("MINLOT=", MINLOT);
 
   //---
   return(INIT_SUCCEEDED);
@@ -84,10 +84,8 @@ void OnTick()
     if(OrderSelect(i, SELECT_BY_POS)) {    
     
       if(OrderType() == OP_BUY) {
-        if(OrderTakeProfit() == 0 || OrderStopLoss() == 0 || OrderLots() != MIN_LOT) {
-//          if(0 <= OrderProfit() + OrderCommission() + OrderSwap()) {
-            bool closed = OrderClose(OrderTicket(), OrderLots(), Bid, 0);
-//          }
+        if(OrderTakeProfit() == 0 || OrderStopLoss() == 0 || OrderLots() != MINLOT) {
+          bool closed = OrderClose(OrderTicket(), OrderLots(), Bid, 0);
         }
         else {
           if(OrderOpenPrice() < lowestLong) {
@@ -99,10 +97,8 @@ void OnTick()
         }
       }
       else if(OrderType() == OP_SELL) {
-        if(OrderTakeProfit() == 0 || OrderStopLoss() == 0 || OrderLots() != MIN_LOT) {
-//          if(0 <= OrderProfit() + OrderCommission() + OrderSwap()) {
-            bool closed = OrderClose(OrderTicket(), OrderLots(), Ask, 0);
-//          }
+        if(OrderTakeProfit() == 0 || OrderStopLoss() == 0 || OrderLots() != MINLOT) {
+          bool closed = OrderClose(OrderTicket(), OrderLots(), Ask, 0);
         }
         else {
           if(highestShort < OrderOpenPrice()) {
@@ -124,13 +120,13 @@ void OnTick()
 
   if(previousBid < Bid) {
     if(Bid < lowestShort - NAMPIN_MARGIN || highestShort + NAMPIN_MARGIN < Bid) {
-      int ticket = OrderSend(Symbol(), OP_SELL, MIN_LOT, Bid, 0, Bid + SL, Bid - TP);
+      int ticket = OrderSend(Symbol(), OP_SELL, MINLOT, Bid, 0, Bid + SL, Bid - TP);
     }
   }
   
   if(Ask < previousAsk) {
     if(Ask < lowestLong - NAMPIN_MARGIN || highestLong + NAMPIN_MARGIN < Ask ) {
-      int ticket = OrderSend(Symbol(), OP_BUY, MIN_LOT, Ask, 0, Ask - SL, Ask + TP);
+      int ticket = OrderSend(Symbol(), OP_BUY, MINLOT, Ask, 0, Ask - SL, Ask + TP);
     }
   }
 
