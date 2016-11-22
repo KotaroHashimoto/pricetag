@@ -10,7 +10,7 @@
 
 //#define ACCEPTABLE_SPREAD (5) //for Rakuten
 //#define ACCEPTABLE_SPREAD (4) //for OANDA
-#define ACCEPTABLE_SPREAD (3) //for FXTF1000, Gaitame
+//#define ACCEPTABLE_SPREAD (3) //for FXTF1000, Gaitame
 //#define ACCEPTABLE_SPREAD (0) //for ICMarket
 //#define ACCEPTABLE_SPREAD (16) //for XMTrading
 
@@ -18,8 +18,8 @@
 #define SPREAD_EURUSD (5)
 #define SPREAD_EURJPY (13)
 
-#define N_CONDITION (-0.01)
-#define P_CONDITION (0.01)
+#define N_CONDITION (-0.02)
+#define P_CONDITION (0.02)
 #define LOT (1.0)
 
 int t_usdjpy = -1;
