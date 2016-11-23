@@ -16,7 +16,6 @@
 #define SL (1.00)
 #define TP (0.05)
 
-double NAMPIN_MARGIN;
 double MINLOT;
 double previousAsk;
 double previousBid;
@@ -56,9 +55,6 @@ int OnInit()
   MINLOT = MarketInfo(Symbol(), MODE_MINLOT);
   Print("MINLOT=", MINLOT);
   
-  NAMPIN_MARGIN = 5000.0 / AccountEquity();
-  Print("NAMPIN_MARGIN = ", NAMPIN_MARGIN);
-
   //---
   return(INIT_SUCCEEDED);
 }
@@ -75,6 +71,12 @@ void OnDeinit(const int reason)
 //+------------------------------------------------------------------+
 void OnTick()
 {
+  if(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD)) {
+    previousBid = Bid;
+    previousAsk = Ask;
+    return;
+  }
+
   double highestShort = 0;
   double lowestShort = 10000;
   double highestLong = 0;
@@ -112,20 +114,16 @@ void OnTick()
     }
   }
 
-  if(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD)) {
-    previousBid = Bid;
-    previousAsk = Ask;
-    return;
-  }
+  double margin = 5000.0 / AccountEquity();
 
   if(previousBid < Bid) {
-    if(Bid < lowestShort - NAMPIN_MARGIN || highestShort + NAMPIN_MARGIN < Bid) {
+    if(Bid < lowestShort - margin || highestShort + margin < Bid) {
       int ticket = OrderSend(Symbol(), OP_SELL, MINLOT, Bid, 0, Bid + SL, Bid - TP);
     }
   }
   
   if(Ask < previousAsk) {
-    if(Ask < lowestLong - NAMPIN_MARGIN || highestLong + NAMPIN_MARGIN < Ask ) {
+    if(Ask < lowestLong - margin || highestLong + margin < Ask ) {
       int ticket = OrderSend(Symbol(), OP_BUY, MINLOT, Ask, 0, Ask - SL, Ask + TP);
     }
   }
