@@ -9,16 +9,14 @@
 #property strict
 
 #define ACCEPTABLE_SPREAD (3) //for FXTF1000
-//#define ACCEPTABLE_SPREAD (4) //for Gaitame
+//#define ACCEPTABLE_SPREAD (4) //for OANDA, Gaitame, ICMarket
 //#define ACCEPTABLE_SPREAD (5) //for Rakuten
-//#define ACCEPTABLE_SPREAD (4) //for OANDA
-//#define ACCEPTABLE_SPREAD (0) //for ICMarket
 //#define ACCEPTABLE_SPREAD (16) //for XMTrading
 
-#define NAMPIN_MARGIN (0.01)
 #define SL (1.00)
 #define TP (0.05)
 
+double NAMPIN_MARGIN;
 double MINLOT;
 double previousAsk;
 double previousBid;
@@ -57,6 +55,9 @@ int OnInit()
   
   MINLOT = MarketInfo(Symbol(), MODE_MINLOT);
   Print("MINLOT=", MINLOT);
+  
+  NAMPIN_MARGIN = 5000.0 / AccountEquity();
+  Print("NAMPIN_MARGIN = ", NAMPIN_MARGIN);
 
   //---
   return(INIT_SUCCEEDED);
@@ -74,7 +75,6 @@ void OnDeinit(const int reason)
 //+------------------------------------------------------------------+
 void OnTick()
 {
-
   double highestShort = 0;
   double lowestShort = 10000;
   double highestLong = 0;
