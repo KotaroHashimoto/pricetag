@@ -71,7 +71,7 @@ void OnDeinit(const int reason)
 //+------------------------------------------------------------------+
 void OnTick()
 {
-  if(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD)) {
+  if(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD) || 7 < Hour()) {
     previousBid = Bid;
     previousAsk = Ask;
     return;
