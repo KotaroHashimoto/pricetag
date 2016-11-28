@@ -20,6 +20,10 @@ double MINLOT;
 double previousAsk;
 double previousBid;
 
+int count;
+#define RANGE (True)
+#define TREND (False)
+
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
 //+------------------------------------------------------------------+
@@ -54,6 +58,8 @@ int OnInit()
   
   MINLOT = MarketInfo(Symbol(), MODE_MINLOT);
   Print("MINLOT=", MINLOT);
+
+  count = 0;
   
   //---
   return(INIT_SUCCEEDED);
@@ -64,6 +70,17 @@ int OnInit()
 void OnDeinit(const int reason)
 {
   //---   
+}
+
+bool bet() {
+  count += 1;
+  d = count % 10;
+  if(d == 0 || d == 3 || d == 6) {
+    return Trend;
+  }
+  else {
+    return False;
+  }
 }
 
 //+------------------------------------------------------------------+
@@ -118,13 +135,23 @@ void OnTick()
 
   if(previousBid < Bid) {
     if(Bid < lowestShort - margin || highestShort + margin < Bid) {
-      int ticket = OrderSend(Symbol(), OP_SELL, MINLOT, Bid, 0, Bid + SL, Bid - TP);
+      if(bet() == RANGE) {
+        int ticket = OrderSend(Symbol(), OP_SELL, MINLOT, Bid, 0, Bid + SL, Bid - TP);
+      }
+      else {
+        int ticket = OrderSend(Symbol(), OP_SELL, MINLOT, Bid, 0, Bid + TP, Bid - SL);
+      }
     }
   }
   
   if(Ask < previousAsk) {
     if(Ask < lowestLong - margin || highestLong + margin < Ask ) {
-      int ticket = OrderSend(Symbol(), OP_BUY, MINLOT, Ask, 0, Ask - SL, Ask + TP);
+      if(bet() == RANGE) {
+        int ticket = OrderSend(Symbol(), OP_BUY, MINLOT, Ask, 0, Ask - SL, Ask + TP);
+      }
+      else {
+        int ticket = OrderSend(Symbol(), OP_BUY, MINLOT, Ask, 0, Ask - TP, Ask + SL);
+      }
     }
   }
 
