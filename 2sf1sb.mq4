@@ -20,10 +20,6 @@ double MINLOT;
 double previousAsk;
 double previousBid;
 
-int count;
-#define RANGE (True)
-#define TREND (False)
-
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
 //+------------------------------------------------------------------+
@@ -59,8 +55,6 @@ int OnInit()
   MINLOT = MarketInfo(Symbol(), MODE_MINLOT);
   Print("MINLOT=", MINLOT);
 
-  count = 0;
-  
   //---
   return(INIT_SUCCEEDED);
 }
@@ -72,23 +66,12 @@ void OnDeinit(const int reason)
   //---   
 }
 
-bool bet() {
-  count += 1;
-  d = count % 10;
-  if(d == 0 || d == 3 || d == 6) {
-    return Trend;
-  }
-  else {
-    return False;
-  }
-}
-
 //+------------------------------------------------------------------+
 //| Expert tick function                                             |
 //+------------------------------------------------------------------+
 void OnTick()
 {
-  if(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD) || 7 < Hour()) {
+  if(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD) || Hour() < 3 || 7 < Hour()) {
     previousBid = Bid;
     previousAsk = Ask;
     return;
@@ -135,23 +118,13 @@ void OnTick()
 
   if(previousBid < Bid) {
     if(Bid < lowestShort - margin || highestShort + margin < Bid) {
-      if(bet() == RANGE) {
-        int ticket = OrderSend(Symbol(), OP_SELL, MINLOT, Bid, 0, Bid + SL, Bid - TP);
-      }
-      else {
-        int ticket = OrderSend(Symbol(), OP_SELL, MINLOT, Bid, 0, Bid + TP, Bid - SL);
-      }
+      int ticket = OrderSend(Symbol(), OP_SELL, MINLOT, Bid, 0, Bid + SL, Bid - TP);
     }
   }
   
   if(Ask < previousAsk) {
     if(Ask < lowestLong - margin || highestLong + margin < Ask ) {
-      if(bet() == RANGE) {
-        int ticket = OrderSend(Symbol(), OP_BUY, MINLOT, Ask, 0, Ask - SL, Ask + TP);
-      }
-      else {
-        int ticket = OrderSend(Symbol(), OP_BUY, MINLOT, Ask, 0, Ask - TP, Ask + SL);
-      }
+      int ticket = OrderSend(Symbol(), OP_BUY, MINLOT, Ask, 0, Ask - SL, Ask + TP);
     }
   }
 
