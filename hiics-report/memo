@@ -1,0 +1,66 @@
+OSADLがなんでそれをやっているのか、突然ファイルが出てくるので背景をたどるのに苦労する。
+Git logコミットはちゃんと書く。
+
+-----Original Message-----
+From: Hashimoto, Koutarou 
+Sent: Thursday, December 24, 2015 2:01 PM
+To: 'Kotaro Hashimoto'; 橋本耕太郎 / HASHIMOTO，KOUTAROU
+Subject: RE: 機能安全成果報告メモ
+
+成果物が何故それで良いか対外的に説明しきれない
+チェックリストではない
+
+-----Original Message-----
+From: Hashimoto, Koutarou 
+Sent: Thursday, December 24, 2015 1:46 PM
+To: 'Kotaro Hashimoto'; 橋本耕太郎 / HASHIMOTO，KOUTAROU
+Subject: RE: 機能安全成果報告メモ
+
+キーワード
+Repeatable / [Iteratable]
+Scalable
+Automated
+
+
+あなたは、どうやって、
+「自ら設計・実装したitemが、正しい」「State of the art である」
+と、技術者として説明しますか?
+
+
+
+-----Original Message-----
+From: Hashimoto, Koutarou 
+Sent: Thursday, December 24, 2015 1:34 PM
+To: 'Kotaro Hashimoto'; 橋本耕太郎 / HASHIMOTO，KOUTAROU
+Subject: RE: 機能安全成果報告メモ
+
+「どうすればよいか」は、「認証機関に説明する場で自身を持って説得できるか」を具体的に想像すると
+なんとなく見えてきそうな気がする。
+
+-----Original Message-----
+From: Kotaro Hashimoto [mailto:hasimoto.kotaro@gmail.com] 
+Sent: Sunday, December 13, 2015 7:10 AM
+To: Hashimoto, Koutarou; 橋本耕太郎 / HASHIMOTO，KOUTAROU
+Subject: 機能安全成果報告メモ
+
+とてもじゃないが人間が検証できる量をはるかに超えている。
+人手で補えないところを自動で行う仕組みに置き換える。
+
+使えば使うほど自動的に品質が上がっていく仕組みを確立することがキモ
+　Coccinelle, csmith, Prequel, KLEE
+　自動テストをするだけでなく、バグを自動的に見つけてくれる、テストケースを自動生成してくれる。
+
+→これらの結果を定量評価できること。過去の結果からの統計情報など
+
+
+プラス、Continous Integration、レビュー、自動回帰テストの仕組みが確立されてみんながそれに従って開発を行っているプロセス。
+クライテリアがきちんと定められて、人間がちゃんとチェック、または自動の仕組みがチェックしてからでないと入り込まない仕組みになっていること。
+
+TODO:
+従来のシステム開発のワークフローを描いて、上記のSIL2LInuxMPの戦略がどこでどのように置き換わるか絵を描く。
+
+TODO:
+テストカバレッジを100%っぽく見せる具体的手法
+posixtestsuite実行、カバーできない範囲特定、
+KLEE実恒例
+

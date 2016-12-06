@@ -1,0 +1,101 @@
+This is pBibTeX, Version 0.99d-j0.33 (utf8.euc) (TeX Live 2015)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: report.aux
+A level-1 auxiliary file: title.aux
+A level-1 auxiliary file: abstract.aux
+A level-1 auxiliary file: chapter1.aux
+A level-1 auxiliary file: chapter2-1.aux
+A level-1 auxiliary file: chapter2-2.aux
+A level-1 auxiliary file: chapter2-3.aux
+A level-1 auxiliary file: chapter3.aux
+A level-1 auxiliary file: chapter4.aux
+The style file: jplain.bst
+Database file #1: report.bib
+I was expecting a `,' or a `}'---line 59 of file report.bib
+ : 
+ : %howpublished = "\url{http://www.csn.ul.ie/\~{}mel/projects/codeviz/}"
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+I was expecting a `,' or a `}'---line 65 of file report.bib
+ : 
+ : %howpublished = "\url{http://students.ceid.upatras.gr/\~{}sxanth/ncc/}"
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+Warning--to sort, need author or key in die
+Warning--to sort, need author or key in cocci
+Warning--to sort, need author or key in coccine
+Warning--to sort, need author or key in sm
+Warning--to sort, need author or key in coccigre
+Warning--to sort, need author or key in csmith
+Warning--to sort, need author or key in klee
+Warning--to sort, need author or key in cpa
+Warning--to sort, need author or key in sv
+Warning--to sort, need author or key in aprove
+Warning--to sort, need author or key in cv
+Warning--to sort, need author or key in ncc
+Warning--to sort, need author or key in syzkaller
+Warning--to sort, need author or key in hero
+Warning--to sort, need author or key in google
+Warning--to sort, need author or key in bugspot
+Warning--to sort, need author or key in gsne
+Warning--to sort, need author or key in gsn
+Warning--to sort, need author or key in dcase
+Warning--to sort, need author or key in acedit
+Warning--to sort, need author or key in advocate
+Warning--to sort, need author or key in rmtoo
+Warning--to sort, need author or key in mail
+Warning--to sort, need author or key in gitstats
+Warning--to sort, need author or key in fdirectives
+Warning--to sort, need author or key in overflow
+Warning--to sort, need author or key in minimization
+Warning--to sort, need author or key in linemarkers
+Warning--to sort, need author or key in comp
+Warning--to sort, need author or key in cybozu
+Warning--to sort, need author or key in yocto
+Warning--to sort, need author or key in toast
+Warning--to sort, need author or key in toastint
+Warning--to sort, need author or key in maketrip
+Warning--to sort, need author or key in trainstuff
+You've used 35 entries,
+            2620 wiz_defined-function locations,
+            701 strings with 7571 characters,
+and the built_in function-call counts, 7022 in all, are:
+= -- 525
+> -- 35
+< -- 0
++ -- 35
+- -- 0
+* -- 177
+:= -- 641
+add.period$ -- 70
+call.type$ -- 35
+change.case$ -- 105
+chr.to.int$ -- 0
+cite$ -- 70
+duplicate$ -- 455
+empty$ -- 1016
+format.name$ -- 0
+if$ -- 1786
+int.to.chr$ -- 0
+int.to.str$ -- 35
+missing$ -- 0
+newline$ -- 143
+num.names$ -- 0
+pop$ -- 467
+preamble$ -- 1
+purify$ -- 70
+quote$ -- 0
+skip$ -- 477
+stack$ -- 0
+substring$ -- 175
+swap$ -- 35
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 140
+warning$ -- 35
+while$ -- 0
+width$ -- 37
+write$ -- 247
+is.kanji.str$ -- 210
+(There were 2 error messages)

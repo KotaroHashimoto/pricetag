@@ -1,0 +1,10 @@
+#! /bin/bash
+
+rm report.acn report.aux report.glo report.idx report.ist report.log report.out report.toc abstract.aux report.bbl report.blg chapter1.aux chapter2-1.aux chapter2-2.aux chapter2-3.aux report.dvi report.pdf rep.pdf title.aux chapter3.aux
+platex report
+pbibtex report
+pbibtex report
+platex report
+platex report
+dvipdfmx report
+gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 -dNOPAUSE -dQUIET -dBATCH -sOutputFile=rep.pdf report.pdf
