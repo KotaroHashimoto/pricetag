@@ -81,7 +81,7 @@ int OnCalculate(const int rates_total,
                 const int &spread[])
 {
 
-  for(int i = 0; i < 128; i++) {
+  for(int i = 0; i < 1500; i++) {
     highLine[i] = lines[0];
     lowLine[i] = lines[1];
   }
