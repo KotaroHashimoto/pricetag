@@ -1,0 +1,92 @@
+\documentclass[a4paper]{jarticle}
+\usepackage[dviout]{graphicx}
+\usepackage{float}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\usepackage{tabularx}
+\usepackage{ascmac}
+\usepackage{verbatim}
+\usepackage{amsmath, amssymb}
+\usepackage{wrapfig}
+
+%\setlength{\topmargin}{-5mm}
+%\setlength{\headheight}{20mm}
+%\setlength{\headsep}{15mm}
+\setlength{\oddsidemargin}{5mm}
+%\setlength{\evensidemargin}{-12.5mm}
+\setlength{\textwidth}{148mm}
+%\setlength{\textheight}{225mm}
+%\setlength{\footskip}{10mm}
+%\setlength{\columnsep}{3mm}
+\newcommand{\bm}[1]{\mbox{\boldmath{$#1$}}}
+
+\makeatletter
+\def\ps@kazari{
+  \def\@oddhead{\hfill Collective Dynamics of 'Small-World' Networks　2008/12/4 ゼミ資料 橋本}
+\makeatother
+}
+\pagestyle{kazari}
+
+\title{Collective Dynamics of 'Small-World' Networks\\\normalsize{(スモールワールド構造を有するネットワークによる集合体の振る舞い)}}
+\author{Duncan J. Watts and Steven H. Strogatz\\\small{\textit{Department of Theoretical and Applied Mechanics, Kimball Hall,}}\\\small{\textit{Cornell University, Ithaca, New York 14853, USA}}}
+\date{\textit{Nature}, 393, 440-442 (1998)\\\small{Received 27 November 1997; accepted 6 April 1998.}\\　\\\normalsize{2008年12月4日　ゼミ資料　橋本耕太郎}}
+\begin{document}
+\maketitle
+\section*{概要}
+生体振動子などの複雑系や自己組織系を扱うためにネットワークを用いてモデル化する手法が以前から用いられてきた。そこでは一般にネットワークとして規則正しい構造かもしくはランダム構造かのどちらかであることが暗黙的に仮定されていたが、しかし実際に生物学や社会学で見られるネットワークはどちらか両極端というわけではなくそれらの中間の性質を持つ。規則正しいネットワークにわずかな数のランダムリンクを加えることで、このような中間の性質を持つネットワークを構成できることを我々は発見した。そしてこのネットワークは規則正しいネットワークと同じように高度にクラスタ化されており、それにもかかわらずランダムネットワークと同じようにノード間の距離が小さいという性質も兼ね備えている。このネットワーク構造は、よく知られている「六次の隔たり」という現象をよく再現するので「スモールワールドネットワーク」と呼ぶことにする。線虫の神経、電力網、映画俳優のつながりなど、これらはすべてスモールワールドネットワークで記述できる。また、処理系がスモールワールド構造を有することで信号伝達速度や計算処理能力が上昇したり、要素の活動が同期したりという自然現象をシミュレートすることができる。特に伝染病が一瞬で拡大するのは人と人とのつながりがスモールワールド構造になっていることで説明できる。このようにスモールワールドネットワークは自然界のありとあらゆる場所に潜んでいる。
+\section{スモールワールドネットワークの構成とその性質}
+\subsection{正規グラフとランダムグラフ}
+正規グラフとランダムグラフの中間グラフを構成するために次のような手続きをとる。まず$n$個のノードが円形に並んでおり、各ノードにつきエッジが$k$本伸びていて$k$近傍のノードと接続している状態を正規グラフとする（図\ref{fig1}の左端が$n = 20,\,k = 4$の場合）。以降、ノード数とエッジ数は変化しない。ここで、各エッジについて確率$p$で端の一方を他の任意のノードとつなぎかえる操作を一回ずつ行う。$p = 0$だと正規グラフのままで、$p = 1$だと完全なランダムグラフとなるが、$p$を$0 < p < 1$で調整することで中間のグラフを得ることができる。この中間の性質を調べることが目的である。
+\begin{figure}[H]
+  \centering
+  \includegraphics[width = .9\textwidth]{pic/fig1.eps}
+  \caption{正規グラフとランダムグラフ}
+  \label{fig1}
+\end{figure}
+\subsection{隔たり次数とクラスタ指数}
+ノード$v_i$から$v_j$への最短パス長を$d_m(v_i,\,v_j)$として、すべての$(v_i,\,v_j)$の組み合わせについて$d_m(v_i,\,v_j)$の平均値を隔たり次数と定義して$L(p)$で表す。また、ノード$v$の近傍$k_v$個のノードに関して$v$と実際に直接エッジが接続されている数を$e_v$として、全ての$v$についての$\displaystyle C_v = \frac{e_v}{k_v}$の平均値をクラスタ指数と定義して$C(p)$で表す。つまり、隔たり次数$L(p)$は任意のノード間の最短パス長としてグローバルな性質を、クラスタ指数$C(p)$は近傍のかたまり具合としてローカルな性質を表す指標である。ここで扱うものはたくさんのノードに対して少数のエッジが存在するような、$n \gg k \gg \ln (n) \gg 1$を満たすグラフに限定する。計算機シミュレーションによると、正規グラフ$(p = 0)$は高度にクラスタ化$(C(0) = 1)$されており、隔たり次数はノード数に比例して増加$(L(0) = O(n))$する。一方でランダムグラフ$(p = 1)$では規則性がほとんどなく$(C(1) \simeq 0)$、隔たり次数は小さいままほとんど変化しない$(L(1) = O(\log (n)))$ことが分かった。
+\subsection{少数のショートカットリンクの重要性}
+図\ref{fig2}は各$p$について隔たり次数とクラスタ指数を$p = 0$で正規化したグラフである。図\ref{fig2}を見ると、$L(p)$が$L_{random}$と同じくらい小さいと同時に$C(p)$が$C_{regular}$と同じくらい大きくなるような$p \ll 1$が存在することが分かる。つまりスモールワールドネットワークとは、ごく少数のランダムリンクを加えることだけでそれが各クラスタ間を結ぶ長距離リンク（ショートカット）の
+\begin{wrapfigure}{r}{.55\textwidth}
+  \vspace*{-\intextsep}
+  \includegraphics[width = .55\textwidth]{pic/fig2.eps}
+  \caption{隔たり次数とクラスタ指数の変化}
+  \label{fig2}
+  \vspace*{-2\intextsep}
+\end{wrapfigure}
+役割を果たし、$L(p)$のみが急激に小さくなっている状態である。ここでランダムリンクはごく少数なのでクラスタ性は保たれている。重要なのは、非常に小さい$p \ll 1$でローカルには正規グラフ、グローバルにはランダムグラフと、二つの性質が両立されて表れているという点である。円形構造（図\ref{fig1}）の他にも様々な形状のグラフでシミュレーションを行ったが結果は同じであった。
+\paragraph{}
+\section{実世界に存在するスモールワールド構造}
+\subsection{実世界のネットワーク}
+以上のことからごく少数の「ショートカット」が重要な要素であると考え、同様な構造を持つであろう実世界のネットワークで隔たり次数$L$とクラスタ指数$C$を計算した。用いたのは、映画俳優の共演関係を表現したグラフ、西部の電力網、線虫の神経系などである。映画俳優グラフは人の社会的関係の性質を代表して表しており、これはエルデシュ数とも深い関連性がある。また、電力網は伝達の効率性と信頼性が考慮された人工的グラフであり、線虫は神経構造が完全に解明されている唯一の種であることから、これらはすべて社会学、情報工学、神経科学とあらゆる分野にわたって興味の対象となるものである。
+\subsection{隔たり次数とクラスタ指数の計算}
+以上の３つのグラフについて、それぞれ同じノード数$n$、同じ１ノードあたりの平均エッジ数$k_a$である条件の下でランダムネットワークを構成した場合とで隔たり次数$L$およびクラスタ指数$C$を比較した（表\ref{table1}）。映画俳優グラフについて$n = 225226,\,k_a = 61$、電力網について$n = 4941,\,k_a = 2.67$、線虫について$n = 282,\,k_a = 14$であった。表\ref{table1}を見るとランダムグラフと比較して$C$が明らかに大きい$(C_{actual} \gg C_{random})$にもかかわらず$L$はわずかに大きいだけ$(L_{actual} \gtrsim L_{random})$であり、このように自然界に存在するネットワークにもスモールワールド構造が存在することが明らかになった。
+\begin{table}[H]
+  \centering
+  \caption{実世界ネットワークとランダムネットワークとの隔たり次数およびクラスタ指数の比較}
+  \label{table1}
+  \includegraphics[width = \textwidth]{pic/table1.eps}
+  \vspace*{-2\intextsep}
+\end{table}
+\section{スモールワールド構造による伝染病拡大シミュレーション}
+\subsection{感染ルール}
+次に、スモールワールドネットワークの機能的な意味を考察する。人々のつながりを図\ref{fig1}のグラフでモデル化し、伝染病が拡大する様子をシミュレートする。時刻$t = 0$で一人が感染しており、各時刻毎にウイルスが各エッジを介して確率$r$で伝染し、感染者は時刻$t + 1$でグラフから削除されるものとする。
+\subsection{感染の容易さ}
+最終的に全体の半数が感染するような$r$を$r_{half}$とすると、$r_{half}$は$p$がわずかに増大すると急激に減少した（図\ref{fig3a}）。また、$r = 1$とした場合に全体が感染するまでの時間$t$を$T(p)$とすると、$\displaystyle \frac{T(p)}{T(0)}$と$\displaystyle \frac{L(p)}{L(0)}$は全く同じ性質を持っていることがシミュレーションにより明らかになった。つまり、ごく少数のショートカットが存在するネットワークでは感染確率$r$が小さくても一瞬にして感染が拡大することがこれで説明できる。
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/fig3a.eps}
+    \caption{半数が感染するための感染確率}
+    \label{fig3a}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/fig3b.eps}
+    \caption{全滅するまでの時間}
+    \label{fig3b}
+  \end{minipage}
+\end{figure}
+\section{まとめ}
+神経細胞のような振動子を要素とするスモールワールドネットワークを用いてシミュレーションを行うと、振動子の位相が直ちに揃う現象が再現できる。これは視覚皮質で遠く離れた多数の神経細胞が同期発火する現象と非常に類似しており、これは脳がスモールワールド構造を有していることの強力な証拠であると考えられる。このようにスモールワールド構造が生物学から社会学まであらゆる複雑系の問題を解く突破口となり、これを手掛かりとしてさらなる研究が発展することを望む。
+\end{document}

@@ -1,0 +1,966 @@
+\documentclass[a4paper]{jarticle}
+\usepackage[dviout]{graphicx}
+\usepackage{float}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\usepackage{tabularx}
+\usepackage{ascmac}
+\usepackage{verbatim}
+\usepackage{amsmath}
+\usepackage{wrapfig}
+
+%\setlength{\topmargin}{-5mm}
+%\setlength{\headheight}{20mm}
+%\setlength{\headsep}{15mm}
+\setlength{\oddsidemargin}{5mm}
+%\setlength{\evensidemargin}{-12.5mm}
+\setlength{\textwidth}{148mm}
+%\setlength{\textheight}{225mm}
+%\setlength{\footskip}{10mm}
+%\setlength{\columnsep}{3mm}
+\newcommand{\bm}[1]{\mbox{\boldmath{$#1$}}}
+
+
+
+\makeatletter
+\def\ps@sotsuron{
+%  \def\@evenhead{\hfill 2008/9/x　卒業論文}
+  \def\@oddhead{\hfill 2008/9/15 卒業論文　東北大学電気通信研究所 塩入・栗木研究室　橋本耕太郎}}
+\makeatother
+
+
+\pagestyle{sotsuron}
+
+\title{フラッシュラグ効果を用いた運動視の\\加速度検出機能の検討}
+\author{東北大学電気通信研究所　塩入・栗木研究室\\学部４年　橋本　耕太郎}
+\date{2008年9月15日　卒業論文}
+\begin{document}
+\maketitle
+\section*{要約}
+運動する物体を我々が正確に知覚するためには神経系の遅延を補償して運動を予測する機構が必要である。この機構が実際に存在することがフラッシュラグ効果（Romi Nijhawan(1994)）の研究などによって示唆されているが、運動に速度変化が伴う場合に予測機構が受ける影響に注目した研究は少ない。Myrka Zago(2001)やRobin Baur\`{e}s (2007)らによる重力運動の予測に関する研究で重力加速度検出機構の存在について議論がなされているが、明確な結論は得られていない。一方でSchlack, A.(2008)の研究によって運動の加速度に対応して運動野の特性が一時的に変化するという報告があり、我々が何かしら速度変化を処理する機構を有している可能性をうかがうことができる。本研究ではフラッシュラグ効果を利用することで、ある加速度に特化して処理を行う機構の存在可能性を検討し、また重力方向と他方向についての差異を調査することを目的として実験を行った。その結果、加速度がフラッシュラグ効果に与える直接的な影響は現れなかったが、一部の結果について運動野の順応に関するSchlack, A.(2008)の知見を用いて一般に解釈することができ、また一部では被験者ごとに一貫した個人的な特徴が現れていることを示唆する実験結果が得られた。本研究では、ある加速度に特化して処理を行う機構の存在を否定し、速度変化を伴う運動の予測機構は重力環境などに運動野が適応することで得られる後天的な個人特有の能力であることを主張する。
+\tableofcontents
+\section{序論}
+\subsection{フラッシュラグ効果}
+我々の視覚系には網膜に像が映ってから知覚に上るまでに$\mbox{数}10 \sim \mbox{数}100\,[\mbox{ms}]$の遅延が存在する。にもかかわらず我々は運動する物体に対して的確な評価をし正確な行動を起こすことができる。このためには運動を予測する機構が必要不可欠であり、それが実際に存在することが過去の多数の研究から示唆されている。運動の先読みが行われていることを支持する現象として、一定速度で運動する刺激に対して進行方向真横に別の刺激を一瞬提示すると運動刺激に対してフラッシュ刺激が遅れて知覚されるという\underline{フラッシュラグ効果}が知られている（図\ref{FlashLag}）。この現象を発見したRomi Nijhawan(1994)は、運動検出の機能には神経系の遅延を補償するように運動を先回り予測する機構が存在する、との説明を与えた。
+\begin{figure}[H]
+  \centering
+  \includegraphics[width = \textwidth]{pic/FlashLag.eps}
+  \caption{フラッシュラグ効果}
+  \label{FlashLag}
+\end{figure}
+\subsection{重力運動の知覚}
+運動を予測する機構が存在するならば、落下するボールを捕える場合のように速度が時間変化するような運動に対しても予測を行う仕組みも存在すると予想できる。自然界で観察される加速度運動は重力による落下運動であるが、Myrka Zago(2001)は重力加速度を検出する機構が存在することによって落下運動を正確に評価できるという\underline{重力内部モデル}説を提案した。しかし重力内部モデルというものを仮定しなくても、加速度運動の各瞬間速度を検出して瞬間速度と位置のみによって運動を予測することを持続的に繰り返しフィードバックすることで十分な精度で加速度運動の予測ができるので、したがって重力内部モデルが存在しなくても等速運動の予測機構と重力の知識があれば重力運動の予測は十分に可能であるという反論がある（Robin Baur\`{e}s (2007)）。
+\subsection{加速度の知覚と運動野の順応}
+\label{schlack}
+一方で、正の加速度運動を観察しているときは減速運動を観察しているときと比較して速度変化の感度が上昇するという報告がSchlack, A.(2008)によってされている。これらのことは、MT野に存在する速度選択性細胞の応答領域が加速運動観察時により鋭くチューニングするように変化するというSchlack, A.(2007)自身の生理学的な知見で説明できると述べられている。また、加速運動を観察しているときは減速運動を観察しているときと比較して速度が過小評価されることが示されている。現在、加速度そのものに感度を持つ細胞は発見されていないが、そのような細胞が存在しないとしても、その代わりに速度選択細胞の応答特性が変化することによって加速度の評価をすることが可能であるという考察がされている。
+\section{目的}
+本研究では運動予測機構の影響がフラッシュラグ効果に現れることを仮定し、神経信号の遅延が現れるフラッシュラグ効果を利用することで加速度そのものを評価する機構の存在可能性を検討する。また、重力方向と他方向について加速度による影響の差異を調査することで重力加速度内部モデル仮説の妥当性を検討する。
+\section{実験}
+\subsection{実験環境}
+\begin{wrapfigure}{r}{.42\textwidth}
+  \vspace*{-\intextsep}
+  \includegraphics[width = .42\textwidth]{pic/stimuli1.eps}
+  \caption{提示刺激}
+  \label{stimuli1}
+\end{wrapfigure}
+$17$\,[in]、$75$\,[Hz]のCRTモニタ(Sony GDM-F520)を使用し、暗室で顎台を用いて視距離$50$\,[cm]とした。刺激はMATLABのPsychtoolboxにより$16.0\,[\mbox{deg}] \times 19.8\,[\mbox{deg}]\,(\,=\, 512\,[\mbox{pixel}] \times 640\,[\mbox{pixel}])$の長方形領域に提示される。グレーの背景に赤い固視点があり、一定方向に運動する刺激、ある時点でフラッシュする刺激が提示される。刺激はともに直径$0.64\,[\mbox{deg}]$の白い円盤である（図\ref{stimuli1}）。被験者は常に固視点を注視するように指示され、周辺視で円盤を観察する。被験者は皆男性で20代、正視、正常色覚を有する著者(KH)、視覚研究者２名(MO, YK)、一般被験者２名(TA, TK)、の計５名。
+\subsection{手続き}
+一定方向に運動する円盤が提示され、その運動に平行する直線上（線は提示されない）に別の円盤が一回の点滅によって提示される。提示のタイミングは運動円盤が画面の中心に到達した瞬間である。ここでフラッシュ円盤の運動円盤に対する相対位置が試行ごとにランダムに設定され、被験者はフラッシュ円盤が運動円盤に対してその運動方向について先行して見えたか、もしくは後方に見えたかを強制二択で応答する（図\ref{before}、図\ref{after}）。
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/before.eps}
+    \caption{フラッシュが先行して知覚}
+    \label{before}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/after.eps}
+    \caption{フラッシュが後方に知覚}
+    \label{after}
+  \end{minipage}
+\end{figure}
+固視点は運動円盤に対してフラッシュ円盤の反対側で、フラッシュ円盤が現れる以前の運動区間の中心にある。これは、フラッシュ円盤と運動円盤の相対位置のみによって応答を計測したいという理由から、固視点とフラッシュ円盤の距離を大きくすることで固視点が応答の手がかりとなる影響を小さくするためである。応答はボタン押しで行い、前試行の応答から$427\,[\mbox{ms}]$後に次の試行が開始される。時間制限は設けず、被験者は適宜休憩をとることができる。1セット600回の試行で、上下左右4通りの運動方向について各1回ずつ、被験者は合計4セットの試行を行う。
+\subsection{提示刺激}
+運動円盤はフラッシュ円盤が提示される以前の区間で等加速度直線運動をし、フラッシュ提示後の区間では等速直線運動をする（図\ref{kukan}）。パラメータとして加速度$a$を変化させるが、運動円盤が画面の中心に到達した瞬間（フラッシュ円盤が提示される瞬間）にどの条件でも運動円盤の瞬間速度が$v = 16.9\,[\mbox{deg/s}]$で一定となるように初速度$v_0$および加速度$a$を調整する。ここで、初速度$v_0$を$2.178 \sim 21.78\,[\mbox{deg/s}]$まで$2.178\,[\mbox{deg/s}]$間隔で$10$段階に変化させることとする。したがって、横方向の運動については加速度が$\displaystyle a = \frac{v^2 - v_0^2}{2 \times 19.8 / 2}$（$19.8$は画面の横幅[deg]）によって$a = 14.2 \sim -9.5\,[\mbox{deg/s}^2]$の範囲で決定される。縦方向については$\displaystyle a = \frac{v^2 - v_0^2}{2 \times 16.0 / 2}$によって$a = 17.6 \sim -11.8\,[\mbox{deg/s}^2]$の範囲で決定される。運動円盤は$1\,[\mbox{pixel}]\,(=\,0.032\,[\mbox{deg}])$単位で移動する。
+\paragraph{}
+フラッシュ円盤が現れる場所は、フラッシュ提示時の運動円盤の位置に対して$-0.52 \sim 0.90\,[\mbox{deg}]$（運動方向が正の向き）の範囲で$0.13\,[\mbox{deg}]$間隔12通りの位置のいずれかである。フラッシュ提示時の運動円盤の速さが$v = 16.9\,[\mbox{deg/s}]$であるので、距離のずれを$v$で割ると時間タイミングずれの範囲が$8\,[\mbox{ms}]$間隔で$-31 \sim 53\,[\mbox{ms}]$となる（図\ref{kukan2}）。フラッシュ円盤の提示時間は$13\,[\mbox{ms}](=\,1\,[\mbox{frame}])$である。
+\paragraph{}
+以上について、フラッシュ提示タイミングが12通り、初速度および加速度が10通りであり、各組み合わせによる試行を5回ずつランダムな順序で行うことで1セットの試行数が合計で600回となる。
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/kukan.eps}
+    \caption{加速区間と等速区間}
+    \label{kukan}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/kukan2.eps}
+    \caption{フラッシュ提示タイミング}
+    \label{kukan2}
+  \end{minipage}
+\end{figure}
+\subsection{解析方法}
+ある加速度および初速度の条件で、それぞれのフラッシュ提示タイミングについてフラッシュ円盤が先行して知覚された割合の5回平均を計算すると、例えば図\ref{data1}のような12点のプロットが得られる。このデータプロットをロジスティック関数
+\begin{equation}
+  \hat{y}_{a,\,b} = \frac{1}{1 + e^{- a \left(x - b \right)}}
+\label{log}
+\end{equation}
+で最小二乗近似して定数$a,\,b$を決定し、その結果$\hat{y}_{a,\,b} = 0.5$となる$x$をフラッシュラグ効果による時間ずれとして扱う（図\ref{fit}）。
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/data1.eps}
+    \caption{フラッシュラグ効果の計測（例）}
+    \label{data1}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/fit.eps}
+    \caption{フィッティング（例）}
+    \label{fit}
+  \end{minipage}
+\end{figure}
+測定点を$y_i$として、残差標準偏差$\Delta y$が
+\begin{equation}
+  \Delta y = \sqrt{\frac{\sum_{i = 1}^{12}{\left( y_i - \hat{y}_{a,\,b} \right)^2}}{12 - 2}}
+\end{equation}
+で算出される。これを横軸の値へ変換するために、$\Delta y$を$\hat{y}_{a,\,b} = 0.5$となる$x$での傾き
+\begin{equation}
+  \left. \frac{d\,\hat{y}_{a,\,b}}{d\,x} \right|_{\hat{y}_{a,\,b} = 0.5} = \left. \frac{a e^{-a (x - b)}}{ (1 + e^{- a(x - b)})^ 2}  \right|_{\hat{y}_{a,\,b} = 0.5}
+\end{equation}
+で割ることで、横軸の残差標準偏差$\Delta x\,[\mbox{ms}]$が
+\begin{equation}
+  \Delta x = \frac{\Delta y}{\left. \frac{d\,\hat{y}_{a,\,b}}{d\,x} \right|_{\hat{y}_{a,\,b} = 0.5}} = \frac{\sqrt{\frac{\sum_{i = 1}^{12}{\left( y_i - \hat{y}_{a,\,b} \right)^2}}{12 - 2}}}{\left. \frac{a e^{-a (x - b)}}{ (1 + e^{- a(x - b)})^ 2}  \right|_{\hat{y}_{a,\,b} = 0.5}}
+\end{equation}
+と求まる。以後、グラフの誤差棒は残差標準偏差$\Delta x\,[\mbox{ms}]$を表すものとする。
+\subsubsection{解析例}
+例として、提示刺激の運動方向が横（左→右 および 右→左）の場合について被験者MOの結果をロジスティック関数(式(\ref{log}))でフィッティングした図を示す。
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/r1.eps}
+    \caption{MO、右方向、加速度$17.0\,[\mbox{deg/s}^2]$}
+    \label{r1}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/l1.eps}
+    \caption{MO、左方向、加速度$17.0\,[\mbox{deg/s}^2]$}
+    \label{l1}
+  \end{minipage}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/r2.eps}
+    \caption{MO、右方向、加速度$16.2\,[\mbox{deg/s}^2]$}
+    \label{r2}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/l2.eps}
+    \caption{MO、左方向、加速度$16.2\,[\mbox{deg/s}^2]$}
+    \label{l2}
+  \end{minipage}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/r3.eps}
+    \caption{MO、右方向、加速度$14.7\,[\mbox{deg/s}^2]$}
+    \label{r3}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/l3.eps}
+    \caption{MO、左方向、加速度$14.7\,[\mbox{deg/s}^2]$}
+    \label{l3}
+  \end{minipage}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/r4.eps}
+    \caption{MO、右方向、加速度$12.7\,[\mbox{deg/s}^2]$}
+    \label{r4}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/l4.eps}
+    \caption{MO、左方向、加速度$12.7\,[\mbox{deg/s}^2]$}
+    \label{l4}
+  \end{minipage}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/r5.eps}
+    \caption{MO、右方向、加速度$10.2\,[\mbox{deg/s}^2]$}
+    \label{r5}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/l5.eps}
+    \caption{MO、左方向、加速度$10.2\,[\mbox{deg/s}^2]$}
+    \label{l5}
+  \end{minipage}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/r6.eps}
+    \caption{MO、右方向、加速度$7.0\,[\mbox{deg/s}^2]$}
+    \label{r6}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/l6.eps}
+    \caption{MO、左方向、加速度$7.0\,[\mbox{deg/s}^2]$}
+    \label{l6}
+  \end{minipage}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/r7.eps}
+    \caption{MO、右方向、加速度$3.3\,[\mbox{deg/s}^2]$}
+    \label{r7}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/l7.eps}
+    \caption{MO、左方向、加速度$3.3\,[\mbox{deg/s}^2]$}
+    \label{l7}
+  \end{minipage}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/r8.eps}
+    \caption{MO、右方向、加速度$-1.0\,[\mbox{deg/s}^2]$}
+    \label{r8}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/l8.eps}
+    \caption{MO、左方向、加速度$-1.0\,[\mbox{deg/s}^2]$}
+    \label{l8}
+  \end{minipage}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/r9.eps}
+    \caption{MO、右方向、加速度$-5.9\,[\mbox{deg/s}^2]$}
+    \label{r9}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/l9.eps}
+    \caption{MO、左方向、加速度$-5.9\,[\mbox{deg/s}^2]$}
+    \label{l9}
+  \end{minipage}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/r10.eps}
+    \caption{MO、右方向、加速度$-11.3\,[\mbox{deg/s}^2]$}
+    \label{r10}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/l10.eps}
+    \caption{MO、左方向、加速度$-11.3\,[\mbox{deg/s}^2]$}
+    \label{l10}
+  \end{minipage}
+\end{figure}
+以上の図\ref{r1}$\sim$図\ref{l10}について、運動刺激の加速度を横軸に、フラッシュラグ効果を縦軸にとると、右方向と左方向の試行についてそれぞれ図\ref{ogiya_r}、図\ref{ogiya_l}のようなグラフが得られる。以降はこの最終的なグラフを結果として扱う。
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/ogiya_r.eps}
+    \caption{右方向(MO)}
+    \label{ogiya_r}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/ogiya_l.eps}
+    \caption{左方向(MO)}
+    \label{ogiya_l}
+  \end{minipage}
+\end{figure}
+\subsection{結果予想}
+\label{結果予想}
+\label{Robin}
+一般にフラッシュラグ効果は運動物体の速度が大きいほど効果が大きく現れる。仮に我々が加速度運動に特化した処理を行っておらず、Robin Baur\`{e}s (2007) が主張しているように直前$(\mbox{数}10 \sim \mbox{数}100\,[\mbox{ms}])$の瞬間速度を用いて運動の予測をしているならば、本実験において加速度を横軸に、フラッシュラグ効果を縦軸にとったデータプロットは図\ref{yosoku1}のように右肩下がりになると推測できる。一方で、加速度を含めて運動を予測する処理が行われているならば、加速度が正に大きいほどフラッシュラグ効果は大きく現れ、加速度が負に大きいほどフラッシュラグ効果は小さく現れる（図\ref{yosoku2}）というように、図\ref{yosoku1}とは逆の予想をすることもできる。
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/yosoku1.eps}
+    \caption{直前の速度のみで運動を予測した場合}
+    \label{yosoku1}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/yosoku2.eps}
+    \caption{加速度を含めて運動を予測した場合}
+    \label{yosoku2}
+  \end{minipage}
+\end{figure}
+また、Schlack, A.(2008)による心理物理学、生理学的知見(\pageref{schlack}ページを参照)によると加速度運動を観察することでMT野の応答特性が変化する。このことが本実験の結果にどのように現れるかについて一概に予想することは難しい。さらに、運動予測機構の影響がフラッシュラグ効果に現れない可能性も存在する。以上の予想が複合して結果に現れる可能性や、未知の要因が関係する可能性を考慮する必要がある。
+\newpage
+\section{結果}
+\label{結果}
+上下左右各方向についての実験結果を被験者ごとに示す。
+\subsection{左→右方向}
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/r_MO.eps}
+    \caption{MO（右方向）}
+    \label{r_MO}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/r_YK.eps}
+    \caption{YK（右方向）}
+    \label{r_YK}
+  \end{minipage}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/r_TA.eps}
+    \caption{TA（右方向）}
+    \label{r_TA}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/r_TK.eps}
+    \caption{TK（右方向）}
+    \label{r_TK}
+  \end{minipage}
+\end{figure}
+\begin{wrapfigure}{l}{.48\textwidth}
+  \vspace*{-\intextsep}
+  \includegraphics[width = .48\textwidth, clip]{pic/r_KH.eps}
+  \caption{KH（右方向）}
+  \label{r_KH}
+\end{wrapfigure}
+　\\　\\　\\　\\　\\　\\　\\　\\　\\　\\
+\subsection{右→左方向}
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/l_MO.eps}
+    \caption{MO（左方向）}
+    \label{l_MO}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/l_YK.eps}
+    \caption{YK（左方向）}
+    \label{l_YK}
+  \end{minipage}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/l_TA.eps}
+    \caption{TA（左方向）}
+    \label{l_TA}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/l_TK.eps}
+    \caption{TK（左方向）}
+    \label{l_TK}
+  \end{minipage}
+\end{figure}
+\begin{wrapfigure}{l}{.48\textwidth}
+  \vspace*{-\intextsep}
+  \includegraphics[width = .48\textwidth, clip]{pic/l_KH.eps}
+  \caption{KH（左方向）}
+  \label{l_KH}
+\end{wrapfigure}
+　\\　\\　\\　\\　\\　\\　\\　\\　\\　\\
+\subsection{下→上方向}
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/u_MO.eps}
+    \caption{MO（上方向）}
+    \label{u_MO}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/u_YK.eps}
+    \caption{YK（上方向）}
+    \label{u_YK}
+  \end{minipage}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/u_TA.eps}
+    \caption{TA（上方向）}
+    \label{u_TA}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/u_TK.eps}
+    \caption{TK（上方向）}
+    \label{u_TK}
+  \end{minipage}
+\end{figure}
+\begin{wrapfigure}{l}{.48\textwidth}
+  \vspace*{-\intextsep}
+  \includegraphics[width = .48\textwidth, clip]{pic/u_KH.eps}
+  \caption{KH（上方向）}
+  \label{u_KH}
+\end{wrapfigure}
+　\\　\\　\\　\\　\\　\\　\\　\\　\\　\\
+\subsection{上→下方向}
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/d_MO.eps}
+    \caption{MO（下方向）}
+    \label{d_MO}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/d_YK.eps}
+    \caption{YK（下方向）}
+    \label{d_YK}
+  \end{minipage}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/d_TA.eps}
+    \caption{TA（下方向）}
+    \label{d_TA}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/d_TK.eps}
+    \caption{TK（下方向）}
+    \label{d_TK}
+  \end{minipage}
+\end{figure}
+\begin{wrapfigure}{l}{.48\textwidth}
+  \vspace*{-\intextsep}
+  \includegraphics[width = .48\textwidth, clip]{pic/d_KH.eps}
+  \caption{KH（下方向）}
+  \label{d_KH}
+\end{wrapfigure}
+　\\　\\　\\　\\　\\　\\　\\　\\　\\　\\
+\newpage
+\subsection{被験者間の平均値}
+実験結果（図\ref{r_MO}$\sim$図\ref{d_KH}）について、それぞれの運動方向ごとに各被験者の結果を重ねて表示した（図\ref{r_ALL}$\sim$図\ref{u_ALL}）。なお、図を見易くするために誤差棒を無視してデータ点を直線で結んで表示している。
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/r_ALL.eps}
+    \caption{左$\to$右方向}
+    \label{r_ALL}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/l_ALL.eps}
+    \caption{右$\to$左方向}
+    \label{l_ALL}
+  \end{minipage}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/d_ALL.eps}
+    \caption{上$\to$下方向}
+    \label{d_ALL}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/u_ALL.eps}
+    \caption{下$\to$上方向}
+    \label{u_ALL}
+  \end{minipage}
+\end{figure}
+\begin{wrapfigure}{r}{.6\textwidth}
+  \vspace*{-\intextsep}
+  \includegraphics[width = .6\textwidth, clip]{pic/ave.eps}
+  \caption{各運動方向についての被験者間平均}
+  \label{ave}
+  \vspace*{-\intextsep}
+\end{wrapfigure}
+図\ref{r_ALL}$\sim$図\ref{u_ALL}を見る限り、\pageref{結果予想}ページの予想のように全体的に右肩上がり、もしくは右肩下がり、のようなはっきりと一貫した傾向は存在しない。ここで被験者間のばらつきや誤差棒を考慮せずに各被験者のデータを運動方向ごとに平均すると図\ref{ave}のようになった。その結果、右と左方向および上と下方向でそれぞれ類似した形状のグラフが得られた。
+\paragraph{}
+このことを考察するために以下の項目を検討する。
+\begin{itemize}
+  \item フラッシュラグ効果の加速度に対する変化特性（グラフの凹凸）について
+  \begin{itemize}
+    \item 刺激運動方向間の差異
+    \item 被験者間の差異
+  \end{itemize}
+  \item フラッシュラグ効果の加速度間平均値（平均レベル）について
+  \begin{itemize}
+    \item 刺激運動方向間の差異
+    \item 被験者間の差異
+  \end{itemize}
+\end{itemize}
+\section{考察}
+\subsection{フラッシュラグ効果の加速度に対する変化の様子（グラフの凹凸）について}
+\subsubsection{刺激運動方向間の差異}
+\paragraph{左右方向間および上下方向間の差分の検討}
+\paragraph{}
+左右方向間および上下方向間について被験者ごとにフラッシュラグ効果の差分を考察する。右方向のフラッシュラグ効果から左方向の効果を引いたグラフ、および上方向の効果から下方向の効果を引いたグラフを以下に示す（図\ref{h_s_MO}$\sim$図\ref{v_s_KH}）。誤差棒は二つの残差標準偏差の和を表す。
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.45\textwidth}
+    \includegraphics[width = \textwidth]{pic/h_s_MO.eps}
+    \caption{右方向の効果 - 左方向の効果（MO）}
+    \label{h_s_MO}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.45\textwidth}
+    \includegraphics[width = \textwidth]{pic/v_s_MO.eps}
+    \caption{上方向の効果 - 下方向の効果（MO）}
+    \label{v_s_MO}
+  \end{minipage}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.45\textwidth}
+    \includegraphics[width = \textwidth]{pic/h_s_YK.eps}
+    \caption{右方向の効果 - 左方向の効果（YK）}
+    \label{h_s_YK}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.45\textwidth}
+    \includegraphics[width = \textwidth]{pic/v_s_YK.eps}
+    \caption{上方向の効果 - 下方向の効果（YK）}
+    \label{v_s_YK}
+  \end{minipage}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/h_s_TA.eps}
+    \caption{右方向の効果 - 左方向の効果（TA）}
+    \label{h_s_TA}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/v_s_TA.eps}
+    \caption{上方向の効果 - 下方向の効果（TA）}
+    \label{v_s_TA}
+  \end{minipage}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/h_s_TK.eps}
+    \caption{右方向の効果 - 左方向の効果（TK）}
+    \label{h_s_TK}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/v_s_TK.eps}
+    \caption{上方向の効果 - 下方向の効果（TK）}
+    \label{v_s_TK}
+  \end{minipage}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/h_s_KH.eps}
+    \caption{右方向の効果 - 左方向の効果（KH）}
+    \label{h_s_KH}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/v_s_KH.eps}
+    \caption{上方向の効果 - 下方向の効果（KH）}
+    \label{v_s_KH}
+  \end{minipage}
+\end{figure}
+運動方向間の差分は全体的に元のフラッシュラグ効果（図\ref{r_ALL}$\sim$図\ref{u_ALL}）と比較して値の絶対値が小さくなっているように見える。このことを検証するために、左右方向間および上下方向間について被験者ごとにフラッシュラグ効果の平均値を計算し、差分絶対値の平均値と比較した（表\ref{sabun}）。
+\begin{table}[H]
+  \begin{center}
+  \caption{フラッシュラグ効果の平均値および差分平均値との比較（単位[ms]）}
+  \label{sabun}
+    \begin{tabular}{|c||c|c|c|c||c|c||c|c||} \hline
+     & \multicolumn{6}{c||}{運動方向ごとの加速度間平均値} & \multicolumn{2}{c||}{差分絶対値の平均} \\ \hline
+    被験者 & 右 & 左 & 上 & 下 & 左と右 & 上と下 & 左右間 & 上下間 \\ \hline \hline
+    MO & 8.16 & 9.29 & 0.57 & 14.10 & 8.71 & 7.34 & 6.81 \textdownarrow & 13.53 \\ \hline
+    YK & 17.93 & 23.50 & 17.61 & 33.54 & 20.72 & 25.58 & 5.89 \textdownarrow & 15.93 \textdownarrow \\ \hline
+    TA & 9.01 & 27.52 & 17.44 & 15.20 & 18.26 & 16.32 & 18.50 & 5.11 \textdownarrow \\ \hline
+    TK & 23.08 & 48.62 & 35.10 & 26.33 & 35.85 & 30.71 & 25.53 \textdownarrow & 8.77 \textdownarrow \\ \hline
+    KH & 22.37 & 23.72 & 13.26 & 6.75 & 23.04 & 10.00 & 8.35 \textdownarrow & 9.94 \textdownarrow \\ \hline
+  \end{tabular}
+  \end{center}
+\end{table}
+\label{結論１}
+差分絶対値の平均値が元のフラッシュラグ効果の平均値よりも小さい場合に \textdownarrow を表示している。表\ref{sabun}では \textdownarrow の個数が過半数$(8/10)$を占めている。そして、このように差分が元の値よりも小さいことは独自の検定（\pageref{橋本検定}ページの付録を参照）により統計的に有意$(p < 0.05)$であった（図\ref{RL}, \ref{UD}）。したがって、図\ref{ave}において右左方向間および上下方向間でグラフの形状が類似していることは有意である。
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/RL.eps}
+    \caption{左右方向間差分が小さいことの検定}
+    \label{RL}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/UD.eps}
+    \caption{上下方向間の差分が小さいことの検定}
+    \label{UD}
+  \end{minipage}
+\end{figure}
+\newpage
+\paragraph{左右方向間および上下方向間のグラフの凹凸に基づく比較}
+\paragraph{}
+左右方向間および上下方向間でグラフの形状が類似していることを、その導関数を調べることで再び確認した。図\ref{r_MO}$\sim$図\ref{d_KH}について、提示加速度に対するフラッシュラグ効果の変化率を追うと図\ref{h_d_MO}$\sim$図\ref{v_d_KH}のようになり、被験者ごとに左右方向間および上下方向間で特性が類似していることが確認できる。図中の点線は誤差棒を考慮した変化率の上限下限を表す。
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/h_d_MO.eps}
+    \caption{MO、グラフの変化率（左右方向）}
+    \label{h_d_MO}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/v_d_MO.eps}
+    \caption{MO、グラフの変化率（上下方向）}
+    \label{v_d_MO}
+  \end{minipage}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/h_d_YK.eps}
+    \caption{YK、グラフの変化率（左右方向）}
+    \label{h_d_YK}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/v_d_YK.eps}
+    \caption{YK、グラフの変化率（上下方向）}
+    \label{v_d_YK}
+  \end{minipage}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/h_d_TA.eps}
+    \caption{TA、グラフの変化率（左右方向）}
+    \label{h_d_TA}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/v_d_TA.eps}
+    \caption{TA、グラフの変化率（上下方向）}
+    \label{v_d_TA}
+  \end{minipage}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/h_d_TK.eps}
+    \caption{TK、グラフの変化率（左右方向）}
+    \label{h_d_TK}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/v_d_TK.eps}
+    \caption{TK、グラフの変化率（上下方向）}
+    \label{v_d_TK}
+  \end{minipage}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/h_d_KH.eps}
+    \caption{KH、グラフの変化率（左右方向）}
+    \label{h_d_KH}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/v_d_KH.eps}
+    \caption{KH、グラフの変化率（上下方向）}
+    \label{v_d_KH}
+  \end{minipage}
+\end{figure}
+\subsubsection{被験者間の差異}
+被験者ごとに左右方向間および上下方向間でグラフ形状が有意に類似することは、図\ref{ave}のように被験者間平均をとっても右左方向間および上下方向間でグラフの形状が有意に類似するために十分である。ここで、任意の刺激運動方向ごとに被験者間でもグラフ形状が有意に類似するという条件が満たされれば、図\ref{ave}のグラフは一般にフラッシュラグ効果の加速度特性として扱うことができる。次に各運動方向ごとに被験者間の類似性を検討する。
+\paragraph{}
+各運動方向ごとの被験者間平均値について独自検定（\pageref{橋本検定}ページの付録を参照）を行うと図\ref{R_ave}$\sim$図\ref{U_ave}に示す結果が得られ、被験者間平均値が有意$(p < 0.05)$であるのは右方向と上方向のみであることが分かった。
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/R_ave.eps}
+    \caption{被験者間平均値の検定（右方向）}
+    \label{R_ave}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/L_ave.eps}
+    \caption{被験者間平均値の検定（左方向）}
+    \label{L_ave}
+  \end{minipage}
+\end{figure}
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/D_ave.eps}
+    \caption{被験者間平均値の検定（下方向）}
+    \label{D_ave}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/U_ave.eps}
+    \caption{被験者間平均値の検定（上方向）}
+    \label{U_ave}
+  \end{minipage}
+\end{figure}
+\label{有意でない}
+したがってフラッシュラグ効果の加速度に対する特性そのものが被験者間で共通しないので、被験者間平均（図\ref{ave}）のグラフ形状に基づいた議論をすることはできない。
+\paragraph{}
+\label{結論２}
+以上のことから、フラッシュラグ効果の加速度に対する特性は左右方向間および上下方向間それぞれで類似した傾向を示すが、それは各被験者内に限ったことであって複数の被験者間の特性は異なることが示された。この結果は、被験者が各々固有の特性を有していることを示唆する。
+\newpage
+\subsection{フラッシュラグ効果の加速度間平均値（平均レベル）について}
+\begin{wraptable}{r}{.4\textwidth}
+  \vspace*{-2\intextsep}
+  \begin{center}
+  \caption{差分の平均値（単位[ms]）}
+  \label{sabun2}
+    \begin{tabular}{|c||c|c|} \hline
+    被験者 & 右-左 & 上-下 \\ \hline \hline
+    MO & -1.16 & -13.5 \\ \hline
+    YK & -5.58 & -15.93 \\ \hline
+    TA & -18.50 & 2.24 \\ \hline
+    TK & -25.54 & 8.77 \\ \hline
+    KH & -1.35 & 6.50 \\ \hline
+  \end{tabular}
+  \end{center}
+  \vspace*{-\intextsep}
+\end{wraptable}
+重力方向と他方向の差異を検討するために、フラッシュラグ効果の左右方向間および上下方向間の差を加速度間で平均して比較した（表\ref{sabun2}）。
+\subsubsection{刺激運動方向間の差異}
+我々が自然界で見る機会のある加速度運動は主に重力運動である。したがって鉛直下方向と上方向について加速度に対する運動予測の特性が異なることはあっても、水平方向に関しては加速度について左右の差が存在しないと考えることが合理的である。
+\paragraph{}
+しかし、表\ref{sabun2}を見る限りフラッシュラグ効果の左右の差分はゼロではない。にもかかわらず\pageref{結論１}ページで述べたように、フラッシュラグ効果の加速度に対する特性グラフの形状は左右方向間および上下方向間で被験者ごとに一貫して類似する。このことは、フラッシュラグ効果の全体的な平均レベルが時間や環境によって上下する可能性を示唆する。
+\subsubsection{被験者間の差異}
+フラッシュラグ効果の左右方向間および上下方向間の差を加速度間で平均した値や、重力方向と水平方向との差異について、すべての被験者に共通する性質は見られない（表\ref{sabun2}）。このことは\pageref{結論２}ページの結果のように被験者が各々固有の特性を有することと同様である。
+\subsection{先行研究との関連}
+\begin{wrapfigure}{r}{.53\textwidth}
+  \vspace*{-\intextsep}
+  \includegraphics[width = .53\textwidth, clip]{pic/sch.eps}
+  \caption{速度選択性細胞の順応による運動野の特性変化}
+  \label{sch}
+%  \vspace*{-\intextsep}
+\end{wrapfigure}
+Schlack, A.(2008)による心理物理学、生理学的知見(\pageref{schlack}ページを参照)は図\ref{sch}のようなモデルで表現できると著者は考える。図\ref{sch}の曲線は物理的な速さと知覚上の速さの対応を示しており、減速運動を観察している場合と加速運動を観察している場合とで対応関係の特性が変化することを示している。そして、曲線の傾きが大きい部分では速度を知覚するための資源が物理的な速度の狭い範囲に集中して割り当てられているために速度変化の感度が高いことを意味する。逆に傾きが小さい部分では少ない資源で大きな範囲を扱うために速度変化の感度が低いことを意味する。図\ref{sch}によると、正の加速運動を観察しているときは現在観察している物理的速度に対応する領域で速度変化感度が上昇し、またその領域に対応する知覚的速度が低域にシフトすることで速度が過小評価される。逆に、減速運動を観察しているときは速度変化感度が低下する代わりに速度が過大評価されるように特性曲線がシフトする。
+\paragraph{}
+運動物体の物理的速度が大きいほどフラッシュラグ効果が大きく現れる（\pageref{Robin}ページ参照）ということが知覚的速度についても同様ならば、本実験において正の加速度運動を提示した場合は減速運動を提示した場合と比較して図\ref{sch}のように速度が過小評価されることでフラッシュラグ効果が小さく現れるであろう。図\ref{ave}を見ると、提示加速度が約$-5\sim5\,[\mbox{deg/s}^2]$の範囲でフラッシュラグ効果$[\mbox{ms}]$が予想と一致して右肩下がりである。しかし提示加速度が大きくなるとその傾向は消失する。\pageref{有意でない}ページで述べたように被験者間で有意に結果が類似していないので図\ref{ave}のグラフの形状に基づく議論をすることは一般にできないが、しかし被験者間で結果が類似しないことを一部否定する図\ref{R_ave}や図\ref{U_ave}のような証拠も存在する。
+\subsubsection{結果の解釈}
+図\ref{R_ave}$\sim$図\ref{U_ave}のように被験者間で結果が類似することを支持する場合と支持しない場合の両方が存在することの原因として、提示加速度に対するフラッシュラグ効果の変化には一般に共通した傾向と個人差との両方が含まれるという可能性が考えられる。そして、その個人差のフラッシュラグ効果に現れる度合いが提示加速度の領域によって変化すると仮定すると、図\ref{ave}のグラフにばらつく領域とばらつかない領域が存在する原因は約$-5\sim5\,[\mbox{deg/s}^2]$で一般に共通した傾向が相対的に大きく、他の領域で個人差が相対的に大きく現れていることであるという推測ができる。また、加速度が正に大きい領域で個人差が相対的に大きく現れることは、図\ref{sch}のモデルのように速度変化感度が上昇することと関連すると考えることができる。
+\paragraph{}
+運動野の順応に個人差があることはよく知られている。本研究の結果は、加速度運動の処理も同様に速度選択性細胞が順応することによって行われている可能性を示唆する。重力方向との差異に関して、方向間で差異は本来存在せずに重力環境に適応することで順応に個人差が生じると考えれば、例えば落下するボールの軌道を正確に予想することが練習によってできるようになることの説明が与えられる。したがって、必ずしも$9.8\,[\mbox{m/s}^2]$に特化した予測機構が生まれつき存在すると考えることはできない。本研究の実験環境では視距離が$50\,[\mbox{cm}]$、提示された運動の加速度が最大で$17.6\,[\mbox{deg/s}^2]$であり、これを$[\mbox{m/s}^2]$に換算すると$0.16\,[\mbox{m/s}^2]$である。現実の重力加速度を視距離$50\,[\mbox{cm}]$で再現しようとすると運動が速すぎて実験を行うことができないためにこのような設定をした。実環境で重力加速度が$9.8\,[\mbox{m/s}^2]$一定でも視距離によって$[\mbox{deg/s}^2]$は変化する。さらに、実世界の加速運動はほぼすべて厳密に等加速度運動ではない。よって、一定の重力加速度に特化して応答を示す細胞というものを仮定しても無意味である。
+\section{結び}
+\subsection{結論}
+本研究では加速度を伴う運動予測機構の影響がフラッシュラグ効果に現れることを仮定して実験を計画した。その結果、\pageref{結果予想}ページの予想（図\ref{yosoku1}、図\ref{yosoku2}）のように加速度の影響が直接的に現れることはなかった。しかし一部の加速度の範囲について運動野の順応に関する先行研究の知見を用いて一般に解釈することができ、また他の領域では被験者ごとに一貫した個人的な特徴が現れていることを示唆する結果が得られた。
+\paragraph{}
+したがって、速度変化を伴う運動の予測機構は経験や環境に運動野が適応することで得られる後天的な個人特有の能力であり、重力方向と水平方向との差異があるならばそれは重力運動に適応した結果であると考えられる。
+\subsection{今後の課題}
+本研究では運動予測機構に加速度が与える影響を考察するためにフラッシュラグ効果という間接的な手法を用いたが、今後は representational momentum などのパラダイムを用いて直接的な効果を調べる必要がある。また、奥行方向に運動する物体の位置予測について等方性が成立しないことが知られており、このことについて加速度運動と関連して研究する余地がある。
+\section*{付録}
+\label{橋本検定}
+\subsection*{系列の類似性検定}
+本研究において著者が独自に考案した、二つの系列の類似度を判定するアルゴリズムを以下に示す。
+\begin{itemize}
+  \item 二つの系列を$a_i,\,b_i\,(i = 1,\,2,\,\cdots,\,n)$とする
+  \item 検定量を$\displaystyle r = \sum_{i = 1}^n{\left| a_i - b_i \right|}$とする
+  \item $i = 1,\,2,\,\cdots,\,n$のうち任意の$i$を$rand$として$\displaystyle x = \sum_{i = 1}^n{\left| a_{rand} - b_{rand}\right|}$を計算する
+  \item 十分に小さい$p\,\,(p \ll 1)$に対して、$x$を十分な回数繰り返し計算して得られる$x$の度数分布のうち$100(1 - p)\,[\%]$が検定量$r$から右側に存在するとき、\underline{系列$a_i,\,b_i$は有意に類似する}と定義する。
+\end{itemize}
+\paragraph{}
+以上のアルゴリズムのMATLABスクリプトによる実装を示す。
+\paragraph{}
+\begin{itembox}[l]{橋本検定}
+  \verbatiminput{hashimoto_kentei_b.m}
+\end{itembox}
+%\begin{itembox}[l]{橋本検定（続き）}
+%  \verbatiminput{hashimoto_kentei_a.m}
+%\end{itembox}
+%\newpage
+\subsection*{実行例}
+\subsubsection*{系列が雑音の場合}
+\begin{verbatim}
+a = rand(1, 100); b = rand(1, 100);
+hashimoto_kentei(a, b);
+\end{verbatim}
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/rand_org.eps}
+    \caption{系列$a_i,\,b_i$}
+    \label{rand_org}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/rand.eps}
+    \caption{検定結果}
+    \label{rand}
+  \end{minipage}
+\end{figure}
+検定結果は$p = 0.3549$であった。これは十分に小さくないので系列$a_i,\,b_i$は類似しない。
+\subsubsection*{系列が正弦波で位相がずれている場合}
+\begin{verbatim}
+t = 0 : 0.1 : 10; a = sin(t); b = cos(t);
+hashimoto_kentei(a, b);
+\end{verbatim}
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/sin_cos_org.eps}
+    \caption{系列$a_i,\,b_i$}
+    \label{sin_cos_org}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/sin_cos.eps}
+    \caption{検定結果}
+    \label{sin_cos}
+  \end{minipage}
+\end{figure}
+検定結果は$p = 0.8605$であった。これは十分に小さくないので系列$a_i,\,b_i$は類似しない。
+\subsubsection*{系列が正弦波で周波数がずれている場合}
+\begin{verbatim}
+t = 0 : 0.1 : 10; a = sin(t); b = sin(1.5 * t);
+hashimoto_kentei(a, b);
+\end{verbatim}
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/freq_org.eps}
+    \caption{系列$a_i,\,b_i$}
+    \label{freq_org}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/freq.eps}
+    \caption{検定結果}
+    \label{freq}
+  \end{minipage}
+\end{figure}
+検定結果は$p = 0.9853$であった。これは十分に小さくないので系列$a_i,\,b_i$は類似しない。
+\subsubsection*{系列が正弦波で振幅がずれている場合}
+\begin{verbatim}
+t = 0 : 0.1 : 10; a = sin(t); b = 7 * sin(t);
+hashimoto_kentei(a, b);
+\end{verbatim}
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/amp_org.eps}
+    \caption{系列$a_i,\,b_i$}
+    \label{amp_org}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/amp.eps}
+    \caption{検定結果}
+    \label{amp}
+  \end{minipage}
+\end{figure}
+検定結果は$p = 0.0043$であった。これは十分に小さいので系列$a_i,\,b_i$は有意に類似する$(p < 0.01)$。
+\subsubsection*{系列が正弦波で平均値がずれている場合}
+\begin{verbatim}
+t = 0 : 0.1 : 10; a = sin(t); b = sin(t) + 0.9;
+hashimoto_kentei(a, b);
+\end{verbatim}
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/bias_org.eps}
+    \caption{系列$a_i,\,b_i$}
+    \label{bias_org}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/bias.eps}
+    \caption{検定結果}
+    \label{bias}
+  \end{minipage}
+\end{figure}
+検定結果は$p = 0.0067$であった。これは十分に小さいので系列$a_i,\,b_i$は有意に類似する$(p < 0.01)$。
+\subsubsection*{系列が正弦波で振幅がずれている場合（白色雑音あり）}
+\begin{verbatim}
+t = 0 : 0.1 : 10;
+a = sin(t) + rand(1, length(t)); b = 7 * sin(t) + rand(1, length(t));
+hashimoto_kentei(a, b);
+\end{verbatim}
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/n_amp_org.eps}
+    \caption{系列$a_i,\,b_i$}
+    \label{n_amp_org}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/n_amp.eps}
+    \caption{検定結果}
+    \label{n_amp}
+  \end{minipage}
+\end{figure}
+検定結果は$p = 0.0059$であった。これは十分に小さいので系列$a_i,\,b_i$は有意に類似する$(p < 0.01)$。
+\subsubsection*{系列が正弦波で平均値がずれている場合（白色雑音あり）}
+\begin{verbatim}
+t = 0 : 0.1 : 10;
+a = sin(t) + rand(1, length(t)); b = sin(t) + 0.9 + rand(1, length(t));
+hashimoto_kentei(a, b);
+\end{verbatim}
+\begin{figure}[H]
+  \centering
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/n_bias_org.eps}
+    \caption{系列$a_i,\,b_i$}
+    \label{n_bias_org}
+  \end{minipage}
+  \hspace{1zw}
+  \begin{minipage}{.48\textwidth}
+    \includegraphics[width = \textwidth]{pic/n_bias.eps}
+    \caption{検定結果}
+    \label{n_bias}
+  \end{minipage}
+\end{figure}
+検定結果は$p = 0.0022$であった。これは十分に小さいので系列$a_i,\,b_i$は有意に類似する$(p < 0.01)$。
+\subsection*{橋本検定の性質}
+本検定による類似度の判定は振幅と直流成分および白色雑音に対してロバストであり、検定結果は主に位相および周波数成分の相違によって左右される。
+\section*{謝辞}
+本論文を執筆するにあたり、塩入諭先生には心理物理実験の手法から研究内容の相談まで丁寧かつ緻密なご指導をいただきました。栗木一郎先生は私の未熟で難解な説明を根気よく理解してくださり、松宮一道先生からは非常に分かりやすく的確なアドバイスをいただきました。荻谷光晴さんとは幾度も熱い議論を行いその都度貴重な意見をいただいて研究を進めるにあたり大きな助けとなりました。柏瀬啓起さんは多忙のなか原稿の手直しを快く手伝ってくださいました。時間を割いて大変な実験を手伝っていただいた被験者の皆様、報告会等で私の話を聴いていただき有益なヒントをくださった研究室の皆様に深く感謝いたします。また、このような研究活動をするための恵まれた環境があることに心より感謝しております。
+%\newpage
+\begin{thebibliography}{9}
+\item
+  Schlack, A., Krekelberg, B., \& Albright, T. D. (2008). Speed perception during acceleration and deceleration.
+  \textit{Journal of Vision, 8(8):9, 1-11}
+\item 
+  Robin Baur\`{e}s *, Nicolas Benguigui, Michel-Ange Amorim, Isabelle Anne Siegler (2007). Intercepting free falling objects: Better use Occam's razor than internalize Newton's law.
+  \textit{Vision Research 47(2007) 2982-2991}
+\item
+  Romi Nijhawan (2008). Visual prediction: Psychophysics and neurophysiology of compensation for time delays.
+  \textit{Behavioral and Brain Sciences (2008) 31, 179-239}
+\item
+  Daniel Linares *, Joan L\'{o}pez-Moliner (2006). Absence of flash-lag when judging global shape from local positions.
+  \textit{Vision Research 47(2007) 357-362}
+\item
+  Myrka Zago, Joseph McIntyre, Patrice Senot, Francesco Lacquaniti (2008). Internal models and prediction of visual gravitational motion.
+  \textit{Vision Research 48(2008) 1532-1538}
+\end{thebibliography}
+\end{document}
