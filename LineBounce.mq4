@@ -52,7 +52,7 @@ int OnInit()
   Print("LOT=", LOT);
   
   symbol = Symbol();
-  Print("symbol = ", symbol)
+  Print("symbol = ", symbol);
 
   SetIndexBuffer(0, highLine);
   SetIndexBuffer(1, lowLine);
@@ -86,7 +86,7 @@ int OnCalculate(const int rates_total,
     lowLine[i] = lines[1];
   }
 
-  return(rates_total)
+  return(rates_total);
 }
 
   
