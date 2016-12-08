@@ -52,7 +52,7 @@ int OnInit()
   Print("ASK=", Ask);
   Print("BID=", Bid);
   
-  LOT = MarketInfo(Symbol(), MODE_LOT);
+  LOT = MarketInfo(Symbol(), MODE_MINLOT);
   Print("LOT=", LOT);
 
   //---
@@ -77,8 +77,8 @@ void OnTick()
     return;
   }
 
-  double upper = High[iHighest(symbol, PERIOD_M1, MODE_HIGH, 1440, 60)];
-  double bottom = Low[iLowest(symbol, PERIOD_M1, MODE_LOW, 1440, 60)];
+  double upper = High[iHighest(Symbol(), PERIOD_M1, MODE_HIGH, 1440, 60)];
+  double bottom = Low[iLowest(Symbol(), PERIOD_M1, MODE_LOW, 1440, 60)];
 
   double highestShort = 0;
   double lowestShort = 10000;
