@@ -14,13 +14,15 @@
 //#define ACCEPTABLE_SPREAD (0) //for ICMarket
 //#define ACCEPTABLE_SPREAD (16) //for XMTrading
 
-
-#define MAX_POSITIONS (1024)
+#define NAMPIN_MARGIN (0.01)
 #define NONE (-1)
 #define MAX_SL (0.100)
 
 double MIN_LOT = NONE;
 double MIN_SL = NONE;
+
+double previousAsk = NONE;
+double previousBid = NONE;
 
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
@@ -85,8 +87,10 @@ void OnTick()
     stopLoss = atr;
   }
 
-  double longProfit = 0;
-  double shortProfit = 0;
+  double highestShort = 0;
+  double lowestShort = 10000;
+  double highestLong = 0;
+  double lowestLong = 10000;
 
   for(int i = 0; i < OrdersTotal(); i++) {
     if(OrderSelect(i, SELECT_BY_POS)) {
@@ -94,37 +98,52 @@ void OnTick()
         if(OrderStopLoss() < Bid - stopLoss) {
           bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Bid - stopLoss, 0, 0);
         }
-        longProfit += OrderProfit();
+        if(OrderTakeProfit() == 0 || OrderStopLoss() == 0 || OrderLots() != MIN_LOT) {
+          bool closed = OrderClose(OrderTicket(), OrderLots(), Bid, 0);
+        }
+        if(OrderOpenPrice() < lowestLong) {
+          lowestLong = OrderOpenPrice();
+        }
+        if(highestLong < OrderOpenPrice()) {
+          highestLong = OrderOpenPrice();
+        }
       }
       else if(OrderType() == OP_SELL) {
         if(Ask + stopLoss < OrderStopLoss()) {
           bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Ask + stopLoss, 0, 0);
      	  }
-        shortProfit += OrderProfit();
+        if(OrderTakeProfit() == 0 || OrderStopLoss() == 0 || OrderLots() != MIN_LOT) {
+          bool closed = OrderClose(OrderTicket(), OrderLots(), Ask, 0);
+        }
+        if(highestShort < OrderOpenPrice()) {
+          highestShort = OrderOpenPrice();
+        }
+        if(OrderOpenPrice() < lowestShort) {
+          lowestShort = OrderOpenPrice();
+        }
       }
     }
   }
   
 
   if(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD)) {
-    return;
-  }/*
-  else if(MAX_POSITIONS < OrdersTotal()) {
-    return;
-  }
-  else if(AccountInfoDouble(ACCOUNT_MARGIN_LEVEL) < 100.0) {
+    previousBid = Bid;
+    previousAsk = Ask;
     return;
   }
-  else if((DayOfWeek() == 5 && 18 < Hour()) || DayOfWeek() == 6) {
-//      Print("No entry on Friday night. Hour()=", Hour());
-    return;
-  }*/
-  else {
-    if(longProfit < shortProfit) {
+
+  if(previousBid < Bid) {
+    if(Bid < lowestShort - NAMPIN_MARGIN || highestShort + NAMPIN_MARGIN < Bid) {
       int ticket = OrderSend(Symbol(), OP_SELL, MIN_LOT, Bid, 0, Ask + stopLoss, 0);
     }
-    else {
+  }
+  
+  if(Ask < previousAsk) {
+    if(Ask < lowestLong - NAMPIN_MARGIN || highestLong + NAMPIN_MARGIN < Ask ) {
       int ticket = OrderSend(Symbol(), OP_BUY, MIN_LOT, Ask, 0, Bid - stopLoss, 0);
     }
   }
+
+  previousBid = Bid;
+  previousAsk = Ask;
 }
