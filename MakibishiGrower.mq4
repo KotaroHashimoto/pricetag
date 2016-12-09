@@ -98,7 +98,7 @@ void OnTick()
         if(OrderStopLoss() < Bid - stopLoss) {
           bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Bid - stopLoss, 0, 0);
         }
-        if(OrderTakeProfit() == 0 || OrderStopLoss() == 0 || OrderLots() != MIN_LOT) {
+        if(/*OrderTakeProfit() == 0 || */OrderStopLoss() == 0 || OrderLots() != MIN_LOT) {
           bool closed = OrderClose(OrderTicket(), OrderLots(), Bid, 0);
         }
         if(OrderOpenPrice() < lowestLong) {
@@ -112,7 +112,7 @@ void OnTick()
         if(Ask + stopLoss < OrderStopLoss()) {
           bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Ask + stopLoss, 0, 0);
      	  }
-        if(OrderTakeProfit() == 0 || OrderStopLoss() == 0 || OrderLots() != MIN_LOT) {
+        if(/*OrderTakeProfit() == 0 || */OrderStopLoss() == 0 || OrderLots() != MIN_LOT) {
           bool closed = OrderClose(OrderTicket(), OrderLots(), Ask, 0);
         }
         if(highestShort < OrderOpenPrice()) {
