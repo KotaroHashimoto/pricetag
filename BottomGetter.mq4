@@ -14,8 +14,8 @@
 //#define ACCEPTABLE_SPREAD (0) //for ICMarket
 //#define ACCEPTABLE_SPREAD (16) //for XMTrading
 
-#define MAX_POSITIONS (1000000)
-#define NAMPIN_MARGIN (0.01)
+#define MAX_MARGIN (150)
+#define NAMPIN_MARGIN (0.001)
 #define NONE (-1)
 
 double MIN_LOT = NONE;
@@ -110,19 +110,15 @@ void OnTick()
     }
   }
 
-  if(/*closed || */(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD))) {
+  if(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD)) {
     previousBid = Bid;
     previousAsk = Ask;
     return;
   }
-/*
-  else if(MAX_POSITIONS < OrdersTotal()) {
+
+  if(AccountMargin() < MAX_MARGIN) {
     return;
   }
-  else if((DayOfWeek() == 5 && 18 < Hour()) || DayOfWeek() == 6) {
-//      Print("No entry on Friday night. Hour()=", Hour());
-    return;
-  }*/
 
   if(Ask < lowest - NAMPIN_MARGIN && Ask < previousAsk) {
     int ticket = OrderSend(Symbol(), OP_BUY, MIN_LOT, Ask, 0, 0, 0);
