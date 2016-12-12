@@ -8,7 +8,7 @@
 #property version   "1.00"
 #property strict
 
-#define ACCEPTABLE_SPREAD (5) //for Rakuten
+#define ACCEPTABLE_SPREAD (20) //for Rakuten
 //#define ACCEPTABLE_SPREAD (4) //for OANDA
 //#define ACCEPTABLE_SPREAD (3) //for FXTF1000, Gaitame
 //#define ACCEPTABLE_SPREAD (0) //for ICMarket
@@ -45,6 +45,8 @@ int OnInit()
   Print("AccountInfoDouble(ACCOUNT_MARGIN_LEVEL)=", AccountInfoDouble(ACCOUNT_MARGIN_LEVEL));
    
   Print("Symbol()=", Symbol());
+  
+  Print("AccountMargin() = ", AccountMargin());
 
 //  MIN_SL = Point * MarketInfo(Symbol(), MODE_STOPLEVEL);
 //  Print("MIN_SL=", MIN_SL);
@@ -92,19 +94,17 @@ void OnTick()
     }
   }
 */
-  double highestShort = 0;
-  double lowestLong = 10000;
+  double highest = 0;
+  double lowest = 10000;
 
   for(int i = 0; i < OrdersTotal(); i++) {
     if(OrderSelect(i, SELECT_BY_POS)) {
       if(OrderType() == OP_BUY) {
-        if(OrderOpenPrice() < lowestLong) {
-          lowestLong = OrderOpenPrice();
+        if(OrderOpenPrice() < lowest) {
+          lowest = OrderOpenPrice();
         }
-      }
-      else if(OrderType() == OP_SELL) {
-        if(highestShort < OrderOpenPrice()) {
-          highestShort = OrderOpenPrice();
+        if(highest < OrderOpenPrice()) {
+          highest = OrderOpenPrice();
         }
       }
     }
@@ -123,11 +123,11 @@ void OnTick()
 //      Print("No entry on Friday night. Hour()=", Hour());
     return;
   }*/
-/*
-  if(highestShort + NAMPIN_MARGIN <= Bid) {
-    int ticket = OrderSend(Symbol(), OP_SELL, MIN_LOT, Bid, 0, 0, 0);
-  }*/
-  if(Ask <= lowestLong - NAMPIN_MARGIN) {
+
+  if(Ask < lowest - NAMPIN_MARGIN && Ask < previousAsk) {
+    int ticket = OrderSend(Symbol(), OP_BUY, MIN_LOT, Ask, 0, 0, 0);
+  }
+  if(highest - NAMPIN_MARGIN < Ask && Ask < previousAsk) {
     int ticket = OrderSend(Symbol(), OP_BUY, MIN_LOT, Ask, 0, 0, 0);
   }
   
