@@ -16,7 +16,7 @@
 string symbol;
 #define STOP_LOSS (100)
 #define WAIT (1)
-#define MAXPOS (100)
+#define MAXPOS (200)
 
 double MINLOT;
 double previousAsk;
@@ -33,10 +33,10 @@ int OnInit()
   Print("ASK=", Ask);
   Print("BID=", Bid);
   
-  MINLOT = MarketInfo(Symbol(), MODE_MINLOT);
+  MINLOT = MarketInfo(symbol, MODE_MINLOT);
   Print("MINLOT=", MINLOT);
   
-  symbol = Symbol();
+//  symbol = Symbol();
   
 //---
    return(INIT_SUCCEEDED);
@@ -56,11 +56,11 @@ void OnDeinit(const int reason)
 void OnTick()
   {
 //---
-  double atr = iATR(Symbol(), PERIOD_M15, 2, 1);
+  double atr = iATR(symbol, PERIOD_M15, 2, 1);
   double stopLoss;
 
-  if(atr < Point * MarketInfo(Symbol(), MODE_STOPLEVEL)) {
-    stopLoss = Point * MarketInfo(Symbol(), MODE_STOPLEVEL);
+  if(atr < Point * MarketInfo(symbol, MODE_STOPLEVEL)) {
+    stopLoss = Point * MarketInfo(symbol, MODE_STOPLEVEL);
   }
   else if(Point * STOP_LOSS < atr) {
     stopLoss = Point * STOP_LOSS;
@@ -71,12 +71,12 @@ void OnTick()
   
   for(int i = 0; i < OrdersTotal(); i++) {
     if(OrderSelect(i, SELECT_BY_POS)) {
-      if(OrderType() == OP_BUY) {
+      if(OrderType() == OP_BUY && OrderSymbol() == symbol) {
         if(OrderStopLoss() < Bid - stopLoss) {
           bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Bid - stopLoss, 0, 0);
         }
       }
-      else if(OrderType() == OP_SELL) {
+      else if(OrderType() == OP_SELL && OrderSymbol() == symbol) {
         if(Ask + stopLoss < OrderStopLoss()) {
           bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Ask + stopLoss, 0, 0);
         }
@@ -84,7 +84,7 @@ void OnTick()
     }
   }
 
-  if(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD) || MAXPOS < OrdersTotal()) {
+  if(ACCEPTABLE_SPREAD < MarketInfo(symbol, MODE_SPREAD) || MAXPOS < OrdersTotal()) {
     previousBid = Bid;
     previousAsk = Ask;
     return;
