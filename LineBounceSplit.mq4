@@ -8,15 +8,17 @@
 #property version   "1.00"
 #property strict
 
-//#define ACCEPTABLE_SPREAD (3) //for FXTF1000
-#define ACCEPTABLE_SPREAD (4) //for OANDA, Gaitame, ICMarket
+#define ACCEPTABLE_SPREAD (3) //for FXTF1000
+//#define ACCEPTABLE_SPREAD (4) //for OANDA, Gaitame, ICMarket
 //#define ACCEPTABLE_SPREAD (5) //for Rakuten
 
-//#define symbol "USDJPY-cd"
-string symbol;
+#define SYMBOL "USDJPY"
+//#define SYMBOL "EURUSD"
+//#define SYMBOL "GBPUSD"
+
 #define STOP_LOSS (100)
 #define WAIT (1)
-#define MAXPOS (200)
+#define MAXPOS (300)
 
 double MINLOT;
 double previousAsk;
@@ -33,10 +35,10 @@ int OnInit()
   Print("ASK=", Ask);
   Print("BID=", Bid);
   
-  MINLOT = MarketInfo(symbol, MODE_MINLOT);
+  MINLOT = MarketInfo(SYMBOL, MODE_MINLOT);
   Print("MINLOT=", MINLOT);
   
-//  symbol = Symbol();
+//  SYMBOL = SYMBOL();
   
 //---
    return(INIT_SUCCEEDED);
@@ -56,11 +58,11 @@ void OnDeinit(const int reason)
 void OnTick()
   {
 //---
-  double atr = iATR(symbol, PERIOD_M15, 2, 1);
+  double atr = iATR(SYMBOL, PERIOD_M15, 2, 1);
   double stopLoss;
 
-  if(atr < Point * MarketInfo(symbol, MODE_STOPLEVEL)) {
-    stopLoss = Point * MarketInfo(symbol, MODE_STOPLEVEL);
+  if(atr < Point * MarketInfo(SYMBOL, MODE_STOPLEVEL)) {
+    stopLoss = Point * MarketInfo(SYMBOL, MODE_STOPLEVEL);
   }
   else if(Point * STOP_LOSS < atr) {
     stopLoss = Point * STOP_LOSS;
@@ -71,12 +73,12 @@ void OnTick()
   
   for(int i = 0; i < OrdersTotal(); i++) {
     if(OrderSelect(i, SELECT_BY_POS)) {
-      if(OrderType() == OP_BUY && OrderSymbol() == symbol) {
+      if(OrderType() == OP_BUY && OrderSYMBOL() == SYMBOL) {
         if(OrderStopLoss() < Bid - stopLoss) {
           bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Bid - stopLoss, 0, 0);
         }
       }
-      else if(OrderType() == OP_SELL && OrderSymbol() == symbol) {
+      else if(OrderType() == OP_SELL && OrderSYMBOL() == SYMBOL) {
         if(Ask + stopLoss < OrderStopLoss()) {
           bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Ask + stopLoss, 0, 0);
         }
@@ -84,33 +86,33 @@ void OnTick()
     }
   }
 
-  if(ACCEPTABLE_SPREAD < MarketInfo(symbol, MODE_SPREAD) || MAXPOS < OrdersTotal()) {
+  if(ACCEPTABLE_SPREAD < MarketInfo(SYMBOL, MODE_SPREAD) || MAXPOS < OrdersTotal()) {
     previousBid = Bid;
     previousAsk = Ask;
     return;
   }
 
   double lines[2];
-  lines[0] = High[iHighest(symbol, PERIOD_M1, MODE_HIGH, 1440, 60)];
-  lines[1] = Low[iLowest(symbol, PERIOD_M1, MODE_LOW, 1440, 60)];
-//  lines[2] = High[iHighest(symbol, PERIOD_M1, MODE_HIGH, 1440, 1500)];
-//  lines[3] = Low[iLowest(symbol, PERIOD_M1, MODE_HIGH, 1440, 1500)];
+  lines[0] = High[iHighest(SYMBOL, PERIOD_M1, MODE_HIGH, 1440, 60)];
+  lines[1] = Low[iLowest(SYMBOL, PERIOD_M1, MODE_LOW, 1440, 60)];
+//  lines[2] = High[iHighest(SYMBOL, PERIOD_M1, MODE_HIGH, 1440, 1500)];
+//  lines[3] = Low[iLowest(SYMBOL, PERIOD_M1, MODE_HIGH, 1440, 1500)];
   
   for(int i = 0; i < 2; i++) {
     
-    if(iLow(symbol, PERIOD_M1, 1 + WAIT) < lines[i] && lines[i] < iHigh(symbol, PERIOD_M1, 1 + WAIT)) {
+    if(iLow(SYMBOL, PERIOD_M1, 1 + WAIT) < lines[i] && lines[i] < iHigh(SYMBOL, PERIOD_M1, 1 + WAIT)) {
 //      Print(lines[i]);
       for(int j = 0; j < WAIT; j++) {
-        if(iLow(symbol, PERIOD_M1, 1 + j) < lines[i])
+        if(iLow(SYMBOL, PERIOD_M1, 1 + j) < lines[i])
           break;
         if(j == WAIT - 1 && lines[i] < Bid - stopLoss / 2.0)
-          int ticket = OrderSend(symbol, OP_BUY, MINLOT, Ask, 0, Bid - stopLoss, 0);
+          int ticket = OrderSend(SYMBOL, OP_BUY, MINLOT, Ask, 0, Bid - stopLoss, 0);
       }
       for(int j = 0; j < WAIT; j++) {
-        if(lines[i] < iHigh(symbol, PERIOD_M1, 1 + j))
+        if(lines[i] < iHigh(SYMBOL, PERIOD_M1, 1 + j))
           break;
         if(j == WAIT - 1 && Ask + stopLoss / 2.0 < lines[i])
-        int ticket = OrderSend(symbol, OP_SELL, MINLOT, Bid, 0, Ask + stopLoss, 0);
+        int ticket = OrderSend(SYMBOL, OP_SELL, MINLOT, Bid, 0, Ask + stopLoss, 0);
       }
     }
 
