@@ -14,10 +14,10 @@
 
 //#define symbol "USDJPY-cd"
 string symbol;
-#define STOP_LOSS 100
-#define WAIT 1
+#define STOP_LOSS (100)
+#define WAIT (1)
 
-double MINLOT;
+#define LOT (1.0)
 double previousAsk;
 double previousBid;
 
@@ -32,9 +32,8 @@ int OnInit()
   Print("ASK=", Ask);
   Print("BID=", Bid);
   
-//  MINLOT = MarketInfo(Symbol(), MODE_MINLOT);
-  MINLOT = 1.0;
-  Print("MINLOT=", MINLOT);
+//  LOT = MarketInfo(Symbol(), MODE_LOT);
+  Print("LOT=", LOT);
   
   symbol = Symbol();
   
@@ -74,18 +73,12 @@ void OnTick()
       if(OrderType() == OP_BUY) {
         if(OrderStopLoss() < Bid - stopLoss) {
           bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Bid - stopLoss, 0, 0);
-        }/*
-        if(OrderLots() == MINLOT && OrderOpenPrice() + stopLoss < Bid) {
-          bool closed = OrderClose(OrderTicket(), MINLOT / 2.0, Bid, 0);
-        }*/
+        }
       }
       else if(OrderType() == OP_SELL) {
         if(Ask + stopLoss < OrderStopLoss()) {
           bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Ask + stopLoss, 0, 0);
-     	  }/*
-        if(OrderLots() == MINLOT && Ask < OrderOpenPrice() - stopLoss) {
-          bool closed = OrderClose(OrderTicket(), MINLOT / 2.0, Ask, 0);
-        }*/
+        }
       }
     }
   }
@@ -110,13 +103,13 @@ void OnTick()
         if(iLow(symbol, PERIOD_M1, 1 + j) < lines[i])
           break;
         if(j == WAIT - 1)
-          int ticket = OrderSend(symbol, OP_BUY, MINLOT, Ask, 0, Bid - stopLoss, 0);
+          int ticket = OrderSend(symbol, OP_BUY, LOT, Ask, 0, Bid - stopLoss, 0);
       }
       for(int j = 0; j < WAIT; j++) {
         if(lines[i] < iHigh(symbol, PERIOD_M1, 1 + j))
           break;
         if(j == WAIT - 1)
-        int ticket = OrderSend(symbol, OP_SELL, MINLOT, Bid, 0, Ask + stopLoss, 0);
+        int ticket = OrderSend(symbol, OP_SELL, LOT, Bid, 0, Ask + stopLoss, 0);
       }
     }
   //    Print("highest = ", lines[0]);
@@ -125,4 +118,3 @@ void OnTick()
   
 }
 //+------------------------------------------------------------------+
-
