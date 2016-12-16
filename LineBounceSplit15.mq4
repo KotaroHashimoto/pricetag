@@ -93,23 +93,21 @@ void OnTick()
   }
 
   double lines[2];
-  lines[0] = High[iHighest(SYMBOL, PERIOD_M1, MODE_HIGH, 1440, 60)];
-  lines[1] = Low[iLowest(SYMBOL, PERIOD_M1, MODE_LOW, 1440, 60)];
-//  lines[2] = High[iHighest(SYMBOL, PERIOD_M1, MODE_HIGH, 1440, 1500)];
-//  lines[3] = Low[iLowest(SYMBOL, PERIOD_M1, MODE_HIGH, 1440, 1500)];
+  lines[0] = High[iHighest(SYMBOL, PERIOD_M15, MODE_HIGH, 96, 4)];
+  lines[1] = Low[iLowest(SYMBOL, PERIOD_M15, MODE_LOW, 96, 4)];
   
   for(int i = 0; i < 2; i++) {
     
-    if(iLow(SYMBOL, PERIOD_M1, 1 + WAIT) < lines[i] && lines[i] < iHigh(SYMBOL, PERIOD_M1, 1 + WAIT)) {
+    if(iLow(SYMBOL, PERIOD_M15, 1 + WAIT) < lines[i] && lines[i] < iHigh(SYMBOL, PERIOD_M15, 1 + WAIT)) {
 //      Print(lines[i]);
       for(int j = 0; j < WAIT; j++) {
-        if(iLow(SYMBOL, PERIOD_M1, 1 + j) < lines[i])
+        if(iLow(SYMBOL, PERIOD_M15, 1 + j) < lines[i])
           break;
         if(j == WAIT - 1 && lines[i] < Bid - stopLoss / 2.0)
           int ticket = OrderSend(SYMBOL, OP_BUY, MINLOT, Ask, 0, Bid - stopLoss, 0);
       }
       for(int j = 0; j < WAIT; j++) {
-        if(lines[i] < iHigh(SYMBOL, PERIOD_M1, 1 + j))
+        if(lines[i] < iHigh(SYMBOL, PERIOD_M15, 1 + j))
           break;
         if(j == WAIT - 1 && Ask + stopLoss / 2.0 < lines[i])
         int ticket = OrderSend(SYMBOL, OP_SELL, MINLOT, Bid, 0, Ask + stopLoss, 0);

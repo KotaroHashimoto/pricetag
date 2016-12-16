@@ -8,18 +8,33 @@
 #property version   "1.00"
 #property strict
 
+#property  indicator_chart_window
+#property  indicator_buffers    2
+#property  indicator_color1    clrYellow
+#property  indicator_color2    clrYellow
+#property  indicator_width1    1
+#property  indicator_width2    1
+#property  indicator_type1     DRAW_LINE
+#property  indicator_type2     DRAW_LINE
+#property  indicator_style1    STYLE_DASHDOT
+#property  indicator_style2    STYLE_DASHDOT
+
+double highLine[];
+double lowLine[];
+
 //#define ACCEPTABLE_SPREAD (3) //for FXTF1000
-#define ACCEPTABLE_SPREAD (4) //for OANDA, Gaitame, ICMarket
-//#define ACCEPTABLE_SPREAD (5) //for Rakuten
+//#define ACCEPTABLE_SPREAD (4) //for OANDA, Gaitame, ICMarket
+#define ACCEPTABLE_SPREAD (5) //for Rakuten
 
-//#define symbol "USDJPY-cd"
-string symbol;
-#define STOP_LOSS (100)
-#define WAIT (1)
 
-#define LOT (1.0)
+#define STOP_LOSS 100
+#define WAIT 1
+
+double LOT;
 double previousAsk;
 double previousBid;
+string symbol;
+double lines[2];
 
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
@@ -33,9 +48,14 @@ int OnInit()
   Print("BID=", Bid);
   
 //  LOT = MarketInfo(Symbol(), MODE_LOT);
+  LOT = 1.0;
   Print("LOT=", LOT);
   
   symbol = Symbol();
+  Print("symbol = ", symbol);
+
+  SetIndexBuffer(0, highLine);
+  SetIndexBuffer(1, lowLine);
   
 //---
    return(INIT_SUCCEEDED);
@@ -48,6 +68,27 @@ void OnDeinit(const int reason)
 //---
    
   }
+
+int OnCalculate(const int rates_total,
+                const int prev_calculated,
+                const datetime &time[],
+                const double &open[],
+                const double &high[],
+                const double &low[],
+                const double &close[],
+                const long &tick_volume[],
+                const long &volume[],
+                const int &spread[])
+{
+
+  for(int i = 0; i < 1500; i++) {
+    highLine[i] = lines[0];
+    lowLine[i] = lines[1];
+  }
+
+  return(rates_total);
+}
+
   
 //+------------------------------------------------------------------+
 //| Expert tick function                                             |
@@ -73,12 +114,18 @@ void OnTick()
       if(OrderType() == OP_BUY) {
         if(OrderStopLoss() < Bid - stopLoss) {
           bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Bid - stopLoss, 0, 0);
-        }
+        }/*
+        if(OrderLots() == LOT && OrderOpenPrice() + stopLoss < Bid) {
+          bool closed = OrderClose(OrderTicket(), LOT / 2.0, Bid, 0);
+        }*/
       }
       else if(OrderType() == OP_SELL) {
         if(Ask + stopLoss < OrderStopLoss()) {
           bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Ask + stopLoss, 0, 0);
-        }
+     	  }/*
+        if(OrderLots() == LOT && Ask < OrderOpenPrice() - stopLoss) {
+          bool closed = OrderClose(OrderTicket(), LOT / 2.0, Ask, 0);
+        }*/
       }
     }
   }
@@ -89,9 +136,8 @@ void OnTick()
     return;
   }
 
-  double lines[2];
   lines[0] = High[iHighest(symbol, PERIOD_M1, MODE_HIGH, 1440, 60)];
-  lines[1] = Low[iLowest(symbol, PERIOD_M1, MODE_LOW, 1440, 60)];
+  lines[1] = Low[iLowest(symbol, PERIOD_M1, MODE_HIGH, 1440, 60)];
 //  lines[2] = High[iHighest(symbol, PERIOD_M1, MODE_HIGH, 1440, 1500)];
 //  lines[3] = Low[iLowest(symbol, PERIOD_M1, MODE_HIGH, 1440, 1500)];
   
@@ -112,7 +158,8 @@ void OnTick()
         int ticket = OrderSend(symbol, OP_SELL, LOT, Bid, 0, Ask + stopLoss, 0);
       }
     }
-  //    Print("highest = ", lines[0]);
+  
+//    Print("highest = ", lines[0]);
 //    Print("lowest = ", lines[1]);
   }
   
