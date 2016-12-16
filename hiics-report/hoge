@@ -1,4 +1,0 @@
-cd /usr/local/texlive/2015/texmf-dist/scripts/cjk-gs-integrate
-sudo perl cjk-gs-integrate.pl --link-texmf --force
-sudo mktexlsr
-sudo kanji-config-updmap-sys hiragino-elcapitan-pron
