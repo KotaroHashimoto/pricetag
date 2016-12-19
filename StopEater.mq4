@@ -81,9 +81,12 @@ void OnTick() {
    int ref = -1; 
    bool triggerUpdate = true;
    
+   datetime timemin = Time[2];
+   datetime timemax = MathMin(Time[0] + Period()*60, TimeCurrent());   
+
    if(triggerUpdate) {
       // get orderbook data
-      ref = orderbook(symbol, TimeCurrent() - Time[0]); 
+      ref = orderbook(symbol, timemax-timemin); 
       Print("ref = ", ref);
       if (ref >= 0)
       {
