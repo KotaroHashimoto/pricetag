@@ -107,10 +107,8 @@ void OnTick() {
       Print("orderbook_timestamps error");
       return;   
    }
-   Print("ts = ", ts);
 
    int pp_sz = orderbook_price_points_sz(ref, ts);
-   Print("pp_sz = ", pp_sz);
    double pricepoints[];
    double ps[]; 
    double pl[]; 
@@ -131,7 +129,8 @@ void OnTick() {
                   
    for(int i = 0; i < pp_sz; i++) 
    {
-      if(MathAbs(pricepoints[i] - Bid) < 1.0) {
+//      if(MathAbs(pricepoints[i] - Bid) < 1.0) {
+      if(116.0 <= pricepoints[i] && pricepoints[i] <= 117.0) {
         Print(pricepoints[i], ", ", ps[i], ", ", pl[i], ", ", os[i], ", ", ol[i]);
       }
    }
