@@ -38,6 +38,8 @@ int OnInit()
   lastcall = 0;
   fatal_error = false;
   symbol = Symbol();
+  int pos = StringLen(symbol)-3; 
+  symbol = StringConcatenate(StringSubstr(symbol, 0, pos), "_", StringSubstr(symbol, pos));
 //---
    return(INIT_SUCCEEDED);
   }
@@ -69,30 +71,21 @@ void OnTick() {
       Print("fatal error");
       return; 
    }
-/*   
-//   datetime timemax = MathMin(Time[0] + Period()*60, TimeCurrent());    
-   Print("Time[0] = ", Time[0]);
-   Print("Bars = ", Bars);
-   Print("IndicatorCounted() = ", IndicatorCounted());
-   Print("Period() = ", Period());
-   Print("TimeCurrent() = ", TimeCurrent());*/
-   
+
    int sz = 0;
    int ref = -1; 
    bool triggerUpdate = true;
    
-   datetime timemin = Time[2];
-   datetime timemax = MathMin(Time[0] + Period()*60, TimeCurrent());   
+//   datetime timemin = Time[1024 - 1];
+//   datetime timemax = MathMin(Time[0] + Period()*60, TimeCurrent());   
 
    if(triggerUpdate) {
       // get orderbook data
-      ref = orderbook(symbol, timemax-timemin); 
-      Print("ref = ", ref);
+      ref = orderbook(symbol, Time[1] - TimeCurrent());
       if (ref >= 0)
       {
          for(int j = 0; j < 100; j++) {
          sz = orderbook_sz(ref);
-         Print("size = ", sz);
          }
          if (sz < 0) 
          {
@@ -104,7 +97,7 @@ void OnTick() {
    }
      
    if (sz == 0) {
-      Print("size = 0");
+      Print("size = 0, returning.");
       return;
    }
    
@@ -136,9 +129,11 @@ void OnTick() {
       return; 
    }  
                   
-   for(int i = 0; i < 1; i++) 
+   for(int i = 0; i < pp_sz; i++) 
    {
-      Print(pricepoints[i], " ", ps[i], " ", pl[i], " ", os[i], " ", ol[i]);
+      if(MathAbs(pricepoints[i] - Bid) < 1.0) {
+        Print(pricepoints[i], ", ", ps[i], ", ", pl[i], ", ", os[i], ", ", ol[i]);
+      }
    }
 }
 //+------------------------------------------------------------------+
