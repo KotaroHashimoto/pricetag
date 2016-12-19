@@ -90,8 +90,10 @@ void OnTick() {
       Print("ref = ", ref);
       if (ref >= 0)
       {
+         for(int j = 0; j < 100; j++) {
          sz = orderbook_sz(ref);
          Print("size = ", sz);
+         }
          if (sz < 0) 
          {
             fatal_error = true; 
