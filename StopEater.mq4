@@ -12,7 +12,7 @@
 #property strict
 
 #define OANDA_REQUEST_DURATION (5)
-#define OANDA_REFLESH_SPAN (20)
+#define OANDA_REFLESH_SPAN (30)
 
 extern int SDIFF;
 
@@ -82,10 +82,10 @@ bool triggerOandaUpdate() {
      return false;
    }
 
-   if((0 <= m && m < OANDA_REQUEST_DURATION) || (20 <= m && m < 20 + OANDA_REQUEST_DURATION) || (40 <= m && m < 40 + OANDA_REQUEST_DURATION)) {
+//   if((0 <= m && m < OANDA_REQUEST_DURATION) || (20 <= m && m < 20 + OANDA_REQUEST_DURATION) || (40 <= m && m < 40 + OANDA_REQUEST_DURATION)) {
       if((s + SDIFF) % OANDA_REFLESH_SPAN < OANDA_REFLESH_SPAN) {
          return true;
-      }
+//      }
    }
    
    return false;
