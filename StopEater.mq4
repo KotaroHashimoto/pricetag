@@ -73,8 +73,9 @@ bool checkArrayResize(int newsz, int sz)
 bool triggerOandaUpdate() {
 
    int m = Minute();
+   int s = Seconds();
    
-   if(!(m % 20)) {
+   if((!(m % 20) && 29 < s) || !((m - 1) % 20)) {
       return true;
    }
    else {
