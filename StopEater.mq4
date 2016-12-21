@@ -13,8 +13,8 @@
 
 #define OANDA_REQUEST_DURATION (2)
 #define OANDA_REFLESH_SPAN (20)
-#define PATH "C:¥¥Users¥¥Administrator¥¥Desktop¥¥"
 
+string common_data_path;
 bool fatal_error = false;
 string symbol;
 
@@ -35,6 +35,7 @@ int OnInit()
   fatal_error = false;
   symbol = Symbol();
   hasUpdated = false;
+  common_data_path=TerminalInfoString(TERMINAL_COMMONDATA_PATH);
   
   int pos = StringLen(symbol) - 3;
   symbol = StringConcatenate(StringSubstr(symbol, 0, pos), "_", StringSubstr(symbol, pos));
@@ -152,7 +153,7 @@ int askOandaUpdate() {
 
 void writeOrderBookInfo() {
  
-   string filepath = PATH + Symbol() + ".csv";
+   string filepath = common_data_path + Symbol() + ".csv";
  
    if(FileIsExist(filepath)) {
       FileDelete(filepath);
