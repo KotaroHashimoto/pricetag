@@ -151,11 +151,13 @@ int askOandaUpdate() {
 
 void writeOrderBookInfo() {
  
-   if(FileIsExist(symbol + ".csv")) {
-      FileDelete(symbol + ".csv");
+   string filepath = "C:¥¥Users¥¥Administrator¥¥Desktop¥¥" + Symbol() + ".csv";
+ 
+   if(FileIsExist(filepath)) {
+      FileDelete(filepath);
    }
 
-   int fh = FileOpen(symbol + ".csv", FILE_CSV | FILE_WRITE);
+   int fh = FileOpen(filepath, FILE_CSV | FILE_WRITE);
    if(fh!=INVALID_HANDLE) {
       FileWrite(fh, positionPressure, pp_sz);
 
