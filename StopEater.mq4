@@ -36,9 +36,11 @@ int OnInit()
   symbol = Symbol();
   hasUpdated = false;
   common_data_path=TerminalInfoString(TERMINAL_COMMONDATA_PATH);
+  Print(common_data_path);
   
   int pos = StringLen(symbol) - 3;
   symbol = StringConcatenate(StringSubstr(symbol, 0, pos), "_", StringSubstr(symbol, pos));
+  Print(symbol);
 
 //---
    return(INIT_SUCCEEDED);
