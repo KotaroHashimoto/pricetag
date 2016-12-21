@@ -89,7 +89,7 @@ bool triggerOandaUpdate() {
    return false;
 }
 
-int askOandaUpdate() {
+double askOandaUpdate() {
    if(fatal_error) {
       Print("fatal error");
       return -1; 
@@ -130,8 +130,6 @@ int askOandaUpdate() {
    double os[]; 
    double ol[];
 
-   double pressure = 0.0;
-
    // we should verify ArrayResize worked, but for sake
    // of brevity we omit this from the sample code
    ArrayResize(pp, pp_sz);
@@ -145,14 +143,17 @@ int askOandaUpdate() {
    if(!orderbook_price_points(ref, ts, pp, ps, pl, os, ol)) {
       return -1; 
    }  
-                  
+   
+   double ips = 0.0;
+   double ipl = 0.0;
    for(int i = 0; i < pp_sz; i++) {
       pendingOrders[i] = ol[i] - os[i];
-      pressure -= pl[i] - ps[i];
+      ips += ps[i];
+      ipl += pl[i];
       hash = ol[i] + os[i] + pl[i] + ps[i];
    }
 
-   return pressure;
+   return ips - ipl;
 }
 
 void writeOrderBookInfo() {
