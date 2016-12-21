@@ -74,6 +74,13 @@ bool triggerOandaUpdate() {
 
    int m = Minute();
    
+   if(!(m % 20)) {
+      return true;
+   }
+   else {
+      return false;
+   }
+   /*
    if(hasUpdated) {
      if(!(m % 20)) {
         hasUpdated = false;
@@ -81,14 +88,14 @@ bool triggerOandaUpdate() {
      }
      return false;
    }
-/*
+
    if((0 <= m && m < OANDA_REQUEST_DURATION) || (20 <= m && m < 20 + OANDA_REQUEST_DURATION) || (40 <= m && m < 40 + OANDA_REQUEST_DURATION)) {
       if((s + SDIFF) % OANDA_REFLESH_SPAN < OANDA_REFLESH_SPAN) {
          return true;
       }
    }
-*/   
-   return true;
+  
+   return true;*/
 }
 
 double askOandaUpdate() {
