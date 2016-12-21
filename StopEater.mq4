@@ -11,20 +11,18 @@
 #property version   "1.00"
 #property strict
 
-#define OANDA_INTERVAL (1)
-
-
-// the start time of the last bar that contained data returned by the fxlabs server
-int lastts = 0;     
-
-// the time of the last data point that was returned by the fxlabs server
-int lastdatapt = 0; 
-
-// the time of the last call out to the fxlabs server
-int lastcall = 0; 
+#define OANDA_REQUEST_DURATION (2)
+#define OANDA_REFLESH_SPAN (20)
 
 bool fatal_error = false;
 string symbol;
+
+int pp_sz;
+double price[];
+double pendingOrders[];
+double positionPressure = 0;
+
+bool hasUpdated;
 
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
@@ -33,13 +31,13 @@ int OnInit()
   {
 //---
   init_fxlabs(); 
-  lastts = 0; 
-  lastdatapt = 0; 
-  lastcall = 0;
   fatal_error = false;
   symbol = Symbol();
-  int pos = StringLen(symbol)-3; 
+  hasUpdated = false;
+  
+  int pos = StringLen(symbol) - 3;
   symbol = StringConcatenate(StringSubstr(symbol, 0, pos), "_", StringSubstr(symbol, pos));
+
 //---
    return(INIT_SUCCEEDED);
   }
@@ -62,77 +60,127 @@ bool checkArrayResize(int newsz, int sz)
    return(true); 
 }
 
-//+------------------------------------------------------------------+
-//| Expert tick function                                             |
-//+------------------------------------------------------------------+
-void OnTick() {
-//---
-   if (fatal_error) {
+bool triggerOandaUpdate() {
+
+   int m = Minute();
+   int s = Seconds();
+   
+   if(hasUpdated) {
+     if(m % 10 == 9) {
+        hasUpdated = false;
+     }
+     return false;
+   }
+
+   if((0 <= m && m < OANDA_REQUEST_DURATION) || (20 <= m && m < 20 + OANDA_REQUEST_DURATION) || (40 <= m && m < 40 + OANDA_REQUEST_DURATION)) {
+      if(!(m % OANDA_REFLESH_SPAN)) {
+         return true;
+      }
+   }
+   
+   return false;
+}
+
+int askOandaUpdate() {
+   if(fatal_error) {
       Print("fatal error");
-      return; 
+      return -1; 
+   }
+   if(!triggerOandaUpdate()) {
+      return -1;
    }
 
    int sz = 0;
    int ref = -1; 
-   bool triggerUpdate = true;
-   
-//   datetime timemin = Time[1024 - 1];
-//   datetime timemax = MathMin(Time[0] + Period()*60, TimeCurrent());   
 
-   if(triggerUpdate) {
-      // get orderbook data
-      ref = orderbook(symbol, Time[1] - TimeCurrent());
-      if (ref >= 0)
-      {
-         for(int j = 0; j < 100; j++) {
-         sz = orderbook_sz(ref);
-         }
-         if (sz < 0) 
-         {
-            fatal_error = true; 
-            Print("Error retrieving size of Orderbook data, sz = ", sz); 
-            return; 
-         }
+// ref = orderbook(symbol, Time[1] - TimeCurrent());
+   ref = orderbook(symbol, 0);
+   if(ref >= 0) {
+      sz = orderbook_sz(ref);
+      if(sz < 0) {
+         fatal_error = true; 
+         Print("Error retrieving size of Orderbook data, sz = ", sz); 
+         return -1; 
       }
    }
      
    if (sz == 0) {
       Print("size = 0, returning.");
-      return;
+      return -1;
    }
    
    int idx = 0;
    int ts = orderbook_timestamp(ref, idx);
    if (ts == -1) {
       Print("orderbook_timestamps error");
-      return;   
+      return -1;   
    }
 
-   int pp_sz = orderbook_price_points_sz(ref, ts);
-   double pricepoints[];
+   pp_sz = orderbook_price_points_sz(ref, ts);
    double ps[]; 
    double pl[]; 
    double os[]; 
    double ol[];
 
+   double pressure = 0;
+
    // we should verify ArrayResize worked, but for sake
    // of brevity we omit this from the sample code
-   ArrayResize(pricepoints, pp_sz);
+   ArrayResize(price, pp_sz);
    ArrayResize(ps, pp_sz); 
    ArrayResize(pl, pp_sz); 
    ArrayResize(os, pp_sz); 
    ArrayResize(ol, pp_sz); 
-         
-   if (!orderbook_price_points(ref, ts, pricepoints, ps, pl, os, ol)) {
-      return; 
+
+   ArrayResize(pendingOrders, pp_sz); 
+
+   if(!orderbook_price_points(ref, ts, price, ps, pl, os, ol)) {
+      return -1; 
    }  
                   
-   for(int i = 0; i < pp_sz; i++) 
-   {
-//      if(MathAbs(pricepoints[i] - Bid) < 1.0) {
-      if(116.0 <= pricepoints[i] && pricepoints[i] <= 117.0) {
-        Print(pricepoints[i], ", ", ps[i], ", ", pl[i], ", ", os[i], ", ", ol[i]);
+   for(int i = 0; i < pp_sz; i++) {
+      pendingOrders[i] = ol[i] - os[i];
+      pressure -= pl[i] - ps[i];
+//      if(MathAbs(price[i] - Bid) < 1.0) {
+//         Print(price[i], ", ", ps[i], ", ", pl[i], ", ", os[i], ", ", ol[i]);
+//      }
+   }
+
+   return pressure;
+}
+
+void writeOrderBookInfo() {
+ 
+   if(FileIsExist(symbol + ".csv")) {
+      FileDelete(symbol + ".csv");
+   }
+
+   int fh = FileOpen(symbol + ".csv", FILE_CSV | FILE_WRITE);
+   if(fh!=INVALID_HANDLE) {
+      FileWrite(fh, positionPressure, pp_sz);
+
+      for(int i = 0; i < pp_sz; i++) {
+        FileWrite(fh, price[i], pendingOrders[i]);
       }
    }
+
+   FileClose(fh);
+}
+
+//+------------------------------------------------------------------+
+//| Expert tick function                                             |
+//+------------------------------------------------------------------+
+void OnTick() {
+//---
+
+   double pressure = askOandaUpdate();
+   if(positionPressure == pressure) {
+      return;
+   }
+   else {
+      hasUpdated = true;
+      positionPressure = pressure;
+      writeOrderBookInfo();
+   }   
 }
 //+------------------------------------------------------------------+
