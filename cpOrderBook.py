@@ -1,4 +1,5 @@
 
+from time import sleep
 from shutil import copyfile
 
 
@@ -25,7 +26,6 @@ def hasUpdated(currency, orderbook):
     return False
 
 
-
 OANDA_DIR = 'C:\\Users\\Administrator\\AppData\\Roaming\\MetaQuotes\\Terminal\\3212703ED955F10C7534BE8497B221F4\\MQL4\\Files\\'
 FXTF_DIR = 'C:\\Users\\Administrator\\AppData\\Roaming\\MetaQuotes\\Terminal\\3F58D636E9CFCB1149A0A8D4AE12E98D\\MQL4\\Files\\'
 RAKUTEN_DIR = 'C:\\Users\\Administrator\\AppData\\Roaming\\MetaQuotes\\Terminal\\3212703ED955F10C7534BE8497B221F4\\MQL4\\Files\\'
@@ -33,11 +33,13 @@ RAKUTEN_DIR = 'C:\\Users\\Administrator\\AppData\\Roaming\\MetaQuotes\\Terminal\
 pair = ['EURUSD', 'USDJPY', 'EURJPY', 'GBPUSD', 'GBPJPY', 'AUDJPY']
 latest = {}
 
-for c in pair:
-    
-    src = OANDA_DIR + 'OANDA_' + c + '.csv'
+while True:
+    sleep(10)
 
-    if(hasUpdated(c, src)):
-        dst = FXTF_DIR + c + '.csv'
-        copyfile(src, dst)
+    for c in pair:
+        src = OANDA_DIR + 'OANDA_' + c + '.csv'
+        
+        if(hasUpdated(c, src)):
+            dst = FXTF_DIR + c + '.csv'
+            copyfile(src, dst)
 
