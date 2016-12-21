@@ -13,6 +13,7 @@
 
 #define OANDA_REQUEST_DURATION (2)
 #define OANDA_REFLESH_SPAN (20)
+#define PATH "C:¥¥Users¥¥Administrator¥¥Desktop¥¥"
 
 bool fatal_error = false;
 string symbol;
@@ -151,7 +152,7 @@ int askOandaUpdate() {
 
 void writeOrderBookInfo() {
  
-   string filepath = "C:¥¥Users¥¥Administrator¥¥Desktop¥¥" + Symbol() + ".csv";
+   string filepath = PATH + Symbol() + ".csv";
  
    if(FileIsExist(filepath)) {
       FileDelete(filepath);
@@ -176,7 +177,7 @@ void OnTick() {
 //---
 
    double pressure = askOandaUpdate();
-   if(positionPressure == pressure) {
+   if(positionPressure == pressure || pressure == -1) {
       return;
    }
    else {
