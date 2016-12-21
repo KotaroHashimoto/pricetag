@@ -23,6 +23,7 @@ double pp[];
 double pendingOrders[];
 double positionPressure;
 double hash;
+double previousHash;
 
 bool hasUpdated;
 
@@ -39,6 +40,7 @@ int OnInit()
   common_data_path = "OANDA_";
   positionPressure = 0.0;
   hash = 0.0;
+  previousHash = 0.0;
   
   int pos = StringLen(symbol) - 3;
   symbol = StringConcatenate(StringSubstr(symbol, 0, pos), "_", StringSubstr(symbol, pos));
@@ -181,11 +183,12 @@ void OnTick() {
 //---
 
    double pressure = askOandaUpdate();
-   if(positionPressure == pressure || pressure == -1) {
+   if(previousHash == hash || pressure == -1) {
       return;
    }
    else {
       hasUpdated = true;
+      previousHash = hash;
       positionPressure = pressure;
       writeOrderBookInfo();
    }   
