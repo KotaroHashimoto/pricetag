@@ -4,7 +4,7 @@ from shutil import copyfile
 
 def hasUpdated(currency, orderbook):
 
-    f = open(srderbook)
+    f = open(orderbook)
     ts = f.readline()
     
     if currency in latest:
