@@ -21,7 +21,7 @@ string symbol;
 int pp_sz;
 double pp[];
 double pendingOrders[];
-double positionPressure = 0;
+double positionPressure = 0.0;
 
 bool hasUpdated;
 
@@ -126,7 +126,7 @@ int askOandaUpdate() {
    double os[]; 
    double ol[];
 
-   double pressure = 0;
+   double pressure = 0.0;
 
    // we should verify ArrayResize worked, but for sake
    // of brevity we omit this from the sample code
