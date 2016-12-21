@@ -13,7 +13,8 @@
 
 #define OANDA_REQUEST_DURATION (5)
 #define OANDA_REFLESH_SPAN (20)
-#define SDIFF (3)
+
+extern int SDIFF;
 
 bool fatal_error = false;
 string symbol;
