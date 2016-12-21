@@ -73,22 +73,22 @@ bool checkArrayResize(int newsz, int sz)
 bool triggerOandaUpdate() {
 
    int m = Minute();
-   int s = Seconds();
    
    if(hasUpdated) {
-     if(m % 10 == 9) {
+     if(!(m % 20)) {
         hasUpdated = false;
+        return true;
      }
      return false;
    }
-
-//   if((0 <= m && m < OANDA_REQUEST_DURATION) || (20 <= m && m < 20 + OANDA_REQUEST_DURATION) || (40 <= m && m < 40 + OANDA_REQUEST_DURATION)) {
+/*
+   if((0 <= m && m < OANDA_REQUEST_DURATION) || (20 <= m && m < 20 + OANDA_REQUEST_DURATION) || (40 <= m && m < 40 + OANDA_REQUEST_DURATION)) {
       if((s + SDIFF) % OANDA_REFLESH_SPAN < OANDA_REFLESH_SPAN) {
          return true;
-//      }
+      }
    }
-   
-   return false;
+*/   
+   return true;
 }
 
 double askOandaUpdate() {
