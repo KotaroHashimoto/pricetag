@@ -94,7 +94,7 @@ int askOandaUpdate() {
       Print("fatal error");
       return -1; 
    }
-   if(!triggerOandaUpdate()) {
+   if(!triggerOandaUpdate() && (previousHash != 0.0)) {
       return -1;
    }
 
