@@ -11,17 +11,18 @@
 #property version   "1.00"
 #property strict
 
-#define OANDA_REQUEST_DURATION (2)
+#define OANDA_REQUEST_DURATION (5)
 #define OANDA_REFLESH_SPAN (20)
 
-string common_data_path;
 bool fatal_error = false;
 string symbol;
+string common_data_path;
 
 int pp_sz;
 double pp[];
 double pendingOrders[];
-double positionPressure = 0.0;
+double positionPressure;
+double hash;
 
 bool hasUpdated;
 
@@ -35,8 +36,9 @@ int OnInit()
   fatal_error = false;
   symbol = Symbol();
   hasUpdated = false;
-//  common_data_path = TerminalInfoString(TERMINAL_COMMONDATA_PATH) + "¥¥Experts¥¥Files¥¥";
   common_data_path = "OANDA_";
+  positionPressure = 0.0;
+  hash = 0.0;
   
   int pos = StringLen(symbol) - 3;
   symbol = StringConcatenate(StringSubstr(symbol, 0, pos), "_", StringSubstr(symbol, pos));
@@ -145,9 +147,7 @@ int askOandaUpdate() {
    for(int i = 0; i < pp_sz; i++) {
       pendingOrders[i] = ol[i] - os[i];
       pressure -= pl[i] - ps[i];
-//      if(MathAbs(pp[i] - Bid) < 1.0) {
-//         Print(pp[i], ", ", ps[i], ", ", pl[i], ", ", os[i], ", ", ol[i]);
-//      }
+      hash = ol[i] + os[i] + pl[i] + ps[i];
    }
 
    return pressure;
