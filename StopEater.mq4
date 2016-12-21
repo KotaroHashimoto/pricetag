@@ -13,6 +13,7 @@
 
 #define OANDA_REQUEST_DURATION (5)
 #define OANDA_REFLESH_SPAN (20)
+#define SDIFF (3)
 
 bool fatal_error = false;
 string symbol;
@@ -81,7 +82,7 @@ bool triggerOandaUpdate() {
    }
 
    if((0 <= m && m < OANDA_REQUEST_DURATION) || (20 <= m && m < 20 + OANDA_REQUEST_DURATION) || (40 <= m && m < 40 + OANDA_REQUEST_DURATION)) {
-      if(!(m % OANDA_REFLESH_SPAN)) {
+      if(!((s + SDIFF) % OANDA_REFLESH_SPAN)) {
          return true;
       }
    }
