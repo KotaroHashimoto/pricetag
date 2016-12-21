@@ -35,6 +35,7 @@ latest = {}
 
 while True:
     sleep(10)
+    print("hogehoge")
 
     for c in pair:
         src = OANDA_DIR + 'OANDA_' + c + '.csv'
