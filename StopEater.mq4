@@ -161,7 +161,7 @@ void writeOrderBookInfo() {
       FileDelete(filepath);
    }
 
-   int fh = FileOpen(filepath, FILE_CSV | FILE_WRITE, ', ');
+   int fh = FileOpen(filepath, FILE_CSV | FILE_WRITE, ",");
    if(fh!=INVALID_HANDLE) {
       FileWrite(fh, TimeCurrent());
       FileWrite(fh, positionPressure, pp_sz);
