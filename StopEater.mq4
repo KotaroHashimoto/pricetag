@@ -18,7 +18,7 @@ bool fatal_error = false;
 string symbol;
 
 int pp_sz;
-double price[];
+double pp[];
 double pendingOrders[];
 double positionPressure = 0;
 
@@ -126,7 +126,7 @@ int askOandaUpdate() {
 
    // we should verify ArrayResize worked, but for sake
    // of brevity we omit this from the sample code
-   ArrayResize(price, pp_sz);
+   ArrayResize(pp, pp_sz);
    ArrayResize(ps, pp_sz); 
    ArrayResize(pl, pp_sz); 
    ArrayResize(os, pp_sz); 
@@ -134,15 +134,15 @@ int askOandaUpdate() {
 
    ArrayResize(pendingOrders, pp_sz); 
 
-   if(!orderbook_price_points(ref, ts, price, ps, pl, os, ol)) {
+   if(!orderbook_price_points(ref, ts, pp, ps, pl, os, ol)) {
       return -1; 
    }  
                   
    for(int i = 0; i < pp_sz; i++) {
       pendingOrders[i] = ol[i] - os[i];
       pressure -= pl[i] - ps[i];
-//      if(MathAbs(price[i] - Bid) < 1.0) {
-//         Print(price[i], ", ", ps[i], ", ", pl[i], ", ", os[i], ", ", ol[i]);
+//      if(MathAbs(pp[i] - Bid) < 1.0) {
+//         Print(pp[i], ", ", ps[i], ", ", pl[i], ", ", os[i], ", ", ol[i]);
 //      }
    }
 
@@ -160,7 +160,7 @@ void writeOrderBookInfo() {
       FileWrite(fh, positionPressure, pp_sz);
 
       for(int i = 0; i < pp_sz; i++) {
-        FileWrite(fh, price[i], pendingOrders[i]);
+        FileWrite(fh, pp[i], pendingOrders[i]);
       }
    }
 
