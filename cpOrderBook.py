@@ -19,11 +19,9 @@ def hasUpdated(currency, orderbook):
             break
         n = n - 1
 
-    if n == 1:
+    if n == 0:
         latest[currency] = ts
         return True
-
-    print("hogehoge")
 
     return False
 
