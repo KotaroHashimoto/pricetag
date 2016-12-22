@@ -35,7 +35,10 @@ while True:
 
     for c in pair:
         src = OANDA_DIR + 'OANDA_' + c + '.csv'
-        
-        if(hasUpdated(c, src)):
-            dst = FXTF_DIR + c + '-cd.csv'
-            copyfile(src, dst)
+
+        try:
+            if(hasUpdated(c, src)):
+                dst = FXTF_DIR + c + '-cd.csv'
+                copyfile(src, dst)
+        except:
+            pass
