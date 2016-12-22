@@ -152,6 +152,7 @@ double askOandaUpdate() {
    ArrayResize(pendingOrders, pp_sz); 
 
    if(!orderbook_price_points(ref, ts, pp, ps, pl, os, ol)) {
+      Print("orderbook_price_points() failed.");
       return -1; 
    }  
    
