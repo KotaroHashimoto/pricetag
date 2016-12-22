@@ -31,6 +31,7 @@ int pp_sz;
 double pp[];
 double pendingOrders[];
 double positionPressure;
+double orderPressure;
 string previousTimeStamp;
 
 #define NOOP (0)
@@ -50,6 +51,7 @@ int OnInit() {
    watchOanda = UPDATE;
 
    positionPressure = 0.0;
+   orderPressure = 0.0;
    previousTimeStamp = "";
 
    MINLOT = MarketInfo(symbol, MODE_MINLOT);
@@ -170,6 +172,7 @@ uchar getStrategy() {
   for(int i = 1; i < pp_sz; i++) {
     double price = (Bid + Ask) / 2.0;
     if(pp[i - 1] < price && price < pp[i]) {
+      orderPressure = pendingOrders[i];
       if(ENTRY_TH_PO < MathAbs(pendingOrders[i])) {
         if(0 < pendingOrders[i]) {
           if(0 < positionPressure)
@@ -294,7 +297,8 @@ void OnTick() {
 
    uchar strategy = getStrategy();
    double stopLoss = stopLossATR();
-
+   
+   Print("s = ", strategy, "  pp = ", positionPressure, "  op = ", orderPressure);
    openPosition(stopLoss, strategy, scanPositions(stopLoss, strategy));
 }
 //+------------------------------------------------------------------+
