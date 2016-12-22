@@ -104,6 +104,7 @@ double askOandaUpdate() {
       return -1;
    }
 
+   init_fxlabs(); 
    int sz = 0;
    int ref = -1; 
 
