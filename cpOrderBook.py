@@ -37,5 +37,5 @@ while True:
         src = OANDA_DIR + 'OANDA_' + c + '.csv'
         
         if(hasUpdated(c, src)):
-            dst = FXTF_DIR + c + '.csv'
+            dst = FXTF_DIR + c + '-cd.csv'
             copyfile(src, dst)
