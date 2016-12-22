@@ -268,7 +268,7 @@ bool scanPositions(double stopLoss, uchar strategy) {
     }
   }
 
-  return (Ask < lowestPos || highestPos < Bid);
+  return (Ask < lowestPos - MARGIN_PIP || highestPos + MARGIN_PIP < Bid);
 }
 
 
