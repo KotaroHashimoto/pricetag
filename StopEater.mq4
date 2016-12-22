@@ -11,14 +11,16 @@
 #property version   "1.00"
 #property strict
 
-#define OANDA_REQUEST_DURATION (5)
-#define OANDA_REFLESH_SPAN (30)
+#define REFLASH_DELAY_S (5)
+int delay;
 
-extern int SDIFF;
+#define MASK (0)
+#define UPDATE (1)
+#define READY (2)
+char watchOanda;
 
 bool fatal_error = false;
 string symbol;
-string common_data_path;
 
 int pp_sz;
 double pp[];
@@ -27,7 +29,6 @@ double positionPressure;
 double hash;
 double previousHash;
 
-bool hasUpdated;
 
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
@@ -38,16 +39,29 @@ int OnInit()
   init_fxlabs(); 
   fatal_error = false;
   symbol = Symbol();
-  hasUpdated = false;
-  common_data_path = "OANDA_";
+  watchOanda = UPDATE;
+
+  if(!StringCompare(symbol, "USDJPY"))
+    delay = 0;
+  else if(!StringCompare(symbol, "EURUSD"))
+    delay = 1 * REFLASH_DELAY_S;
+  else if(!StringCompare(symbol, "GBPUSD"))
+    delay = 2 * REFLASH_DELAY_S;
+  else if(!StringCompare(symbol, "GBPJPY"))
+    delay = 3 * REFLASH_DELAY_S;
+  else if(!StringCompare(symbol, "AUDJPY"))
+    delay = 4 * REFLASH_DELAY_S;
+  else if(!StringCompare(symbol, "EURJPY"))
+    delay = 5 * REFLASH_DELAY_S;
+  else
+    return -1;
+
   positionPressure = 0.0;
   hash = 0.0;
   previousHash = 0.0;
   
   int pos = StringLen(symbol) - 3;
   symbol = StringConcatenate(StringSubstr(symbol, 0, pos), "_", StringSubstr(symbol, pos));
-//  Print(symbol);
-
 //---
    return(INIT_SUCCEEDED);
   }
@@ -73,30 +87,22 @@ bool checkArrayResize(int newsz, int sz)
 bool triggerOandaUpdate() {
 
    int m = Minute();
-   int s = Seconds();
-   
-   if((!(m % 20) && 29 < s) || !((m - 1) % 20)) {
-      return true;
+
+   if(watchOanda == READY && !(m % 20)) {
+      watchOanda = UPDATE;
    }
-   else {
-      return false;
-   }
-   /*
-   if(hasUpdated) {
-     if(!(m % 20)) {
-        hasUpdated = false;
-        return true;
-     }
-     return false;
+   else if(watchOanda == MASK && (m == 19 || m == 39 || m == 59)) {
+      watchOanda = READY;
    }
 
-   if((0 <= m && m < OANDA_REQUEST_DURATION) || (20 <= m && m < 20 + OANDA_REQUEST_DURATION) || (40 <= m && m < 40 + OANDA_REQUEST_DURATION)) {
-      if((s + SDIFF) % OANDA_REFLESH_SPAN < OANDA_REFLESH_SPAN) {
-         return true;
-      }
+   if(watchOanda == UPDATE) {
+     int t = (Seconds() % 30) - delay;     
+     if(-1 < t && t < REFLASH_DELAY_S) {
+       return true;
+     }
    }
-  
-   return true;*/
+
+   return false;
 }
 
 double askOandaUpdate() {
@@ -135,6 +141,11 @@ double askOandaUpdate() {
    }
 
    pp_sz = orderbook_price_points_sz(ref, ts);
+   if(pp_sz < 1) {
+     Print("pp_sz = ", pp_sz);
+      return -1;   
+   }
+   
    double ps[]; 
    double pl[]; 
    double os[]; 
@@ -167,8 +178,8 @@ double askOandaUpdate() {
 }
 
 void writeOrderBookInfo() {
- 
-   string filepath = common_data_path + Symbol() + ".csv";
+
+   string filepath = "OANDA_" + Symbol() + ".csv";
  
    if(FileIsExist(filepath)) {
       FileDelete(filepath);
@@ -198,7 +209,7 @@ void OnTick() {
       return;
    }
    else {
-      hasUpdated = true;
+      watchOanda = MASK;
       previousHash = hash;
       positionPressure = pressure;
       writeOrderBookInfo();
