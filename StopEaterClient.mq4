@@ -240,6 +240,11 @@ bool scanPositions(double stopLoss, uchar strategy) {
             }
 	  }
         }
+	else {
+	  if(strategy & LONG_TRAIL) {
+            bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Bid - stopLoss, 0, 0);	  
+	  }
+	}
       }
       else if(OrderType() == OP_SELL) {
         if(strategy & (LONG_LIMIT | LONG_TRAIL | LONG_NOOP)) {
@@ -255,6 +260,11 @@ bool scanPositions(double stopLoss, uchar strategy) {
             }
 	  }
         }
+	else {
+	  if(strategy & SHORT_TRAIL) {
+            bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Ask + stopLoss, 0, 0);	  
+	  }
+	}	
       }
     }
 
