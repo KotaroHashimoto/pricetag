@@ -226,7 +226,7 @@ bool scanPositions(double stopLoss, uchar strategy) {
     bool closed = False;
 
     if(OrderSelect(i, SELECT_BY_POS)) {
-      if(OrderType() == OP_BUY) {
+      if(OrderType() == OP_BUY && !StringCompare(OrderSymbol(), symbol)) {
         if(!!(strategy & (SHORT_LIMIT | SHORT_TRAIL | SHORT_NOOP))) {
           closed = OrderClose(OrderTicket(), OrderLots(), Bid, 0);
 	     }
@@ -246,7 +246,7 @@ bool scanPositions(double stopLoss, uchar strategy) {
 	       }
 	     }
       }
-      else if(OrderType() == OP_SELL) {
+      else if(OrderType() == OP_SELL && !StringCompare(OrderSymbol(), symbol)) {
         if(!!(strategy & (LONG_LIMIT | LONG_TRAIL | LONG_NOOP))) {
           closed = OrderClose(OrderTicket(), OrderLots(), Ask, 0);
 	     }
