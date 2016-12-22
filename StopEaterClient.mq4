@@ -288,10 +288,7 @@ bool scanPositions(double stopLoss, uchar strategy) {
 void OnTick() {
 //---
 
-   if(!askOandaUpdate()) {
-      return;
-   }
-   else {
+   if(askOandaUpdate()) {
       watchOanda = MASK;
    }
 
