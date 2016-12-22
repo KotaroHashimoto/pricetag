@@ -50,7 +50,7 @@ int OnInit() {
    watchOanda = UPDATE;
 
    positionPressure = 0.0;
-   previousTimeStamp;
+   previousTimeStamp = "";
 
    MINLOT = MarketInfo(symbol, MODE_MINLOT);
    MINSL = Point * MarketInfo(Symbol(), MODE_STOPLEVEL);
@@ -121,7 +121,7 @@ bool readOrderBookInfo() {
    }
 
    int fh = FileOpen(filepath, FILE_CSV | FILE_READ, ",");
-   if(fh! = INVALID_HANDLE) {
+   if(fh != INVALID_HANDLE) {
 
       string ts = FileReadString(fh);
       if(!StringCompare(previousTimeStamp, ts)) {
@@ -132,12 +132,12 @@ bool readOrderBookInfo() {
       positionPressure = FileReadNumber(fh);
       pp_sz = (int)FileReadNumber(fh);
 
-      ArrayResize(pp[i], pp_sz);
-      ArrayResize(pendingOrders[i], pp_sz);
+      ArrayResize(pp, pp_sz);
+      ArrayResize(pendingOrders, pp_sz);
 
       int i;
       for(i = 0; i < pp_sz; i++) {
-	 pp[i] = FileReadNumber(fh);
+	      pp[i] = FileReadNumber(fh);
          pendingOrders[i] = FileReadNumber(fh);
       }
 
@@ -174,15 +174,15 @@ uchar getStrategy() {
         if(0 < pendingOrders[i]) {
           if(0 < positionPressure)
             return LONG_TRAIL;
-	  else
-	    return LONG_LIMIT;
-	}
+	       else
+	         return LONG_LIMIT;
+	     }
         else {
           if(positionPressure < 0)
             return SHORT_TRAIL;
-	  else
-	    return SHORT_LIMIT;
-	}
+	       else
+	         return SHORT_LIMIT;
+	     }
       }
       else {
         if(0 < positionPressure)
@@ -204,13 +204,13 @@ int openPosition(double stopLoss, uchar strategy, bool isOpen) {
 
   int ticket = -1;
 
-  if(strategy & LONG_TRAIL)
+  if(!!(strategy & LONG_TRAIL))
     ticket = OrderSend(symbol, OP_BUY, MINLOT, Ask, 0, Bid - stopLoss, 0);
-  else if(strategy & SHORT_TRAIL)
+  else if(!!(strategy & SHORT_TRAIL))
     ticket = OrderSend(symbol, OP_SELL, MINLOT, Bid, 0, Ask + stopLoss, 0);
-  else if(strategy & LONG_LIMIT)
+  else if(!!(strategy & LONG_LIMIT))
     ticket = OrderSend(symbol, OP_BUY, MINLOT, Ask, 0, Bid - stopLoss, Bid + stopLoss);
-  else if(strategy & SHORT_LIMIT)
+  else if(!!(strategy & SHORT_LIMIT))
     ticket = OrderSend(symbol, OP_SELL, MINLOT, Bid, 0, Ask + stopLoss, Ask - stopLoss);
 
   return ticket;
@@ -227,44 +227,44 @@ bool scanPositions(double stopLoss, uchar strategy) {
 
     if(OrderSelect(i, SELECT_BY_POS)) {
       if(OrderType() == OP_BUY) {
-        if(strategy & (SHORT_LIMIT | SHORT_TRAIL | SHORT_NOOP)) {
-          closed = OrderClose(OrderTicket(), OrderLot(), Bid, 0);
-	}
+        if(!!(strategy & (SHORT_LIMIT | SHORT_TRAIL | SHORT_NOOP))) {
+          closed = OrderClose(OrderTicket(), OrderLots(), Bid, 0);
+	     }
         else if(0.0 == OrderTakeProfit()) { // if trailing
-          if(strategy & (/*LONG_LIMIT | */LONG_NOOP)) {
-	    bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Bid - stopLoss, Bid + stopLoss, 0);
+          if(!!(strategy & (/*LONG_LIMIT | */LONG_NOOP))) {
+	         bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Bid - stopLoss, Bid + stopLoss, 0);
           }
-          else if(strategy & (LONG_LIMIT | LONG_TRAIL)) {
+          else if(!!(strategy & (LONG_LIMIT | LONG_TRAIL))) {
             if(OrderStopLoss() < Bid - stopLoss) {
               bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Bid - stopLoss, 0, 0);
             }
-	  }
+	       }
         }
-	else {
-	  if(strategy & LONG_TRAIL) {
+	     else {
+	       if(!!(strategy & LONG_TRAIL)) {
             bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Bid - stopLoss, 0, 0);	  
-	  }
-	}
+	       }
+	     }
       }
       else if(OrderType() == OP_SELL) {
-        if(strategy & (LONG_LIMIT | LONG_TRAIL | LONG_NOOP)) {
-          closed = OrderClose(OrderTicket(), OrderLot(), Ask, 0);
-	}
+        if(!!(strategy & (LONG_LIMIT | LONG_TRAIL | LONG_NOOP))) {
+          closed = OrderClose(OrderTicket(), OrderLots(), Ask, 0);
+	     }
         else if(0.0 == OrderTakeProfit()) { // if trailing
-          if(strategy & (/*SHORT_LIMIT | */SHORT_NOOP)) {
-	    bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Ask + stopLoss, Ask - stopLoss, 0);
+          if(!!(strategy & (/*SHORT_LIMIT | */SHORT_NOOP))) {
+	         bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Ask + stopLoss, Ask - stopLoss, 0);
           }
-          else if(strategy & (SHORT_LIMIT | SHORT_TRAIL)) {
+          else if(!!(strategy & (SHORT_LIMIT | SHORT_TRAIL))) {
             if(OrderStopLoss() < Ask + stopLoss) {
               bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Ask + stopLoss, 0, 0);
             }
-	  }
+	       }
         }
-	else {
-	  if(strategy & SHORT_TRAIL) {
+	     else {
+	       if(!!(strategy & SHORT_TRAIL)) {
             bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Ask + stopLoss, 0, 0);	  
-	  }
-	}	
+	       }
+        }	
       }
     }
 
@@ -295,7 +295,7 @@ void OnTick() {
       watchOanda = MASK;
    }
 
-   uchar strategy = getStrategy()
+   uchar strategy = getStrategy();
    double stopLoss = stopLossATR();
 
    openPosition(stopLoss, strategy, scanPositions(stopLoss, strategy));
