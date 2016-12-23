@@ -63,17 +63,19 @@ int OnInit()
   
   int pos = StringLen(symbol) - 3;
   symbol = StringConcatenate(StringSubstr(symbol, 0, pos), "_", StringSubstr(symbol, pos));
+  
+  while(!EventSetTimer(1));
+  
 //---
    return(INIT_SUCCEEDED);
   }
 //+------------------------------------------------------------------+
 //| Expert deinitialization function                                 |
 //+------------------------------------------------------------------+
-void OnDeinit(const int reason)
-  {
+void OnDeinit(const int reason) {
 //---
-   
-  }
+    EventKillTimer();
+}
   
 bool triggerOandaUpdate() {
 
@@ -115,7 +117,6 @@ double askOandaUpdate() {
       return DERR;
    }
 
-   init_fxlabs(); 
    int sz = 0;
    int ref = -1;
 
@@ -214,15 +215,19 @@ void writeOrderBookInfo() {
 //| Expert tick function                                             |
 //+------------------------------------------------------------------+
 void OnTick() {
-//---
+  return;
+}
 
+void OnTimer() {
+//---
    double pressure = askOandaUpdate();
-   Print("OANDA updated. hsame hash? = ", hash == previousHash, ", pressure = ", pressure);
    
    if(previousHash == hash || pressure == DERR) {
       return;
    }
    else {
+      Print("OANDA updated. hsame hash? = ", hash == previousHash, ", pressure = ", pressure);
+
       watchOanda = MASK;
       previousHash = hash;
       positionPressure = pressure;
