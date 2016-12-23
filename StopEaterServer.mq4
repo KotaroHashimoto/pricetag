@@ -11,8 +11,7 @@
 #property version   "1.00"
 #property strict
 
-#define REFLASH_DELAY_S (5)
-int delay;
+#define REFLASH_RATE (5)
 
 #define MASK (0)
 #define UPDATE (1)
@@ -42,21 +41,6 @@ int OnInit()
   symbol = Symbol();
   watchOanda = UPDATE;
 
-  if(!StringCompare(symbol, "USDJPY"))
-    delay = 0;
-  else if(!StringCompare(symbol, "EURUSD"))
-    delay = 1 * REFLASH_DELAY_S;
-  else if(!StringCompare(symbol, "GBPUSD"))
-    delay = 2 * REFLASH_DELAY_S;
-  else if(!StringCompare(symbol, "GBPJPY"))
-    delay = 3 * REFLASH_DELAY_S;
-  else if(!StringCompare(symbol, "AUDJPY"))
-    delay = 4 * REFLASH_DELAY_S;
-  else if(!StringCompare(symbol, "EURJPY"))
-    delay = 5 * REFLASH_DELAY_S;
-  else
-    return -1;
-
   positionPressure = 0.0;
   hash = 0.0;
   previousHash = 0.0;
@@ -64,7 +48,7 @@ int OnInit()
   int pos = StringLen(symbol) - 3;
   symbol = StringConcatenate(StringSubstr(symbol, 0, pos), "_", StringSubstr(symbol, pos));
   
-  while(!EventSetTimer(1));
+  while(!EventSetTimer(REFLASH_RATE));
   
 //---
    return(INIT_SUCCEEDED);
@@ -89,10 +73,7 @@ bool triggerOandaUpdate() {
    }
 
    if(watchOanda == UPDATE) {
-     int t = (Seconds() % 30) - delay;     
-     if(-1 < t && t < REFLASH_DELAY_S) {
-       return true;
-     }
+      return true;
    }
 
    return false;
@@ -120,7 +101,7 @@ double askOandaUpdate() {
    int sz = 0;
    int ref = -1;
 
-   Print("OANDA updating... previousHash = ", previousHash);
+//   Print("OANDA updating... previousHash = ", previousHash);
 
 // ref = orderbook(symbol, Time[1] - TimeCurrent());
    ref = orderbook(symbol, 0);
@@ -184,7 +165,7 @@ double askOandaUpdate() {
       hash = ol[i] + os[i] + pl[i] + ps[i];
    }
 
-   Print("pp_sz = ", pp_sz, ", ipl = ", ipl, " ips = ", ips);
+//   Print("pp_sz = ", pp_sz, ", ipl = ", ipl, " ips = ", ips);
    return ips - ipl;
 }
 
