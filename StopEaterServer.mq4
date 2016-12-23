@@ -29,6 +29,7 @@ double positionPressure;
 double hash;
 double previousHash;
 
+#define DERR (-100000.00)
 
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
@@ -108,10 +109,10 @@ bool checkArrayResize(int newsz, int sz)
 double askOandaUpdate() {
    if(fatal_error) {
       Print("fatal error");
-      return -1; 
+      return DERR; 
    }
    if(!triggerOandaUpdate() && (previousHash != 0.0)) {
-      return -1;
+      return DERR;
    }
 
    init_fxlabs(); 
@@ -127,26 +128,26 @@ double askOandaUpdate() {
       if(sz < 0) {
          fatal_error = true; 
          Print("Error retrieving size of Orderbook data, sz = ", sz); 
-         return -1; 
+         return DERR; 
       }
    }
      
    if (sz == 0) {
       Print("size = 0, returning.");
-      return -1;
+      return DERR;
    }
    
    int idx = 0;
    int ts = orderbook_timestamp(ref, idx);
    if (ts == -1) {
       Print("orderbook_timestamps error");
-      return -1;   
+      return DERR;   
    }
 
    pp_sz = orderbook_price_points_sz(ref, ts);
    if(pp_sz < 1) {
      Print("pp_sz = ", pp_sz);
-      return -1;   
+      return DERR;   
    }
    
    double ps[]; 
@@ -155,22 +156,22 @@ double askOandaUpdate() {
    double ol[];
 
    if(!checkArrayResize(ArrayResize(pp, pp_sz), pp_sz)) 
-      return -1;
+      return DERR;
    else if(!checkArrayResize(ArrayResize(ps, pp_sz), pp_sz)) 
-      return -1;
+      return DERR;
    else if(!checkArrayResize(ArrayResize(pl, pp_sz), pp_sz)) 
-      return -1;
+      return DERR;
    else if(!checkArrayResize(ArrayResize(os, pp_sz), pp_sz)) 
-      return -1;
+      return DERR;
    else if(!checkArrayResize(ArrayResize(ol, pp_sz), pp_sz)) 
-      return -1;
+      return DERR;
    else if(!checkArrayResize(ArrayResize(pendingOrders, pp_sz), pp_sz)) 
-      return -1;
+      return DERR;
 
 
    if(!orderbook_price_points(ref, ts, pp, ps, pl, os, ol)) {
       Print("orderbook_price_points() failed.");
-      return -1; 
+      return DERR; 
    }  
    
    double ips = 0.0;
@@ -182,6 +183,7 @@ double askOandaUpdate() {
       hash = ol[i] + os[i] + pl[i] + ps[i];
    }
 
+   Print("pp_sz = ", pp_sz, ", ipl = ", ipl, " ips = ", ips);
    return ips - ipl;
 }
 
@@ -215,9 +217,9 @@ void OnTick() {
 //---
 
    double pressure = askOandaUpdate();
-   Print("OANDA updated. hash = ", hash, ", pressure = ", pressure);
+   Print("OANDA updated. hsame hash? = ", hash == previousHash, ", pressure = ", pressure);
    
-   if(previousHash == hash || pressure == -1) {
+   if(previousHash == hash || pressure == DERR) {
       return;
    }
    else {
