@@ -95,6 +95,16 @@ bool triggerOandaUpdate() {
    return false;
 }
 
+bool checkArrayResize(int newsz, int sz)
+{
+   if (newsz != sz) 
+   {
+      Alert("ArrayResize failed"); 
+      return(false); 
+   }
+   return(true); 
+}     
+
 double askOandaUpdate() {
    if(fatal_error) {
       Print("fatal error");
@@ -142,15 +152,19 @@ double askOandaUpdate() {
    double os[]; 
    double ol[];
 
-   // we should verify ArrayResize worked, but for sake
-   // of brevity we omit this from the sample code
-   ArrayResize(pp, pp_sz);
-   ArrayResize(ps, pp_sz); 
-   ArrayResize(pl, pp_sz); 
-   ArrayResize(os, pp_sz); 
-   ArrayResize(ol, pp_sz); 
+   if(!checkArrayResize(ArrayResize(pp, pp_sz), pp_sz)) 
+      return -1;
+   else if(!checkArrayResize(ArrayResize(ps, pp_sz), pp_sz)) 
+      return -1;
+   else if(!checkArrayResize(ArrayResize(pl, pp_sz), pp_sz)) 
+      return -1;
+   else if(!checkArrayResize(ArrayResize(os, pp_sz), pp_sz)) 
+      return -1;
+   else if(!checkArrayResize(ArrayResize(ol, pp_sz), pp_sz)) 
+      return -1;
+   else if(!checkArrayResize(ArrayResize(pendingOrders, pp_sz), pp_sz)) 
+      return -1;
 
-   ArrayResize(pendingOrders, pp_sz); 
 
    if(!orderbook_price_points(ref, ts, pp, ps, pl, os, ol)) {
       Print("orderbook_price_points() failed.");
@@ -177,14 +191,16 @@ void writeOrderBookInfo() {
       FileDelete(filepath);
    }
 
-   int fh = FileOpen(filepath, FILE_CSV | FILE_WRITE, ",");
-   if(fh!=INVALID_HANDLE) {
-      FileWrite(fh, TimeCurrent());
-      FileWrite(fh, positionPressure, pp_sz);
+   int fh;
+   do {
+     fh = FileOpen(filepath, FILE_CSV | FILE_WRITE, ",");
+   } while(fh == INVALID_HANDLE);
 
-      for(int i = 0; i < pp_sz; i++) {
-        FileWrite(fh, pp[i], pendingOrders[i]);
-      }
+   FileWrite(fh, TimeCurrent());
+   FileWrite(fh, positionPressure, pp_sz);
+
+   for(int i = 0; i < pp_sz; i++) {
+     FileWrite(fh, pp[i], pendingOrders[i]);
    }
 
    FileClose(fh);

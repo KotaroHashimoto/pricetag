@@ -114,6 +114,16 @@ bool askOandaUpdate() {
    return readOrderBookInfo();
 }
 
+bool checkArrayResize(int newsz, int sz)
+{
+   if (newsz != sz) 
+   {
+      Alert("ArrayResize failed"); 
+      return(false); 
+   }
+   return(true); 
+}     
+
 bool readOrderBookInfo() {
 
    string filepath = Symbol() + ".csv";
@@ -134,9 +144,11 @@ bool readOrderBookInfo() {
       positionPressure = FileReadNumber(fh);
       pp_sz = (int)FileReadNumber(fh);
 
-      ArrayResize(pp, pp_sz);
-      ArrayResize(pendingOrders, pp_sz);
-
+      if(!checkArrayResize(ArrayResize(pp, pp_sz), pp_sz)) 
+         return false;
+      else if(!checkArrayResize(ArrayResize(pendingOrders, pp_sz), pp_sz)) 
+         return false;
+      
       int i;
       for(i = 0; i < pp_sz; i++) {
 	      pp[i] = FileReadNumber(fh);
