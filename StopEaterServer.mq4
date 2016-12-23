@@ -100,6 +100,7 @@ double askOandaUpdate() {
 
    int sz = 0;
    int ref = -1;
+   init_fxlabs(); 
 
 //   Print("OANDA updating... previousHash = ", previousHash);
 
