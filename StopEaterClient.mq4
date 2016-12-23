@@ -200,7 +200,8 @@ uchar getStrategy() {
 	     }
       }
       else {
-        if(0 < positionPressure)
+//        if(0 < positionPressure)
+        if(0 < pendingOrders[i])
           return LONG_NOOP;
         else
           return SHORT_NOOP;
@@ -287,7 +288,7 @@ bool scanPositions(double stopLoss, uchar strategy) {
       if(OrderOpenPrice() < lowestPos) {
         lowestPos = OrderOpenPrice();
       }
-      if(OrderOpenPrice() < highestPos) {
+      if(highestPos < OrderOpenPrice()) {
         highestPos = OrderOpenPrice();
       }
     }
