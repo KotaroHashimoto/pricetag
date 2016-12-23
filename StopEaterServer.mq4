@@ -116,7 +116,9 @@ double askOandaUpdate() {
 
    init_fxlabs(); 
    int sz = 0;
-   int ref = -1; 
+   int ref = -1;
+
+   Print("OANDA updating... previousHash = ", previousHash);
 
 // ref = orderbook(symbol, Time[1] - TimeCurrent());
    ref = orderbook(symbol, 0);
@@ -213,6 +215,8 @@ void OnTick() {
 //---
 
    double pressure = askOandaUpdate();
+   Print("OANDA updated. hash = ", hash, ", pressure = ", pressure);
+   
    if(previousHash == hash || pressure == -1) {
       return;
    }
