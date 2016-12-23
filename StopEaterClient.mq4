@@ -310,7 +310,7 @@ void OnTick() {
    uchar strategy = getStrategy();
    double stopLoss = stopLossATR();
    
-   Print("s = ", strategy, "  pp = ", positionPressure, "  op = ", orderPressure);
+//   Print("s = ", strategy, "  pp = ", positionPressure, "  op = ", orderPressure);
    openPosition(stopLoss, strategy, scanPositions(stopLoss, strategy));
 }
 //+------------------------------------------------------------------+
