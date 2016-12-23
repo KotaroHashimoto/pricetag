@@ -1,6 +1,5 @@
 from time import sleepC:\Users\Administrator\AppData\Roaming\MetaQuotes\Terminal\3212703ED955F10C7534BE8497B221F4
-from shutil import copyfile
-
+from shutil import copyfileC:\Users\Administrator\AppData\Roaming\MetaQuotes\Terminal\3F58D636E9CFCB1149A0A8D4AE12E98D\MQL4
 def hasUpdated(currency, orderbook):
 
     f = open(orderbook)
