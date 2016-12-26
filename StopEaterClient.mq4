@@ -9,8 +9,15 @@
 #property version   "1.00"
 #property strict
 
+#define FXTF
+//#define RAKUTEN
+
+#ifdef FXTF
 #define ENTRY_TH_PO (0.50)
-//#define ENTRY_TH_PO (1.00)
+#else //RAKUTEN
+#define ENTRY_TH_PO (1.00)
+#endif
+
 #define MARGIN_PIP (0)
 #define MAXSL_PIP (200)
 
@@ -65,6 +72,7 @@ int OnInit() {
    lastUpH = 10000;
    lastUpM = 10000;
 
+#ifdef FXTF
   if(!StringCompare(symbol, "USDJPY-cd"))
     ACCEPTABLE_SPREAD = 3;
   else if(!StringCompare(symbol, "EURUSD-cd"))
@@ -77,25 +85,24 @@ int OnInit() {
     ACCEPTABLE_SPREAD = 14;
   else if(!StringCompare(symbol, "EURJPY-cd"))
     ACCEPTABLE_SPREAD = 6;
-  else
-    return -1;
 
-/*
+#else //RAKUTEN
   if(!StringCompare(symbol, "USDJPY"))
     ACCEPTABLE_SPREAD = 5;
   else if(!StringCompare(symbol, "EURUSD"))
     ACCEPTABLE_SPREAD = 6;
   else if(!StringCompare(symbol, "GBPUSD"))
-    ACCEPTABLE_SPREAD = 11;
+    ACCEPTABLE_SPREAD = 12;
   else if(!StringCompare(symbol, "GBPJPY"))
     ACCEPTABLE_SPREAD = 20;
   else if(!StringCompare(symbol, "AUDJPY"))
-    ACCEPTABLE_SPREAD = 14;
+    ACCEPTABLE_SPREAD = 12;
   else if(!StringCompare(symbol, "EURJPY"))
-    ACCEPTABLE_SPREAD = 6;
+    ACCEPTABLE_SPREAD = 11;
+#endif
+
   else
     return -1;
-*/
 
   
 //---
