@@ -9,8 +9,9 @@
 #property version   "1.00"
 #property strict
 
-#define FXTF
-//#define RAKUTEN
+//#define BREAK_ONLY
+//#define FXTF
+#define RAKUTEN
 
 #ifdef FXTF
 #define ENTRY_TH_PO (0.50)
@@ -260,15 +261,18 @@ int openPosition(double stopLoss, uchar strategy, bool isOpen) {
   }
 
   int ticket = -1;
-
+  
   if(!!(strategy & LONG_TRAIL))
     ticket = OrderSend(symbol, OP_BUY, MINLOT, Ask, 0, Bid - stopLoss, 0);
   else if(!!(strategy & SHORT_TRAIL))
     ticket = OrderSend(symbol, OP_SELL, MINLOT, Bid, 0, Ask + stopLoss, 0);
+    
+#ifndef BREAK_ONLY
   else if(!!(strategy & LONG_LIMIT))
     ticket = OrderSend(symbol, OP_BUY, MINLOT, Ask, 0, Bid - stopLoss, Bid + stopLoss);
   else if(!!(strategy & SHORT_LIMIT))
     ticket = OrderSend(symbol, OP_SELL, MINLOT, Bid, 0, Ask + stopLoss, Ask - stopLoss);
+#endif
 
   return ticket;
 }
