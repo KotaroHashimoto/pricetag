@@ -10,6 +10,7 @@
 #property strict
 
 #define ENTRY_TH_PO (0.50)
+//#define ENTRY_TH_PO (1.00)
 #define MARGIN_PIP (0)
 #define MAXSL_PIP (200)
 
@@ -42,6 +43,9 @@ string previousTimeStamp;
 #define SHORT_LIMIT (16)
 #define LONG_LIMIT (32)
 
+int lastUpH;
+int lastUpM;
+
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
 //+------------------------------------------------------------------+
@@ -58,6 +62,9 @@ int OnInit() {
    MINSL = Point * MarketInfo(Symbol(), MODE_STOPLEVEL);
    MAXSL = Point * MAXSL_PIP;
 
+   lastUpH = 10000;
+   lastUpM = 10000;
+
   if(!StringCompare(symbol, "USDJPY-cd"))
     ACCEPTABLE_SPREAD = 3;
   else if(!StringCompare(symbol, "EURUSD-cd"))
@@ -72,6 +79,24 @@ int OnInit() {
     ACCEPTABLE_SPREAD = 6;
   else
     return -1;
+
+/*
+  if(!StringCompare(symbol, "USDJPY"))
+    ACCEPTABLE_SPREAD = 5;
+  else if(!StringCompare(symbol, "EURUSD"))
+    ACCEPTABLE_SPREAD = 6;
+  else if(!StringCompare(symbol, "GBPUSD"))
+    ACCEPTABLE_SPREAD = 11;
+  else if(!StringCompare(symbol, "GBPJPY"))
+    ACCEPTABLE_SPREAD = 20;
+  else if(!StringCompare(symbol, "AUDJPY"))
+    ACCEPTABLE_SPREAD = 14;
+  else if(!StringCompare(symbol, "EURJPY"))
+    ACCEPTABLE_SPREAD = 6;
+  else
+    return -1;
+*/
+
   
 //---
    return(INIT_SUCCEEDED);
@@ -109,6 +134,7 @@ bool askOandaUpdate() {
 
    if(!triggerOandaUpdate() && !(positionPressure == 0.0)) {
       return false;
+
    }
 
    return readOrderBookInfo();
@@ -140,6 +166,11 @@ bool readOrderBookInfo() {
           FileClose(fh);
           return false;
       }
+      else {
+        lastUpH = Hour();
+        lastUpM = Minute();
+      }
+
       previousTimeStamp = ts;
       positionPressure = FileReadNumber(fh);
       pp_sz = (int)FileReadNumber(fh);
@@ -215,6 +246,9 @@ uchar getStrategy() {
 int openPosition(double stopLoss, uchar strategy, bool isOpen) {
 
   if(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD) || !isOpen) {
+    return -1;
+  }
+  else if(lastUpH * 60 + lastUpM + 20 < Hour() * 60 + Minute()) { // if not updated in last 20 minutes
     return -1;
   }
 
