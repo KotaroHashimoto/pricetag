@@ -10,8 +10,8 @@
 #property strict
 
 //#define BREAK_ONLY
-//#define FXTF
-#define RAKUTEN
+#define FXTF
+//#define RAKUTEN
 
 #ifdef FXTF
   #define ENTRY_TH_PO (0.50)
