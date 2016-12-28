@@ -51,8 +51,7 @@ string previousTimeStamp;
 #define SHORT_LIMIT (16)
 #define LONG_LIMIT (32)
 
-int lastUpH;
-int lastUpM;
+int lastUpTime:
 
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
@@ -70,8 +69,7 @@ int OnInit() {
   MINSL = Point * MarketInfo(Symbol(), MODE_STOPLEVEL);
   MAXSL = Point * MAXSL_PIP;
 
-  lastUpH = 10000;
-  lastUpM = 10000;
+  lastUpTime = 1000000;
 
 #ifdef FXTF
   if(!StringCompare(symbol, "USDJPY-cd"))
@@ -171,8 +169,7 @@ bool readOrderBookInfo() {
        return false;
     }
     else {
-      lastUpH = Hour();
-      lastUpM = Minute();
+      lastUpTime = DayOfWeek() * 1440 + Hour() * 60 + Minute();
     }
 
     previousTimeStamp = ts;
@@ -254,7 +251,7 @@ int openPosition(double stopLoss, uchar strategy, bool isOpen) {
   if(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD) || !isOpen) {
     return -1;
   }
-  else if(lastUpH * 60 + lastUpM + 20 < Hour() * 60 + Minute()) { // if not updated in last 20 minutes
+  else if(lastUpTime + 20 < DayOfWeek() * 1440 + Hour() * 60 + Minute() || 5670 < lastUpTime - DayOfWeek() * 1440) { // if not updated in last 20 minutes
     return -1;
   }
 
