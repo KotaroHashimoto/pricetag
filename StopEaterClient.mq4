@@ -1,7 +1,7 @@
 //+------------------------------------------------------------------+
-//|                               StopEaterClient.mq4 |
-//|                Copyright 2016, MetaQuotes Software Corp. |
-//|                              https://www.mql5.com |
+//|                                              StopEaterClient.mq4 |
+//|                        Copyright 2016, MetaQuotes Software Corp. |
+//|                                             https://www.mql5.com |
 //+------------------------------------------------------------------+
 
 #property copyright "Copyright 2016, MetaQuotes Software Corp."
@@ -55,7 +55,7 @@ int lastUpH;
 int lastUpM;
 
 //+------------------------------------------------------------------+
-//| Expert initialization function                        |
+//| Expert initialization function                                   |
 //+------------------------------------------------------------------+
 int OnInit() {
 //---
@@ -110,7 +110,7 @@ int OnInit() {
 }
 
 //+------------------------------------------------------------------+
-//| Expert deinitialization function                      |
+//| Expert deinitialization function                                 |
 //+------------------------------------------------------------------+
 void OnDeinit(const int reason) {
 //---  
@@ -342,7 +342,7 @@ bool scanPositions(double stopLoss, uchar strategy) {
 
 
 //+------------------------------------------------------------------+
-//| Expert tick function                              |
+//| Expert tick function                                             |
 //+------------------------------------------------------------------+
 void OnTick() {
 //---

@@ -1,7 +1,7 @@
 //+------------------------------------------------------------------+
-//|                               StopEaterServer.mq4 |
-//|                Copyright 2016, MetaQuotes Software Corp. |
-//|                              https://www.mql5.com |
+//|                                              StopEaterServer.mq4 |
+//|                        Copyright 2016, MetaQuotes Software Corp. |
+//|                                             https://www.mql5.com |
 //+------------------------------------------------------------------+
 
 #include <fxlabsnet.mqh>
@@ -31,7 +31,7 @@ double previousHash;
 #define DERR (-100000.00)
 
 //+------------------------------------------------------------------+
-//| Expert initialization function                        |
+//| Expert initialization function                                   |
 //+------------------------------------------------------------------+
 int OnInit()
   {
@@ -55,7 +55,7 @@ int OnInit()
   }
 
 //+------------------------------------------------------------------+
-//| Expert deinitialization function                      |
+//| Expert deinitialization function                                 |
 //+------------------------------------------------------------------+
 void OnDeinit(const int reason) {
 //---
@@ -194,7 +194,7 @@ void writeOrderBookInfo() {
 }
 
 //+------------------------------------------------------------------+
-//| Expert tick function                              |
+//| Expert tick function                                             |
 //+------------------------------------------------------------------+
 void OnTick() {
   return;
