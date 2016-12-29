@@ -210,7 +210,7 @@ void reInitOrderBook() {
       return;
    }
    else {
-      Print("OANDA updated. hsame hash? = ", hash == previousHash, ", pressure = ", pressure);
+//      Print("OANDA updated. hsame hash? = ", hash == previousHash, ", pressure = ", pressure);
 
       watchOanda = MASK;
       previousHash = hash;
