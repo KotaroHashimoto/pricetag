@@ -16,7 +16,7 @@
 #ifdef FXTF
   #define ENTRY_TH_PO (0.50)
 #else //RAKUTEN
-  #define ENTRY_TH_PO (1.00)
+  #define ENTRY_TH_PO (0.50)
 #endif
 
 #define MARGIN_PIP (0)
@@ -84,6 +84,10 @@ int OnInit() {
     ACCEPTABLE_SPREAD = 14;
   else if(!StringCompare(symbol, "EURJPY-cd"))
     ACCEPTABLE_SPREAD = 6;
+  else if(!StringCompare(symbol, "AUDUSD-cd"))
+    ACCEPTABLE_SPREAD = 19;
+  else if(!StringCompare(symbol, "EURGBP-cd"))
+    ACCEPTABLE_SPREAD = 16;
 
 #else //RAKUTEN
   if(!StringCompare(symbol, "USDJPY"))
@@ -98,6 +102,16 @@ int OnInit() {
     ACCEPTABLE_SPREAD = 12;
   else if(!StringCompare(symbol, "EURJPY"))
     ACCEPTABLE_SPREAD = 11;
+  else if(!StringCompare(symbol, "NZDUSD"))
+    ACCEPTABLE_SPREAD = 20;
+  else if(!StringCompare(symbol, "AUDUSD"))
+    ACCEPTABLE_SPREAD = 12;
+  else if(!StringCompare(symbol, "EURGBP"))
+    ACCEPTABLE_SPREAD = 10;
+  else if(!StringCompare(symbol, "USDCHF"))
+    ACCEPTABLE_SPREAD = 16;
+  else if(!StringCompare(symbol, "EURCHF"))
+    ACCEPTABLE_SPREAD = 16;
 #endif
 
   else
