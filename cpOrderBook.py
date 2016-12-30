@@ -27,7 +27,7 @@ OANDA_DIR = 'C:\\Users\\Administrator\\AppData\\Roaming\\MetaQuotes\\Terminal\\3
 FXTF_DIR = 'C:\\Users\\Administrator\\AppData\\Roaming\\MetaQuotes\\Terminal\\3F58D636E9CFCB1149A0A8D4AE12E98D\\MQL4\\Files\\'
 RAKUTEN_DIR = 'C:\\Users\\Administrator\\AppData\\Roaming\\MetaQuotes\\Terminal\\A84B568DA10F82FE5A8FF6A859153D6F\\MQL4\\Files\\'
 
-pair = ['EURUSD', 'USDJPY', 'EURJPY', 'GBPUSD', 'GBPJPY', 'AUDJPY']
+pair = ['EURUSD', 'USDJPY', 'EURJPY', 'GBPUSD', 'GBPJPY', 'AUDJPY', 'AUDUSD', 'EURGBP', 'USDCHF', 'EURCHF', 'NZDUSD']
 latest = {}
 
 while True:
