@@ -330,7 +330,7 @@ bool scanPositions(double stopLoss, uchar strategy) {
             bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Ask + stopLoss, Ask - stopLoss, 0);
           }
           else if(!!(strategy & (/*SHORT_LIMIT | */SHORT_TRAIL))) {
-            if(OrderStopLoss() < Ask + stopLoss) {
+            if(Ask + stopLoss < OrderStopLoss()) {
               bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Ask + stopLoss, 0, 0);
             }
           }
