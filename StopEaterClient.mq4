@@ -9,7 +9,7 @@
 #property version  "1.00"
 #property strict
 
-//#define BREAK_ONLY
+#define BREAK_ONLY (True)
 #define FXTF
 //#define RAKUTEN
 
@@ -52,6 +52,7 @@ string previousTimeStamp;
 #define LONG_LIMIT (32)
 
 int lastUpTime;
+double lastUpPrice;
 
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
@@ -70,6 +71,7 @@ int OnInit() {
   MAXSL = Point * MAXSL_PIP;
 
   lastUpTime = 1000000;
+  lastUpPrice = (Bid + Ask) / 2.0
 
 #ifdef FXTF
   if(!StringCompare(symbol, "USDJPY-cd"))
@@ -184,6 +186,7 @@ bool readOrderBookInfo() {
     }
     else {
       lastUpTime = DayOfWeek() * 1440 + Hour() * 60 + Minute();
+      lastUpPrice = (Ask + Bid) / 2.0;
     }
 
     previousTimeStamp = ts;
@@ -235,12 +238,18 @@ uchar getStrategy() {
       
       if(ENTRY_TH_PO < MathAbs(pendingOrders[i])) {
         if(0 < pendingOrders[i]) {
+	  if(BREAK_ONLY && price < lastUpPrice)
+	    return LONG_NOOP;
+	  
           if(0 < positionPressure)
             return LONG_TRAIL;
           else
             return LONG_LIMIT;
         }
         else {
+	  if(BREAK_ONLY && lastUpPrice < price)
+	    return SHORT_NOOP;
+	
           if(positionPressure < 0)
             return SHORT_TRAIL;
           else
@@ -276,12 +285,10 @@ int openPosition(double stopLoss, uchar strategy, bool isOpen) {
   else if(!!(strategy & SHORT_TRAIL))
     ticket = OrderSend(symbol, OP_SELL, MINLOT, Bid, 0, Ask + stopLoss, 0);
    
-#ifndef BREAK_ONLY
   else if(!!(strategy & LONG_LIMIT))
     ticket = OrderSend(symbol, OP_BUY, MINLOT, Ask, 0, Bid - stopLoss, Bid + stopLoss);
   else if(!!(strategy & SHORT_LIMIT))
     ticket = OrderSend(symbol, OP_SELL, MINLOT, Bid, 0, Ask + stopLoss, Ask - stopLoss);
-#endif
 
   return ticket;
 }
