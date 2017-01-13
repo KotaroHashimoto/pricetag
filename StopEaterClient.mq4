@@ -13,11 +13,7 @@
 #define FXTF
 //#define RAKUTEN
 
-#ifdef FXTF
-  #define ENTRY_TH_PO (0.50)
-#else //RAKUTEN
-  #define ENTRY_TH_PO (0.50)
-#endif
+#define ENTRY_TH_PO (0.50)
 
 #define MARGIN_PIP (0)
 #define MAXSL_PIP (200)
