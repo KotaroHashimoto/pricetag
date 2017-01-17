@@ -67,7 +67,7 @@ int OnInit() {
   MAXSL = Point * MAXSL_PIP;
 
   lastUpTime = 1000000;
-  lastUpPrice = (Bid + Ask) / 2.0
+  lastUpPrice = (Bid + Ask) / 2.0;
 
 #ifdef FXTF
   if(!StringCompare(symbol, "USDJPY-cd"))
@@ -305,20 +305,36 @@ bool scanPositions(double stopLoss, uchar strategy) {
         }
         else if(0.0 == OrderTakeProfit()) { // if trailing position
           if(!!(strategy & (LONG_LIMIT | LONG_NOOP))) {
-            bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Bid - stopLoss, Bid + stopLoss, 0);
+            if(MINSL < Bid - OrderOpenPrice() && OrderStopLoss() < orderOpenPrice()) {
+              bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), OrderOpenPrice(), Bid + stopLoss, 0);
+            }
+            else {
+              bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Bid - stopLoss, Bid + stopLoss, 0);
+            }
           }
           else if(!!(strategy & (/*LONG_LIMIT | */LONG_TRAIL))) {
-            if(OrderStopLoss() < Bid - stopLoss) {
+            if(MINSL < Bid - OrderOpenPrice() && OrderStopLoss() < orderOpenPrice()) {
+              bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), OrderOpenPrice(), 0, 0);
+            }
+            else if(OrderStopLoss() < Bid - stopLoss) {
               bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Bid - stopLoss, 0, 0);
             }
           }
         }
         else { // if limit position
           if(!!(strategy & LONG_TRAIL)) {
-            bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Bid - stopLoss, 0, 0);    
+            if(MINSL < Bid - OrderOpenPrice() && OrderStopLoss() < orderOpenPrice()) {
+              bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), OrderOpenPrice(), 0, 0);
+            }
+            else if(OrderStopLoss() < Bid - stopLoss) {
+              bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Bid - stopLoss, 0, 0);
+            }
           }
           else if(!!(strategy & (LONG_LIMIT | LONG_NOOP))) {
-            if(stopLoss < ACCEPTABLE_SPREAD * Point + OrderOpenPrice() - OrderStopLoss() && OrderStopLoss() < Bid - stopLoss) {
+            if(MINSL < Bid - OrderOpenPrice() && OrderStopLoss() < orderOpenPrice()) {
+              bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), OrderOpenPrice(), Bid + stopLoss, 0);
+            }
+            else if(stopLoss < ACCEPTABLE_SPREAD * Point + OrderOpenPrice() - OrderStopLoss() && OrderStopLoss() < Bid - stopLoss) {
               bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Bid - stopLoss, Bid + stopLoss, 0);
             }
           }
@@ -330,20 +346,36 @@ bool scanPositions(double stopLoss, uchar strategy) {
         }
         else if(0.0 == OrderTakeProfit()) { // if trailing position
           if(!!(strategy & (SHORT_LIMIT | SHORT_NOOP))) {
-            bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Ask + stopLoss, Ask - stopLoss, 0);
+            if(MINSL < OrderOpenPrice() - Ask && OrderOpenPrice() < OrderStopLoss()) {
+              bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), OrderOpenPrice(), Ask - stopLoss, 0);
+            }
+            else {
+              bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Ask + stopLoss, Ask - stopLoss, 0);
+            }
           }
           else if(!!(strategy & (/*SHORT_LIMIT | */SHORT_TRAIL))) {
-            if(Ask + stopLoss < OrderStopLoss()) {
+            if(MINSL < OrderOpenPrice() - Ask && OrderOpenPrice() < OrderStopLoss()) {
+              bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), OrderOpenPrice(), 0, 0);
+            }
+            else if(Ask + stopLoss < OrderStopLoss()) {
               bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Ask + stopLoss, 0, 0);
             }
           }
         }
         else { // if limit position
           if(!!(strategy & SHORT_TRAIL)) {
-            bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Ask + stopLoss, 0, 0);    
+            if(MINSL < OrderOpenPrice() - Ask && OrderOpenPrice() < OrderStopLoss()) {
+              bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), OrderOpenPrice(), 0, 0);
+            }
+            else if(Ask + stopLoss < OrderStopLoss()) {
+              bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Ask + stopLoss, 0, 0);
+            }
           }
           else if(!!(strategy & (SHORT_LIMIT | SHORT_NOOP))) {
-            if(stopLoss < ACCEPTABLE_SPREAD * Point + OrderStopLoss() - OrderOpenPrice() && Ask + stopLoss < OrderStopLoss()) {
+            if(MINSL < OrderOpenPrice() - Ask && OrderOpenPrice() < OrderStopLoss()) {
+              bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), OrderOpenPrice(), Ask - stopLoss, 0);
+            }
+            else if(stopLoss < ACCEPTABLE_SPREAD * Point + OrderStopLoss() - OrderOpenPrice() && Ask + stopLoss < OrderStopLoss()) {
               bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Ask + stopLoss, Ask - stopLoss, 0);
             }
           }
