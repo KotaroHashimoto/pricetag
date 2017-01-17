@@ -305,7 +305,7 @@ bool scanPositions(double stopLoss, uchar strategy) {
         }
         else if(0.0 == OrderTakeProfit()) { // if trailing position
           if(!!(strategy & (LONG_LIMIT | LONG_NOOP))) {
-            if(MINSL < Bid - OrderOpenPrice() && OrderStopLoss() < orderOpenPrice()) {
+            if(MINSL < Bid - OrderOpenPrice() && OrderStopLoss() < OrderOpenPrice()) {
               bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), OrderOpenPrice(), Bid + stopLoss, 0);
             }
             else {
@@ -313,7 +313,7 @@ bool scanPositions(double stopLoss, uchar strategy) {
             }
           }
           else if(!!(strategy & (/*LONG_LIMIT | */LONG_TRAIL))) {
-            if(MINSL < Bid - OrderOpenPrice() && OrderStopLoss() < orderOpenPrice()) {
+            if(MINSL < Bid - OrderOpenPrice() && OrderStopLoss() < OrderOpenPrice()) {
               bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), OrderOpenPrice(), 0, 0);
             }
             else if(OrderStopLoss() < Bid - stopLoss) {
@@ -323,7 +323,7 @@ bool scanPositions(double stopLoss, uchar strategy) {
         }
         else { // if limit position
           if(!!(strategy & LONG_TRAIL)) {
-            if(MINSL < Bid - OrderOpenPrice() && OrderStopLoss() < orderOpenPrice()) {
+            if(MINSL < Bid - OrderOpenPrice() && OrderStopLoss() < OrderOpenPrice()) {
               bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), OrderOpenPrice(), 0, 0);
             }
             else if(OrderStopLoss() < Bid - stopLoss) {
@@ -331,7 +331,7 @@ bool scanPositions(double stopLoss, uchar strategy) {
             }
           }
           else if(!!(strategy & (LONG_LIMIT | LONG_NOOP))) {
-            if(MINSL < Bid - OrderOpenPrice() && OrderStopLoss() < orderOpenPrice()) {
+            if(MINSL < Bid - OrderOpenPrice() && OrderStopLoss() < OrderOpenPrice()) {
               bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), OrderOpenPrice(), Bid + stopLoss, 0);
             }
             else if(stopLoss < ACCEPTABLE_SPREAD * Point + OrderOpenPrice() - OrderStopLoss() && OrderStopLoss() < Bid - stopLoss) {
