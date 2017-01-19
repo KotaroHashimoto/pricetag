@@ -142,6 +142,9 @@ void OnTick()
     stopLoss = iATR(Symbol(), PERIOD_M15, IND_PERIOD - 1, 1);
 
 #ifdef OANDA
+    stopLoss = stopLoss / 4.0;
+#endif
+#ifdef RAKUTEN
     stopLoss = stopLoss / 2.0;
 #endif
   }
