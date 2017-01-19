@@ -145,16 +145,28 @@ void OnTick()
     stopLoss = stopLoss / 4.0;
 #endif
 #ifdef RAKUTEN
-    stopLoss = stopLoss / 2.0;
+    stopLoss = stopLoss / 3.0;
 #endif
   }
 
   bool isOpen = false;
+  double gain = 0.0;
   for(int i = 0; i < OrdersTotal(); i++) {
     if(OrderSelect(i, SELECT_BY_POS)) {
+      gain = gain + OrderProfit() + OrderSwap() + OrderCommission();
       if(!StringCompare(OrderSymbol(), symbol)) {
         isOpen = true;
-        break;
+      }
+    }
+  }
+  
+  if(1000 < gain) {
+    for(int i = 0; i < OrdersTotal(); i++) {
+      if(OrderSelect(i, SELECT_BY_POS)) {
+        if(OrderType() == OP_BUY)
+          bool close = OrderClose(OrderTicket(), OrderLots(), Bid, 0);
+        else if(OrderType() == OP_SELL)
+          bool close = OrderClose(OrderTicket(), OrderLots(), Ask, 0);
       }
     }
   }
