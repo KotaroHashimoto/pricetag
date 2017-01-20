@@ -10,7 +10,7 @@
 
 #define FXTF
 //#define OANDA
-//#deinfe RAKUTEN
+//#define RAKUTEN
 
 #define NONE (-1)
 int position = NONE;
@@ -76,7 +76,7 @@ int OnInit()
   else if(!StringCompare(symbol, "EURJPY-cd"))
     ACCEPTABLE_SPREAD = 6;
     
-  LOSS_CUT = -3000.0;
+  LOSS_CUT = -10000.0;
 #endif
 #ifdef RAKUTEN
   if(!StringCompare(symbol, "USDJPY"))
@@ -84,7 +84,7 @@ int OnInit()
   else if(!StringCompare(symbol, "EURUSD"))
     ACCEPTABLE_SPREAD = 6;
 
-  LOSS_CUT = -1000.0;
+  LOSS_CUT = -10000.0;
 #endif
 #ifdef OANDA
   if(!StringCompare(symbol, "USDJPY"))
@@ -92,7 +92,7 @@ int OnInit()
   else if(!StringCompare(symbol, "EURUSD"))
     ACCEPTABLE_SPREAD = 5;
 
-  LOSS_CUT = -2000.0;
+  LOSS_CUT = -10000.0;
 #endif
 
   //---
@@ -153,7 +153,7 @@ void OnTick()
     stopLoss = stopLoss / 4.0;
 #endif
 #ifdef RAKUTEN
-    stopLoss = stopLoss / 3.0;
+    stopLoss = stopLoss / 2.0;
 #endif
   }
 
