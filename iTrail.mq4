@@ -159,9 +159,16 @@ void OnTick()
 
   bool isOpen = false;
   double gain = 0.0;
+  double maxLoss = 0.0;
+  int maxTicket = NONE;
   for(int i = 0; i < OrdersTotal(); i++) {
     if(OrderSelect(i, SELECT_BY_POS)) {
-      gain = gain + OrderProfit() + OrderSwap() + OrderCommission();
+      double loss = OrderProfit() + OrderSwap() + OrderCommission();
+      gain = gain + loss;
+      if(loss < maxLoss) {
+        maxLoss = loss;
+        maxTicket = OrderTicket();
+      }
       if(!StringCompare(OrderSymbol(), symbol)) {
         isOpen = true;
       }
@@ -171,9 +178,9 @@ void OnTick()
   if(gain < LOSS_CUT) {
     for(int i = 0; i < OrdersTotal(); i++) {
       if(OrderSelect(i, SELECT_BY_POS)) {
-        if(OrderType() == OP_BUY)
+        if(OrderType() == OP_BUY && OrderTicket() == maxTicket)
           bool close = OrderClose(OrderTicket(), OrderLots(), Bid, 0);
-        else if(OrderType() == OP_SELL)
+        else if(OrderType() == OP_SELL && OrderTicket() == maxTicket)
           bool close = OrderClose(OrderTicket(), OrderLots(), Ask, 0);
       }
     }
