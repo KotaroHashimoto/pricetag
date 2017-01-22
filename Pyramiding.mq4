@@ -13,7 +13,7 @@
 //#define RAKUTEN
 
 #define NONE (-1)
-#define MARGINPIP (1.0)
+#define MARGINPIP (0.0)
 
 double minLot = NONE;
 double priceMargin = NONE;
@@ -138,7 +138,7 @@ void OnTick()
       }
       
       if(!close) {
-        double price = (Ask + Bid) / 2.0;
+        double price = OrderOpenPrice();
         if(price < lowest)
           lowest = price;
         if(highest < price)
