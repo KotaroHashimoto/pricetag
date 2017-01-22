@@ -13,7 +13,6 @@
 //#define RAKUTEN
 
 #define NONE (-1)
-#define MARGINPIP (0.0)
 
 double minLot = NONE;
 double priceMargin = NONE;
@@ -52,9 +51,6 @@ int OnInit()
   minLot = MarketInfo(Symbol(), MODE_MINLOT);
   Print("minLot=", minLot);
   
-  priceMargin = Point * MARGINPIP;
-  Print("priceMargin=", priceMargin);
-    
   symbol = Symbol();
   
 #ifdef FXTF
@@ -78,6 +74,9 @@ int OnInit()
     ACCEPTABLE_SPREAD = 5;
 #endif
 
+  priceMargin = (double)ACCEPTABLE_SPREAD * Point;
+  Print("priceMargin=", priceMargin);
+    
   //---
   return(INIT_SUCCEEDED);
 }
