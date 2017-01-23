@@ -18,7 +18,6 @@ double minLot = NONE;
 double priceMargin = NONE;
 double stopLoss = NONE;
 
-
 int TIMEFRAME = NONE;
 int ACCEPTABLE_SPREAD = NONE;
 string symbol;
@@ -67,21 +66,25 @@ int OnInit()
   TIMEFRAME = PERIOD_M1;
   stopLoss = (double)MarketInfo(Symbol(), MODE_STOPLEVEL) * Point;
 #endif
-#ifdef RAKUTEN
-  if(!StringCompare(symbol, "USDJPY"))
-    ACCEPTABLE_SPREAD = 5;
-  else if(!StringCompare(symbol, "EURUSD"))
-    ACCEPTABLE_SPREAD = 6;
-    
-  TIMEFRAME = PERIOD_M15;    
-#endif
 #ifdef OANDA
   if(!StringCompare(symbol, "USDJPY"))
     ACCEPTABLE_SPREAD = 4;
   else if(!StringCompare(symbol, "EURUSD"))
     ACCEPTABLE_SPREAD = 5;
+  else if(!StringCompare(symbol, "EURJPY"))
+    ACCEPTABLE_SPREAD = 13;
 
   TIMEFRAME = PERIOD_M5;
+#endif
+#ifdef RAKUTEN
+  if(!StringCompare(symbol, "USDJPY"))
+    ACCEPTABLE_SPREAD = 5;
+  else if(!StringCompare(symbol, "EURUSD"))
+    ACCEPTABLE_SPREAD = 6;
+  else if(!StringCompare(symbol, "EURJPY"))
+    ACCEPTABLE_SPREAD = 11;
+    
+  TIMEFRAME = PERIOD_M15;    
 #endif
 
   priceMargin = (double)ACCEPTABLE_SPREAD * Point;
@@ -100,19 +103,19 @@ void OnDeinit(const int reason)
 
 int currentDecision()
 {
-  double adx1 = iADX(Symbol(), TIMEFRAME, 14, PRICE_WEIGHTED, 0, 1);
+  double adx1 = iADX(Symbol(), TIMEFRAME, 14, PRICE_WEIGHTED, 0, 0);
   if(adx1 < 25.0) {
     return NONE;
   }
 
-  double adx2 = iADX(Symbol(), TIMEFRAME, 14, PRICE_WEIGHTED, 0, 2);
-  if(adx2 >= adx1) {
+  double adx2 = iADX(Symbol(), TIMEFRAME, 14, PRICE_WEIGHTED, 0, 1);
+  if(adx2 > adx1) {
     return NONE;
   }
   
-  double pDI = iADX(Symbol(), TIMEFRAME, 14, PRICE_WEIGHTED, 1, 1);
-  double nDI = iADX(Symbol(), TIMEFRAME, 14, PRICE_WEIGHTED, 2, 1);
-    
+  double pDI = iADX(Symbol(), TIMEFRAME, 14, PRICE_WEIGHTED, 1, 0);
+  double nDI = iADX(Symbol(), TIMEFRAME, 14, PRICE_WEIGHTED, 2, 0);
+
   if(nDI < pDI) {
     return OP_BUY;
   }
@@ -129,33 +132,32 @@ int currentDecision()
 //+------------------------------------------------------------------+
 void OnTick()
 {
-
   int decision = currentDecision();
   bool overLap = False;
-  
+
 #ifdef FXTF
 #else
-  stopLoss = iATR(Symbol(), TIMEFRAME, 14, 1);
+  stopLoss = iATR(Symbol(), TIMEFRAME, 14, 0);
 #endif
 
   for(int i = 0; i < OrdersTotal(); i++) {
     if(OrderSelect(i, SELECT_BY_POS) && !StringCompare(OrderSymbol(), symbol)) {
       bool close = False;
       if(OrderType() == OP_BUY) {
-        if(decision != OP_BUY)
+        if((decision == NONE && 0.0 <= OrderProfit() + OrderSwap() + OrderCommission()) || decision == OP_SELL)
           close = OrderClose(OrderTicket(), OrderLots(), Bid, 0);
-          
+/*          
         if(!close && (OrderStopLoss() < Bid - stopLoss)) {
           bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Bid - stopLoss, 0, 0);
-        }
+        }*/
       }
       else if(OrderType() == OP_SELL) {
-        if(decision != OP_SELL)
+        if((decision == NONE && 0.0 <= OrderProfit() + OrderSwap() + OrderCommission()) || decision == OP_BUY)
           close = OrderClose(OrderTicket(), OrderLots(), Ask, 0);
-
+/*
         if(!close && (Ask + stopLoss < OrderStopLoss())) {
           bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), Ask + stopLoss, 0, 0);
-        }
+        }*/
       }
       
       if(!close && !overLap) {
@@ -176,8 +178,8 @@ void OnTick()
     Print("No entry on Friday night. Hour()=", Hour());
     position = NONE;
     return;
-  }
-*/
+  }*/
+
   if(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD)) {
 //    Print("No entry on wide spread: ", MarketInfo(Symbol(), MODE_SPREAD));
     return;
@@ -186,10 +188,12 @@ void OnTick()
   
   if(!overLap) {
     if(decision == OP_BUY) {
-      int ticket = OrderSend(symbol, OP_BUY, minLot, Ask, 0, Bid - stopLoss, 0);
+//      int ticket = OrderSend(symbol, OP_BUY, minLot, Ask, 0, Bid - stopLoss, 0);
+      int ticket = OrderSend(symbol, OP_BUY, minLot, Ask, 0, 0, 0);
     }
     if(decision == OP_SELL) {
-      int ticket = OrderSend(symbol, OP_SELL, minLot, Bid, 0, Ask + stopLoss, 0);
+//      int ticket = OrderSend(symbol, OP_SELL, minLot, Bid, 0, Ask + stopLoss, 0);
+      int ticket = OrderSend(symbol, OP_SELL, minLot, Bid, 0, 0, 0);
     }
   }
 }
