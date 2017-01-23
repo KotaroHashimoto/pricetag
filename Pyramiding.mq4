@@ -135,7 +135,7 @@ void OnTick()
   
 #ifdef FXTF
 #else
-  stopLoss = iATR(Symbol(), TIMEFRAME, 2, 1) / 2.0;
+  stopLoss = iATR(Symbol(), TIMEFRAME, 14, 1);
 #endif
 
   for(int i = 0; i < OrdersTotal(); i++) {
