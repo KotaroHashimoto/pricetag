@@ -52,7 +52,7 @@ int OnInit()
   
   minLot = MarketInfo(Symbol(), MODE_MINLOT);
   Print("minLot=", minLot);
-  
+
   symbol = Symbol();
   
 #ifdef FXTF
@@ -103,13 +103,18 @@ void OnDeinit(const int reason)
 
 int currentDecision()
 {
-  double adx1 = iADX(Symbol(), TIMEFRAME, 14, PRICE_WEIGHTED, 0, 0);
-  if(adx1 < 25.0) {
+  double adx0 = iADX(Symbol(), TIMEFRAME, 14, PRICE_WEIGHTED, 0, 0);
+  if(adx0 < 25.0) {
     return NONE;
   }
 
-  double adx2 = iADX(Symbol(), TIMEFRAME, 14, PRICE_WEIGHTED, 0, 1);
-  if(adx2 > adx1) {
+  double adx1 = iADX(Symbol(), TIMEFRAME, 14, PRICE_WEIGHTED, 0, 1);
+  if(adx1 > adx0) {
+    return NONE;
+  }
+
+  double adx2 = iADX(Symbol(), TIMEFRAME, 14, PRICE_WEIGHTED, 0, 2);
+  if((adx1 - adx2) > (adx0 - adx1)) {
     return NONE;
   }
   
@@ -144,7 +149,7 @@ void OnTick()
     if(OrderSelect(i, SELECT_BY_POS) && !StringCompare(OrderSymbol(), symbol)) {
       bool close = False;
       if(OrderType() == OP_BUY) {
-        if((decision == NONE && 0.0 <= OrderProfit() + OrderSwap() + OrderCommission()) || decision == OP_SELL)
+        if((decision == NONE && 0.0 < OrderProfit() + OrderSwap() + OrderCommission()) || decision == OP_SELL)
           close = OrderClose(OrderTicket(), OrderLots(), Bid, 0);
 /*          
         if(!close && (OrderStopLoss() < Bid - stopLoss)) {
@@ -152,7 +157,7 @@ void OnTick()
         }*/
       }
       else if(OrderType() == OP_SELL) {
-        if((decision == NONE && 0.0 <= OrderProfit() + OrderSwap() + OrderCommission()) || decision == OP_BUY)
+        if((decision == NONE && 0.0 < OrderProfit() + OrderSwap() + OrderCommission()) || decision == OP_BUY)
           close = OrderClose(OrderTicket(), OrderLots(), Ask, 0);
 /*
         if(!close && (Ask + stopLoss < OrderStopLoss())) {
