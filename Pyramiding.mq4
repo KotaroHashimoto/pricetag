@@ -114,7 +114,7 @@ int currentDecision()
   }
 
   double adx2 = iADX(Symbol(), TIMEFRAME, 14, PRICE_WEIGHTED, 0, 2);
-  if((adx1 - adx2) > (adx0 - adx1)) {
+  if((adx1 - adx2) / 2.0 > (adx0 - adx1)) {
     return NONE;
   }
   
