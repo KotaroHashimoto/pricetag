@@ -1,5 +1,5 @@
 //+------------------------------------------------------------------+
-//|                                                   Pyramiding.mq4 |
+//|                                                   Accumulate.mq4 |
 //|                        Copyright 2016, MetaQuotes Software Corp. |
 //|                                             https://www.mql5.com |
 //+------------------------------------------------------------------+
@@ -74,7 +74,7 @@ int OnInit()
     ACCEPTABLE_SPREAD = 11;
 
   stopLoss = (double)(ACCEPTABLE_SPREAD + 1) * Point;
-  timeToClose = 22;
+  timeToClose = 23;
 #endif
 
   priceMargin = (double)ACCEPTABLE_SPREAD * Point;
@@ -100,7 +100,7 @@ void OnTick()
   bool overLapShort = False;
   double price = (Ask + Bid) / 2.0;
   
-  bool close = ((timeToClose - 1 == Hour() && 55 < Minute()) || timeToClose <= Hour() || ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD));
+  bool close = ((timeToClose - 1 == Hour() && 58 < Minute()) || timeToClose <= Hour() || ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD));
 
   for(int i = 0; i < OrdersTotal(); i++) {
     if(OrderSelect(i, SELECT_BY_POS) && !StringCompare(OrderSymbol(), symbol)) {
