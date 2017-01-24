@@ -149,7 +149,8 @@ void OnTick()
     if(OrderSelect(i, SELECT_BY_POS) && !StringCompare(OrderSymbol(), symbol)) {
       bool close = False;
       if(OrderType() == OP_BUY) {
-        if((decision == NONE && 0.0 < OrderProfit() + OrderSwap() + OrderCommission()) || decision == OP_SELL)
+//        if((decision == NONE && 0.0 < OrderProfit() + OrderSwap() + OrderCommission()) || decision == OP_SELL)
+        if(decision != OP_BUY && 0.0 < OrderProfit() + OrderSwap() + OrderCommission())
           close = OrderClose(OrderTicket(), OrderLots(), Bid, 0);
 /*          
         if(!close && (OrderStopLoss() < Bid - stopLoss)) {
@@ -157,7 +158,8 @@ void OnTick()
         }*/
       }
       else if(OrderType() == OP_SELL) {
-        if((decision == NONE && 0.0 < OrderProfit() + OrderSwap() + OrderCommission()) || decision == OP_BUY)
+//        if((decision == NONE && 0.0 < OrderProfit() + OrderSwap() + OrderCommission()) || decision == OP_BUY)
+        if(decision != OP_SELL && 0.0 < OrderProfit() + OrderSwap() + OrderCommission())
           close = OrderClose(OrderTicket(), OrderLots(), Ask, 0);
 /*
         if(!close && (Ask + stopLoss < OrderStopLoss())) {
