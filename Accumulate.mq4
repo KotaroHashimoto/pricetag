@@ -73,7 +73,7 @@ int OnInit()
   else if(!StringCompare(symbol, "EURJPY"))
     ACCEPTABLE_SPREAD = 11;
 
-  stopLoss = (double)(ACCEPTABLE_SPREAD + 1) * Point;
+//  stopLoss = (double)(ACCEPTABLE_SPREAD + 1) * Point;
   timeToClose = 23;
 #endif
 
@@ -126,6 +126,10 @@ void OnTick()
   if(close)
     return;
     
+#ifdef RAKUTEN
+  stopLoss = iATR(Symbol(), PERIOD_M15, 14, 0);
+#endif
+
   if(!overLapLong) {
     int ticket = OrderSend(symbol, OP_BUY, minLot, Ask, 0, Bid - stopLoss, 0);
   }
