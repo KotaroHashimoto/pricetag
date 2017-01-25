@@ -61,7 +61,13 @@ int OnInit()
     ACCEPTABLE_SPREAD = 8;
   else if(!StringCompare(symbol, "EURJPY-cd"))
     ACCEPTABLE_SPREAD = 6;
-    
+  else if(!StringCompare(symbol, "GBPUSD-cd"))
+    ACCEPTABLE_SPREAD = 11;
+  else if(!StringCompare(symbol, "AUDJPY-cd"))
+    ACCEPTABLE_SPREAD = 14;
+  else if(!StringCompare(symbol, "EURGBP-cd"))
+    ACCEPTABLE_SPREAD = 16;
+// total = 58
   stopLoss = (double)MarketInfo(Symbol(), MODE_STOPLEVEL) * Point;
   timeToClose = 21;
 #endif
@@ -70,8 +76,15 @@ int OnInit()
     ACCEPTABLE_SPREAD = 5;
   else if(!StringCompare(symbol, "EURUSD"))
     ACCEPTABLE_SPREAD = 6;
+  else if(!StringCompare(symbol, "EURGBP"))
+    ACCEPTABLE_SPREAD = 10;
   else if(!StringCompare(symbol, "EURJPY"))
     ACCEPTABLE_SPREAD = 11;
+  else if(!StringCompare(symbol, "GBPUSD"))
+    ACCEPTABLE_SPREAD = 12;
+  else if(!StringCompare(symbol, "AUDJPY"))
+    ACCEPTABLE_SPREAD = 12;
+// total = 56
 
 //  stopLoss = (double)(ACCEPTABLE_SPREAD + 1) * Point;
   timeToClose = 23;
@@ -127,7 +140,7 @@ void OnTick()
     return;
     
 #ifdef RAKUTEN
-  stopLoss = iATR(Symbol(), PERIOD_M15, 14, 0);
+  stopLoss = iATR(Symbol(), PERIOD_M5, 14, 0);
 #endif
 
   if(!overLapLong) {
