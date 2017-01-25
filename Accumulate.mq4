@@ -113,7 +113,7 @@ void OnTick()
   bool overLapShort = False;
   double price = (Ask + Bid) / 2.0;
   
-  bool close = ((timeToClose - 1 == Hour() && 58 < Minute()) || timeToClose <= Hour() || ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD));
+  bool close = ((timeToClose - 1 == Hour() && 55 < Minute()) || timeToClose <= Hour()/* || ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD)*/);
 
   for(int i = 0; i < OrdersTotal(); i++) {
     if(OrderSelect(i, SELECT_BY_POS) && !StringCompare(OrderSymbol(), symbol)) {
@@ -136,7 +136,7 @@ void OnTick()
     }
   }
   
-  if(close)
+  if(close || ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD))
     return;
     
 #ifdef RAKUTEN
