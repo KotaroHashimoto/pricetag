@@ -8,15 +8,15 @@
 #property version   "1.00"
 #property strict
 
-#define FXTF
-//#define RAKUTEN
+//#define FXTF
+#define RAKUTEN
 
 #define NONE (-1)
 
 double minLot = NONE;
 double stopLoss = NONE;
 double priceMargin = NONE;
-int timeToClose = NONE;
+//int timeToClose = NONE;
 
 int ACCEPTABLE_SPREAD = NONE;
 string symbol;
@@ -87,7 +87,8 @@ int OnInit()
 // total = 56
 
 //  stopLoss = (double)(ACCEPTABLE_SPREAD + 1) * Point;
-  timeToClose = 23;
+  stopLoss = 50.0 * Point;
+//  timeToClose = 23;
 #endif
 
   priceMargin = (double)ACCEPTABLE_SPREAD * Point;
@@ -113,36 +114,36 @@ void OnTick()
   bool overLapShort = False;
   double price = (Ask + Bid) / 2.0;
   
-  bool close = ((timeToClose - 1 == Hour() && 55 < Minute()) || timeToClose <= Hour()/* || ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD)*/);
+//  bool close = ((timeToClose - 1 == Hour() && 55 < Minute()) || timeToClose <= Hour()/* || ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD)*/);
 
   for(int i = 0; i < OrdersTotal(); i++) {
     if(OrderSelect(i, SELECT_BY_POS) && !StringCompare(OrderSymbol(), symbol)) {
       double openPrice = OrderOpenPrice();
       
       if(OrderType() == OP_BUY) {      
-        if(close)
+/*        if(close)
           bool closed = OrderClose(OrderTicket(), OrderLots(), Bid, 0);
-        else if(MathAbs(openPrice - price) < priceMargin && !overLapLong) {
+        else */if(MathAbs(openPrice - price) < priceMargin && !overLapLong) {
           overLapLong = True;
         }
       }
       else if(OrderType() == OP_SELL) {
-        if(close)
+/*        if(close)
           bool closed = OrderClose(OrderTicket(), OrderLots(), Ask, 0);
-        else if(MathAbs(openPrice - price) < priceMargin && !overLapShort) {
+        else */if(MathAbs(openPrice - price) < priceMargin && !overLapShort) {
           overLapShort = True;
         }
       }      
     }
   }
   
-  if(close || ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD))
+  if(/*close || */ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD))
     return;
-    
+/*    
 #ifdef RAKUTEN
   stopLoss = iATR(Symbol(), PERIOD_M5, 14, 0);
 #endif
-
+*/
   if(!overLapLong) {
     int ticket = OrderSend(symbol, OP_BUY, minLot, Ask, 0, Bid - stopLoss, 0);
   }
