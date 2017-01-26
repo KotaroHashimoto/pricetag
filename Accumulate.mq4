@@ -8,8 +8,8 @@
 #property version   "1.00"
 #property strict
 
-//#define FXTF
-#define RAKUTEN
+#define FXTF
+//#define RAKUTEN
 
 #define NONE (-1)
 

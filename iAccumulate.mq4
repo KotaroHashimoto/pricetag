@@ -8,8 +8,8 @@
 #property version   "1.00"
 #property strict
 
-#define FXTF
-//#define RAKUTEN
+//#define FXTF
+#define RAKUTEN
 
 #define NONE (-1)
 
@@ -83,6 +83,7 @@ int OnInit()
   else if(!StringCompare(symbol, "AUDJPY"))
     ACCEPTABLE_SPREAD = 12;
 // total = 56
+  stopLoss = 50.0 * Point;
 //  stopLoss = (double)(ACCEPTABLE_SPREAD + 1) * Point;
 #endif
 
@@ -128,11 +129,11 @@ void OnTick()
   
   if(ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD))
     return;
-    
+    /*
 #ifdef RAKUTEN
   stopLoss = iATR(Symbol(), PERIOD_M5, 14, 0);
 #endif
-
+*/
   if(!overLapLong) {
     int ticket = OrderSend(symbol, OP_BUY, minLot, Ask, 0, 0, Bid + stopLoss);
   }
