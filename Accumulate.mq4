@@ -186,7 +186,7 @@ void OnTick()
     return;
  
 #ifdef RAKUTEN
-  stopLoss = iATR(Symbol(), PERIOD_M15, 14, 0);
+  stopLoss = iATR(symbol, PERIOD_M15, 14, 0);
 #endif
 
   if(!overLapLong) {
