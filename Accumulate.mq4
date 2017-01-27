@@ -20,7 +20,7 @@ bool isOpening;
 double lastEquity;
 double closeProfit;
 
-#define TRAILPROFIT (10000.0)
+#define TRAILPROFIT (20000.0)
 #define THREASH (0.7)
 #define NM (-1000000.0)
 
@@ -136,7 +136,7 @@ void OnTick()
     closeProfit = NM;
     lastEquity = AccountEquity();
   }
-  else {
+  else if(!StringCompare(symbol, "USDJPY-cd")){
     Print("closeProfit = ", closeProfit, ", currentProfit = ", currentProfit);
   }
 
