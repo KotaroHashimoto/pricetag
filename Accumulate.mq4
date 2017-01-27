@@ -11,14 +11,20 @@
 #define FXTF
 //#define RAKUTEN
 
-#define NONE (-1)
+double minLot;
+double stopLoss;
+double priceMargin;
 
-double minLot = NONE;
-double stopLoss = NONE;
-double priceMargin = NONE;
-//int timeToClose = NONE;
+int timeToClose;
+bool isOpening;
+double lastEquity;
+double closeProfit;
 
-int ACCEPTABLE_SPREAD = NONE;
+#define TRAILPROFIT (10000.0)
+#define THREASH (0.7)
+#define NM (-1000000.0)
+
+int ACCEPTABLE_SPREAD;
 string symbol;
 
 //+------------------------------------------------------------------+
@@ -53,6 +59,8 @@ int OnInit()
   Print("minLot=", minLot);
 
   symbol = Symbol();
+  lastEquity = AccountEquity();
+  closeProfit = NM;
   
 #ifdef FXTF
   if(!StringCompare(symbol, "USDJPY-cd"))
@@ -68,6 +76,7 @@ int OnInit()
   else if(!StringCompare(symbol, "EURGBP-cd"))
     ACCEPTABLE_SPREAD = 16;
 // total = 58
+
   stopLoss = (double)MarketInfo(Symbol(), MODE_STOPLEVEL) * Point;
   timeToClose = 21;
 #endif
@@ -87,8 +96,7 @@ int OnInit()
 // total = 56
 
 //  stopLoss = (double)(ACCEPTABLE_SPREAD + 1) * Point;
-  stopLoss = 50.0 * Point;
-//  timeToClose = 23;
+  timeToClose = 23;
 #endif
 
   priceMargin = (double)ACCEPTABLE_SPREAD * Point;
@@ -110,40 +118,58 @@ void OnDeinit(const int reason)
 //+------------------------------------------------------------------+
 void OnTick()
 {
+  double currentProfit = AccountEquity() - lastEquity;
+  if(closeProfit == NM) {
+    if(TRAILPROFIT < currentProfit) {
+      closeProfit = (AccountEquity() - lastEquity) * THREASH;
+    }
+  }
+  else {
+    if(closeProfit < currentProfit * THREASH) {
+      closeProfit = (AccountEquity() - lastEquity) * THREASH;
+    }
+  }
+  
+  isOpening = ((timeToClose - 1 == Hour() && Minute() < 50) || Hour() < (timeToClose - 1));// || ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD));
+  isOpening = (closeProfit < currentProfit) & isOpening;
+  if(!isOpening && OrdersTotal() == 0) {
+    closeProfit = NM;
+    lastEquity = AccountEquity();
+  }
+
+
   bool overLapLong = False;
   bool overLapShort = False;
   double price = (Ask + Bid) / 2.0;
   
-//  bool close = ((timeToClose - 1 == Hour() && 55 < Minute()) || timeToClose <= Hour()/* || ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD)*/);
-
   for(int i = 0; i < OrdersTotal(); i++) {
     if(OrderSelect(i, SELECT_BY_POS) && !StringCompare(OrderSymbol(), symbol)) {
       double openPrice = OrderOpenPrice();
       
       if(OrderType() == OP_BUY) {      
-/*        if(close)
+        if(!isOpening)
           bool closed = OrderClose(OrderTicket(), OrderLots(), Bid, 0);
-        else */if(MathAbs(openPrice - price) < priceMargin && !overLapLong) {
+        else if(MathAbs(openPrice - price) < priceMargin && !overLapLong) {
           overLapLong = True;
         }
       }
       else if(OrderType() == OP_SELL) {
-/*        if(close)
+        if(!isOpening)
           bool closed = OrderClose(OrderTicket(), OrderLots(), Ask, 0);
-        else */if(MathAbs(openPrice - price) < priceMargin && !overLapShort) {
+        else if(MathAbs(openPrice - price) < priceMargin && !overLapShort) {
           overLapShort = True;
         }
       }      
     }
   }
   
-  if(/*close || */ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD))
+  if(!isOpening || ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD))
     return;
-/*    
+ 
 #ifdef RAKUTEN
-  stopLoss = iATR(Symbol(), PERIOD_M5, 14, 0);
+  stopLoss = iATR(Symbol(), PERIOD_M15, 14, 0);
 #endif
-*/
+
   if(!overLapLong) {
     int ticket = OrderSend(symbol, OP_BUY, minLot, Ask, 0, Bid - stopLoss, 0);
   }
