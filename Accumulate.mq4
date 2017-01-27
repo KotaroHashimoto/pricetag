@@ -145,9 +145,9 @@ void OnTick()
     double equity = AccountEquity();
     int margin = (int)((AccountEquity() / AccountMargin()) * 100.0);
     if(isOpening)
-      Print("closeProfit = ", closeProfit, ", currentProfit = ", currentProfit, ", margin = ", margin, "equity = ", equity, ", opening...");
+      Print("closeProfit = ", closeProfit, ", currentProfit = ", currentProfit, ", margin = ", margin, ", equity = ", equity, ", opening...");
     else
-      Print("closeProfit = ", closeProfit, ", currentProfit = ", currentProfit, ", margin = ", margin, "equity = ", equity, ", closing...");
+      Print("closeProfit = ", closeProfit, ", currentProfit = ", currentProfit, ", margin = ", margin, ", equity = ", equity, ", closing...");
   }
 
 
