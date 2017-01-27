@@ -33,6 +33,7 @@ string symbol;
 int OnInit()
 {
   //---
+  Print("AccountMargin=", AccountMargin());
   Print("AccountBalance=", AccountBalance());
   Print("AccountEquity=", AccountEquity());
   Print("AccountFreeMargin=", AccountFreeMargin());
@@ -143,11 +144,16 @@ void OnTick()
   else if(!StringCompare(symbol, "USDJPY")){
 #endif
     double equity = AccountEquity();
-    int margin = (int)((AccountEquity() / AccountMargin()) * 100.0);
-    if(isOpening)
-      Print("trail = ", closeProfit, ", profit = ", currentProfit, ", margin = ", margin, ", equity = ", equity, ", opening...");
+    int margin;
+    if(AccountMargin() == 0.0)
+      margin = -1;
     else
-      Print("trail = ", closeProfit, ", profit = ", currentProfit, ", margin = ", margin, ", equity = ", equity, ", closing...");
+      margin = (int)((AccountEquity() / AccountMargin()) * 100.0);
+    
+    if(isOpening)
+      Print("trail = ", closeProfit, ", profit = ", currentProfit, ", margin = ", margin, ", equity = ", (int)equity, ", opening...");
+    else
+      Print("trail = ", closeProfit, ", profit = ", currentProfit, ", margin = ", margin, ", equity = ", (int)equity, ", closing...");
   }
 
 
