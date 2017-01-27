@@ -136,6 +136,9 @@ void OnTick()
     closeProfit = NM;
     lastEquity = AccountEquity();
   }
+  else {
+    Print("closeProfit = ", closeProfit, ", currentProfit = ", currentProfit);
+  }
 
 
   bool overLapLong = False;
