@@ -20,7 +20,7 @@ bool isOpening;
 double lastEquity;
 double closeProfit;
 
-#define TRAILPROFIT (20000.0)
+#define TRAILPROFIT (15000.0)
 #define THREASH (0.7)
 #define NM (-1000000.0)
 
