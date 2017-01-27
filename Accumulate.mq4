@@ -20,7 +20,7 @@ bool isOpening;
 double lastEquity;
 double closeProfit;
 
-#define TRAILPROFIT (15000.0)
+double TRAILPROFIT;
 #define THREASH (0.7)
 #define NM (-1000000.0)
 
@@ -80,6 +80,7 @@ int OnInit()
 
   stopLoss = (double)MarketInfo(Symbol(), MODE_STOPLEVEL) * Point;
   timeToClose = 21;
+  TRAILPROFIT = 7500.0;
 #endif
 #ifdef RAKUTEN
   if(!StringCompare(symbol, "USDJPY"))
@@ -98,6 +99,7 @@ int OnInit()
 
 //  stopLoss = (double)(ACCEPTABLE_SPREAD + 1) * Point;
   timeToClose = 23;
+  TRAILPROFIT = 15000.0;
 #endif
 
   priceMargin = (double)ACCEPTABLE_SPREAD * Point;
