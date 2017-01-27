@@ -136,8 +136,16 @@ void OnTick()
     closeProfit = NM;
     lastEquity = AccountEquity();
   }
+#ifdef FXTF
   else if(!StringCompare(symbol, "USDJPY-cd")){
-    Print("closeProfit = ", closeProfit, ", currentProfit = ", currentProfit);
+#endif
+#ifdef RAKUTEN
+  else if(!StringCompare(symbol, "USDJPY")){
+#endif
+    if(isOpening)
+      Print("closeProfit = ", closeProfit, ", currentProfit = ", currentProfit, ", opening...");
+    else
+      Print("closeProfit = ", closeProfit, ", currentProfit = ", currentProfit, ", closing...");
   }
 
 
