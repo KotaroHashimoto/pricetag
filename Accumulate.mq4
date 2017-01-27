@@ -142,10 +142,12 @@ void OnTick()
 #ifdef RAKUTEN
   else if(!StringCompare(symbol, "USDJPY")){
 #endif
+    double equity = AccountEquity();
+    int margin = (int)((AccountEquity() / AccountMargin()) * 100.0);
     if(isOpening)
-      Print("closeProfit = ", closeProfit, ", currentProfit = ", currentProfit, ", margin = ", (int)((AccountEquity() / AccountMargin()) * 100.0), ", opening...");
+      Print("closeProfit = ", closeProfit, ", currentProfit = ", currentProfit, ", margin = ", margin, "equity = ", equity, ", opening...");
     else
-      Print("closeProfit = ", closeProfit, ", currentProfit = ", currentProfit, ", margin = ", (int)((AccountEquity() / AccountMargin()) * 100.0), ", closing...");
+      Print("closeProfit = ", closeProfit, ", currentProfit = ", currentProfit, ", margin = ", margin, "equity = ", equity, ", closing...");
   }
 
 
