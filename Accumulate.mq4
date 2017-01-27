@@ -143,9 +143,9 @@ void OnTick()
   else if(!StringCompare(symbol, "USDJPY")){
 #endif
     if(isOpening)
-      Print("closeProfit = ", closeProfit, ", currentProfit = ", currentProfit, ", opening...");
+      Print("closeProfit = ", closeProfit, ", currentProfit = ", currentProfit, ", margin = ", (AccountEquity() / AccountMargin()) * 100.0, ", opening...");
     else
-      Print("closeProfit = ", closeProfit, ", currentProfit = ", currentProfit, ", closing...");
+      Print("closeProfit = ", closeProfit, ", currentProfit = ", currentProfit, ", margin = ", (AccountEquity() / AccountMargin()) * 100.0, ", closing...");
   }
 
 
