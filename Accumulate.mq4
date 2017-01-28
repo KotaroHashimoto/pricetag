@@ -14,6 +14,7 @@
 double minLot;
 double stopLoss;
 double priceMargin;
+double minSL;
 
 int timeToClose;
 bool isOpening;
@@ -78,7 +79,7 @@ int OnInit()
     ACCEPTABLE_SPREAD = 16;
 // total = 58
 
-  stopLoss = (double)MarketInfo(Symbol(), MODE_STOPLEVEL) * Point;
+//  stopLoss = (double)MarketInfo(Symbol(), MODE_STOPLEVEL) * Point;
   timeToClose = 21;
   TRAILPROFIT = 7500.0;
 #endif
@@ -104,6 +105,8 @@ int OnInit()
 
   priceMargin = (double)ACCEPTABLE_SPREAD * Point;
   Print("priceMargin=", priceMargin);
+  
+  minSL = (double)MarketInfo(Symbol(), MODE_STOPLEVEL) * Point;
 
   //---
   return(INIT_SUCCEEDED);
@@ -133,9 +136,9 @@ void OnTick()
     }
   }
   
-  isOpening = ((timeToClose - 1 == Hour() && Minute() < 50) || Hour() < (timeToClose - 1));// || ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD));
+  isOpening = ((timeToClose - 1 == Hour() && Minute() < 55) || Hour() < (timeToClose - 1));// || ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD));
   isOpening = (closeProfit < currentProfit) & isOpening;
-  if(!isOpening && OrdersTotal() == 0) {
+  if(!isOpening && OrdersTotal() == 0 && Hour() < timeToClose - 2) {
     closeProfit = NM;
     lastEquity = AccountEquity();
   }
@@ -187,9 +190,15 @@ void OnTick()
   if(!isOpening || ACCEPTABLE_SPREAD < MarketInfo(Symbol(), MODE_SPREAD))
     return;
  
+#ifdef FXTF
+  stopLoss = iATR(symbol, PERIOD_M5, 14, 0);
+#endif
 #ifdef RAKUTEN
   stopLoss = iATR(symbol, PERIOD_M15, 14, 0);
 #endif
+  if(stopLoss < minSL) {
+    stopLoss = minSL;
+  }
 
   if(!overLapLong) {
     int ticket = OrderSend(symbol, OP_BUY, minLot, Ask, 0, Bid - stopLoss, 0);
