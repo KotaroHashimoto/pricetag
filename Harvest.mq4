@@ -262,12 +262,17 @@ void OnTick()
   }
 
   
-  if(MAXPOS < OrdersTotal() || (AccountEquity() < previousEquity && OrdersTotal() < previousTotal)) {
+//  if(MAXPOS < OrdersTotal() || (AccountEquity() < previousEquity && OrdersTotal() < previousTotal)) {
+  if(MAXPOS < OrdersTotal() || OrdersTotal() < previousTotal) {
     if(OrderSelect(mostProfitTicket, SELECT_BY_TICKET)) {
-      if(OrderType() == OP_BUY)
-        bool closed = OrderClose(mostProfitTicket, OrderLots(), MarketInfo(OrderSymbol(), MODE_BID), 0);
-      else if(OrderType() == OP_SELL)
-        bool closed = OrderClose(mostProfitTicket, OrderLots(), MarketInfo(OrderSymbol(), MODE_ASK), 0);
+      if(OrderType() == OP_BUY) {
+        if(iATR(OrderSymbol(), PERIOD_M15, 7, 0) < MarketInfo(OrderSymbol(), MODE_ASK) - OrderOpenPrice())
+          bool closed = OrderClose(mostProfitTicket, OrderLots(), MarketInfo(OrderSymbol(), MODE_BID), 0);
+      }
+      else if(OrderType() == OP_SELL) {
+        if(iATR(OrderSymbol(), PERIOD_M15, 7, 0) < OrderOpenPrice() - MarketInfo(OrderSymbol(), MODE_BID))
+          bool closed = OrderClose(mostProfitTicket, OrderLots(), MarketInfo(OrderSymbol(), MODE_ASK), 0);
+      }
     }
   }
 
