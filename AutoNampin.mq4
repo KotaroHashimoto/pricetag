@@ -249,10 +249,14 @@ void OnTick()
       }
     }
   }
-  
 
-  bool closeLong = (stopLoss / (double)longPos < (Ask - longPrice / (double)longPos));
-  bool closeShort = (stopLoss / (double)shortPos < (shortPrice / (double)shortPos) - Bid);
+  bool closeLong = False;
+  if(0 < longPos)
+    closeLong = (stopLoss / (double)longPos < (Ask - longPrice / (double)longPos));
+
+  bool closeShort = False;
+  if(0 < shortPos)
+    closeShort = (stopLoss / (double)shortPos < (shortPrice / (double)shortPos) - Bid);
 
   for(int i = 0; i < OrdersTotal(); i++) {
     if(OrderSelect(i, SELECT_BY_POS)) {
