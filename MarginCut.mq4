@@ -276,11 +276,17 @@ void OnTick()
   }
   else {
     if(!overLapLong) {
-      int ticket = OrderSend(symbol, OP_BUY, minLot, Ask, 0, 0, 0);
+      double lots = minLot * (double)(longPos + 1.0);
+      if(maxLot < lots)
+        lots = maxLot;
+      int ticket = OrderSend(symbol, OP_BUY, lots, Ask, 0, 0, 0);
     }
     
     if(!overLapShort) {
-      int ticket = OrderSend(symbol, OP_SELL, minLot, Bid, 0, 0, 0);
+      double lots = minLot * (double)(shortPos + 1.0);
+      if(maxLot < lots)
+        lots = maxLot;
+      int ticket = OrderSend(symbol, OP_SELL, lots, Bid, 0, 0, 0);
     }
   }
 }
