@@ -12,7 +12,7 @@
 //#define Rakuten
 //#define Gaitame
 
-#define LOSS_CUT (1.2)  //120%
+#define LOSS_CUT (1.28)  //128%
 
 double minLot;
 double maxLot;
