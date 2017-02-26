@@ -1,5 +1,5 @@
 //+------------------------------------------------------------------+
-//|                                                  iAutoNampin.mq4 |
+//|                                                   AutoNampin.mq4 |
 //|                        Copyright 2016, MetaQuotes Software Corp. |
 //|                                             https://www.mql5.com |
 //+------------------------------------------------------------------+
@@ -8,11 +8,11 @@
 #property version   "1.00"
 #property strict
 
-#define FXTF
+//#define FXTF
 //#define Rakuten
-//#define Gaitame
+#define Gaitame
 
-#define LOSS_CUT (1.28)  //128%
+#define LOSS_CUT (1.2)  //120%
 
 double minLot;
 double maxLot;
@@ -308,14 +308,22 @@ void OnTick()
     }
   }
   else {
-    if(!overLapLong && !closeLong) {
+    if(0.0 == longLots) {
+      longPrice = 10000.0;
+      longLots = 1.0;
+    }
+    if(!overLapLong && !closeLong && (Ask < longPrice / longLots)) {
       double lots = minLot * (double)(longPos + 1.0);
       if(maxLot < lots)
         lots = maxLot;
       int ticket = OrderSend(symbol, OP_BUY, lots, Ask, 0, 0, 0);
     }
     
-    if(!overLapShort && !closeShort) {
+    if(0.0 == shortLots) {
+      shortPrice = 0.0;
+      shortLots = 1.0;
+    }
+    if(!overLapShort && !closeShort && (shortPrice / shortLots < Bid)) {
       double lots = minLot * (double)(shortPos + 1.0);
       if(maxLot < lots)
         lots = maxLot;
