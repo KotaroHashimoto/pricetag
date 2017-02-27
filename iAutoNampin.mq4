@@ -312,7 +312,7 @@ void OnTick()
       longPrice = 10000.0;
       longLots = 1.0;
     }
-    if(!overLapLong && !closeLong && (Ask < longPrice / longLots)) {
+    if(!overLapLong && !closeLong) {
       double lots = minLot * (double)(longPos + 1.0);
       if(maxLot < lots)
         lots = maxLot;
@@ -323,7 +323,7 @@ void OnTick()
       shortPrice = 0.0;
       shortLots = 1.0;
     }
-    if(!overLapShort && !closeShort && (shortPrice / shortLots < Bid)) {
+    if(!overLapShort && !closeShort) {
       double lots = minLot * (double)(shortPos + 1.0);
       if(maxLot < lots)
         lots = maxLot;
