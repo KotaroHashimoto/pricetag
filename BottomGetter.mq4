@@ -8,14 +8,14 @@
 #property version   "1.00"
 #property strict
 
-#define ACCEPTABLE_SPREAD (20) //for Rakuten
+//#define ACCEPTABLE_SPREAD (20) //for Rakuten
 //#define ACCEPTABLE_SPREAD (4) //for OANDA
-//#define ACCEPTABLE_SPREAD (3) //for FXTF1000, Gaitame
+#define ACCEPTABLE_SPREAD (3) //for FXTF1000, Gaitame
 //#define ACCEPTABLE_SPREAD (0) //for ICMarket
 //#define ACCEPTABLE_SPREAD (16) //for XMTrading
 
-#define MAX_MARGIN (150)
-#define NAMPIN_MARGIN (0.001)
+#define MAX_NAMPIN (50)
+#define NAMPIN_MARGIN (0.005)
 #define NONE (-1)
 
 double MIN_LOT = NONE;
@@ -116,14 +116,14 @@ void OnTick()
     return;
   }
 
-  if(AccountMargin() < MAX_MARGIN) {
+  if(MAX_NAMPIN < OrdersTotal()) {
     return;
   }
 
-  if(Ask < lowest - NAMPIN_MARGIN && Ask < previousAsk) {
+  if(Ask < lowest - NAMPIN_MARGIN/* && Ask < previousAsk*/) {
     int ticket = OrderSend(Symbol(), OP_BUY, MIN_LOT, Ask, 0, 0, 0);
   }
-  if(highest - NAMPIN_MARGIN < Ask && Ask < previousAsk) {
+  if(highest + NAMPIN_MARGIN < Ask/* && Ask < previousAsk*/) {
     int ticket = OrderSend(Symbol(), OP_BUY, MIN_LOT, Ask, 0, 0, 0);
   }
   
