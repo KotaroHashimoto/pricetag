@@ -8,16 +8,17 @@
 #property version   "1.00"
 #property strict
 
-//#define FXTF
-#define Rakuten
+#define FXTF
+//#define Rakuten
 //#define Gaitame
+
+#define NONE (-1)
 
 double dailyEquity;
 double dailyBalance;
 bool openTime;
 
 int ACCEPTABLE_SPREAD;
-#define NONE (-1)
 
 double lotSize[] = {0.01, 0.01, 0.04, 0.06, 0.15, 0.30, 0.69, 1.46, 3.20, 6.89, 15.0};
 int lotIndex;
@@ -211,7 +212,7 @@ void OnTick()
   if(ACCEPTABLE_SPREAD < MarketInfo(symbol, MODE_SPREAD))
     return;
 
-  if(2 == Hour() && Minute() < 5 && !openTime && finished) {
+  if(3 == Hour() && Minute() < 5 && !openTime && finished) {
     dailyEquity = AccountEquity();
     dailyBalance = AccountBalance();
     openTime = True;
@@ -233,7 +234,7 @@ void OnTick()
         
     lotIndex ++;
   }
-  else if((7 == Hour() && openTime) || finished) {
+  else if((8 == Hour() && openTime) || finished) {
     openTime = False;
     finished = True;
     
