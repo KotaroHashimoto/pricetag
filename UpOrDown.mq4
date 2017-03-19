@@ -13,6 +13,7 @@
 int OnInit()
   {
 //---
+  Print(string(Hour()) + ":" + string(Minute()) + ":" + string(Seconds()));
 
   string CurrencyPairs[] = {"EURUSD", "EURJPY", "USDJPY", "GBPUSD", "GBPJPY", 
                             "AUDUSD", "AUDJPY", "EURGBP", "EURAUD", "GBPAUD"};
