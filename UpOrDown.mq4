@@ -13,13 +13,11 @@
 int OnInit()
   {
 //---
-  Print(string(Hour()) + ":" + string(Minute()) + ":" + string(Seconds()));
-  Print(MarketInfo(Symbol(), MODE_TRADEALLOWED));
 
   string CurrencyPairs[] = {"EURUSD", "EURJPY", "USDJPY", "GBPUSD", "GBPJPY", 
                             "AUDUSD", "AUDJPY", "EURGBP", "EURAUD", "GBPAUD"};
 
-  string date = string(Year()) + "_" + string(Month()) + "_" + string((Day() - 1));
+  string date = string(Year()) + "_" + string(Month()) + "_" + string((Day() - MarketInfo(Symbol(), MODE_TRADEALLOWED)));
   int handle=FileOpen(date + ".csv", FILE_CSV|FILE_WRITE, ',');
   if(handle < 0) {
     return -1;
