@@ -18,7 +18,7 @@ int OnInit()
                             "AUDUSD", "AUDJPY", "EURGBP", "EURAUD", "GBPAUD"};
 
   string date = string(Year()) + "_" + string(Month()) + "_" + string((Day() - 1));
-  int handle=FileOpen(date, FILE_CSV|FILE_WRITE, ',');
+  int handle=FileOpen(date + ".csv", FILE_CSV|FILE_WRITE, ',');
   if(handle < 0) {
     return -1;
   }
@@ -30,6 +30,7 @@ int OnInit()
     double price = iClose(CurrencyPairs[i], PERIOD_D1, 1);
     
     FileWrite(handle, CurrencyPairs[i], determine(ma5, price), determine(ma25, price));
+    Print(price, ", ma5 = ", ma5, " ma25 = ", ma25);
   }
 
   FileClose(handle);
