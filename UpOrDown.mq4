@@ -30,7 +30,7 @@ int OnInit()
     double price = iClose(CurrencyPairs[i], PERIOD_D1, 1);
     
     FileWrite(handle, CurrencyPairs[i], determine(ma5, price), determine(ma25, price));
-    Print(price, ", ma5 = ", ma5, " ma25 = ", ma25);
+    Print(CurrencyPairs[i], " = ", price, ", ma5 = ", ma5, " ma25 = ", ma25);
   }
 
   FileClose(handle);
