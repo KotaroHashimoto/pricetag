@@ -166,7 +166,8 @@ class Arbitrage(Thread):
 #        elif 'STRONG SELL' in signal:
         if 'STRONG SELL' in signal:
             a = Arbitrage.SELL_FX_AMOUNT if Arbitrage.SELL_FX_AMOUNT < Arbitrage.BUY_AMOUNT else Arbitrage.BUY_AMOUNT
-            if a + totalPosLot < Arbitrage.MAXLOTS:
+            a = a if a + totalPosLot < Arbitrage.MAXLOTS else Arbitrage.MAXLOTS - totalPosLot:
+            if 0.0 < a:
                 self.api.sendchildorder(product_code = 'BTC_JPY', child_order_type = 'MARKET', side = 'BUY', size = a)
                 self.api.sendchildorder(product_code = 'FX_BTC_JPY', child_order_type = 'MARKET', side = 'SELL', size = a)
 
