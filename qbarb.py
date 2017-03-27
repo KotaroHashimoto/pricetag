@@ -94,6 +94,8 @@ class Arbitrage(Thread):
         self.entryPrice = 0
         self.posType = None
 
+        self.totalPosLot = 0.0
+
         Arbitrage.MAXLOTS = 1.0
 
     def trimAmount(a, b, m):
@@ -241,14 +243,16 @@ class Arbitrage(Thread):
             if pos['side'] == 'BUY':
                 if 'SELL' in signal:
                     a = self.trimAmount(Arbitrage.SELL_BF_AMOUNT, Arbitrage.BUY_QN_AMOUNT, pos['size'])
-                    self.orderQuoine('buy', str(a))
-                    BitFlyer.api.sendchildorder(product_code = 'FX_BTC_JPY', child_order_type = 'MARKET', side = 'SELL', size = a)
+                    if 0.0 < a:
+                        self.orderQuoine('buy', str(a))
+                        BitFlyer.api.sendchildorder(product_code = 'FX_BTC_JPY', child_order_type = 'MARKET', side = 'SELL', size = a)
 
             elif pos['side'] == 'SELL':
                 if 'BUY' in signal:
                     a = self.trimAmount(Arbitrage.BUY_BF_AMOUNT, Arbitrage.SELL_QN_AMOUNT, pos['size'])
-                    self.orderQuoine('sell', str(a))
-                    BitFlyer.api.sendchildorder(product_code = 'FX_BTC_JPY', child_order_type = 'MARKET', side = 'BUY', size = a)
+                    if 0.0 < a:
+                        self.orderQuoine('sell', str(a))
+                        BitFlyer.api.sendchildorder(product_code = 'FX_BTC_JPY', child_order_type = 'MARKET', side = 'BUY', size = a)
 
         if 'STRONG BUY' in signal: #for new position
             a = self.trimAmount(Arbitrage.BUY_BF_AMOUNT, Arbitrage.SELL_QN_AMOUNT, Arbitrage.MAXLOTS - totalPosLot)
@@ -267,12 +271,18 @@ class Arbitrage(Thread):
         if self.posType == None:
             
             if 'STRONG BUY' in signal:
+#                a = self.trimAmount(Arbitrage.BUY_BF_AMOUNT, Arbitrage.SELL_QN_AMOUNT, Arbitrage.MAXLOTS - abs(self.totalPosLot))
+#                if 0.0 < a:
                 self.entryPrice = bfBuy
                 self.posType = Arbitrage.BF_BUY
+#                self.totalPosLot = self.totalPosLot + a
             elif 'STRONG SELL' in signal:
+#                a = self.trimAmount(Arbitrage.SELL_BF_AMOUNT, Arbitrage.BUY_QN_AMOUNT, Arbitrage.MAXLOTS - abs(self.totalPosLot))
+#                if 0.0 < a:
                 self.entryPrice = bfSell
                 self.posType = Arbitrage.BF_SELL
-                
+#                self.totalPosLot = self.totalPosLot + a
+               
         else:
             if self.posType == Arbitrage.BF_BUY:
                 if 'SELL' in signal:

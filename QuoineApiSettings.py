@@ -9,7 +9,8 @@ class Settings():
 	BaseURL = "https://api.quoine.com"
 
 # URI parts for calling API - to be added to BaseURL per call
-	GetAccountsURI = "/accounts"				# [GET] 				
+#	GetAccountsURI = "/accounts"				# [GET] 				
+	GetAccountsURI = "/trading_accounts"				# [GET] 				
 	GetOrderURI = "/orders/%s"			# [GET] 				
 	GetOrdersURI = "/orders?currency_pair_code=%s%s"	# [GET] 				
 	GetProductURI = "/products/code/%s/%s"              # [GET] 				
