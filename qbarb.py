@@ -86,6 +86,11 @@ class Arbitrage(Thread):
         self.labelProfit = Label(root, textvariable = self.strProfit, font = (Window.FONT, Window.FSIZE))
         self.labelProfit.pack()
 
+        self.strAccount = StringVar()
+        self.strAccount.set('')
+        self.labelAccount = Label(root, textvariable = self.strAccount, font = (Window.FONT, Window.FSIZE))
+        self.labelAccount.pack()
+
         self.entryPrice = 0
         self.posType = None
 
@@ -97,6 +102,78 @@ class Arbitrage(Thread):
         t = t if t < m else m
         t = floor(t * 100.0) / 100.0 # 0.01 BTC is the minumum lot
         return t if 0.0 < t else 0.0
+
+
+    def summary(self):
+        bf = self.getBitFlyerAccount()
+        qn = self.getQuoineAccount()
+
+        if qn == None or bf == None:
+            return
+
+        total = str(bf[0] + qn[0]) + '(bf:' + str(bf[0]) + ' + qn:' + str(qn[0]) + ')'
+
+        bfstat = 'bf:' + str(bf[2]) + '\% (' + str(bf[1]) + ')'
+        qnstat = 'qn:' + str(qn[2]) + '\% (' + str(qn[1]) + ')'
+
+        self.strAccount.set(total + '\t' + bfstat + '\t' + qnstat)
+        
+
+    def getBitFlyerAccount(self):
+
+        status = BitFlyer.api.getcollateral()
+
+        if status['require_collateral'] == 0.0:
+            status['require_collateral'] = 1.0
+
+        equity = status['collateral'] + status['open_position_pnl']
+        margin = equity / status['require_collateral'] * 100.0
+
+        positions = BitFlyer.api.getpositions(product_code = 'FX_BTC_JPY')
+        totalPosLot = 0.0
+        for pos in positions:
+            totalPosLot = totalPosLot + pos['size']
+
+        return (equity, totalPosLot, margin)        
+
+    def getQuoineAccount(self):
+
+        user_agent = Quoine.api.UserAgent
+        data = ""
+        ctype = Quoine.api.ContentType
+        cMD5 = base64.b64encode(md5(data).encode().digest())
+
+        url = Quoine.api.BaseURL + Quoine.api.GetAccountsURI 
+        nonce = str(uuid.uuid4()).upper().replace("-","")[0:32] 
+
+        uri = Quoine.api.GetAccountsURI
+        theDate = TimestampGMT()
+        cstr = "%s,%s,%s,%s,%s" % (ctype,cMD5,uri,theDate,nonce)
+
+        key = Quoine.api.UserSecret
+
+        hash = hmac.new(bytes(key), bytes(cstr),hashlib.sha1).digest()
+
+        auth_str = "%s %s:%s" % ('APIAuth', Quoine.api.UserId, base64.b64encode(hash))
+
+        hdrs = {'User-Agent' : Quoine.api.UserAgent,'NONCE': nonce,'Date': theDate, 'Content-Type': Quoine.api.ContentType, 'Content-MD5': cMD5,  'Authorization': auth_str } 
+
+        try:
+            r = requests.get(url,headers=hdrs)
+            print(r.status_code)
+            print(r.text)
+
+            data = json.loads(r.text)
+            margin = float(data['margin'])
+            equity = float(data['equity'])
+
+            return (str(data['equity']), float(data['position']), equity / margin * 100.0)
+        except requests.exceptions.HTTPError as e: 
+            print("Error: \n")
+            print(e)
+
+            return None
+
 
     def orderQuoine(self, side, amount):
 
@@ -115,32 +192,30 @@ class Arbitrage(Thread):
         user_agent = Quoine.api.UserAgent
         data = str(order)
         ctype = Quoine.api.ContentType
-        cMD5 = base64.b64encode(md5.new(data).digest())
-        print("MD5 :" +  cMD5)
+        cMD5 = base64.b64encode(md5(data).encode().digest())
+#        print("MD5 :" +  cMD5)
 
         nonce = str(uuid.uuid4()).upper().replace("-","")[0:32]
-        print("Nonce : " + nonce + " " + str(len(nonce)))
+#        print("Nonce : " + nonce + " " + str(len(nonce)))
 
         uri = Quoine.api.AddOrderURI
         theDate = TimestampGMT()
         cstr = "%s,,%s,%s,%s" % (ctype,uri,theDate,nonce)
-        print("Canonical String :" + cstr)
+#        print("Canonical String :" + cstr)
 
-        key = api.UserSecret
-        print("API Secret : " + key)
+        key = Quoine.api.UserSecret
+#        print("API Secret : " + key)
 
         hash = hmac.new(bytes(key), bytes(cstr),hashlib.sha1).digest()
-        print("B64 HASH : " + base64.encodestring(hash))
+#        print("B64 HASH : " + base64.encodestring(hash))
 
-        auth_str = "%s %s:%s" % ('APIAuth', api.UserId, base64.b64encode(hash))
-        print("Authorization : " + auth_str)
+        auth_str = "%s %s:%s" % ('APIAuth', Quoine.api.UserId, base64.b64encode(hash))
+#        print("Authorization : " + auth_str)
 
-        Quoine.HDRS = {'User-Agent' : api.UserAgent,'NONCE': nonce,'Date': theDate, 'Content-Type': api.ContentType, 'Authorization': auth_str }
+        Quoine.HDRS = {'User-Agent' : Quoine.api.UserAgent,'NONCE': nonce,'Date': theDate, 'Content-Type': api.ContentType, 'Authorization': auth_str }
 
         Quoine.URL = api.BaseURL  + uri
-        print("URL : ", Quoine.URL)
-
-
+#        print("URL : ", Quoine.URL)
 
         request = {}
         request['order'] = order
@@ -287,6 +362,8 @@ class Arbitrage(Thread):
             if Arbitrage.LENGTH / 2.0 < len(self.sellBFHist) or True:
                 self.placeOrder(signal, Arbitrage.BF_BID - Arbitrage.QN_ASK, Arbitrage.BF_ASK - Arbitrage.QN_BID)
 #                self.placeRealOrder(signal)
+
+            self.summary()
 
             sleep(Window.PERIOD)
 
