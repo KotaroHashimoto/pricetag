@@ -246,13 +246,10 @@ class Arbitrage(Thread):
         self.sell_bf_med = sorted(self.sellBFHist)[mi]
         self.buy_bf_med = sorted(self.buyBFHist)[mi]
 
-        sell_bf_ave = sum(self.sellBFHist) / length
-        buy_bf_ave = sum(self.buyBFHist) / length
+        self.sell_bf_sig = sqrt(sum([(self.sell_bf_med - v) ** 2 for v in self.sellBFHist]) / length)
+        self.buy_bf_sig = sqrt(sum([(self.buy_bf_med - v) ** 2 for v in self.buyBFHist]) / length)
 
-        self.sell_bf_sig = sqrt(sum([(sell_bf_ave - v) ** 2 for v in self.sellBFHist]) / length)
-        self.buy_bf_sig = sqrt(sum([(buy_bf_ave - v) ** 2 for v in self.buyBFHist]) / length)
-
-        self.strStat.set('Median:\t' + str(int(self.sell_bf_med)) + ' (sig:' + str(int(self.sell_bf_sig)) + ')\t'  + str(int(self.buy_bf_med)) + '  (sig:' + str(int(self.buy_bf_sig)) + ')')
+        self.strStat.set('History:\t' + str(int(self.sell_bf_med)) + ' (sig:' + str(int(self.sell_bf_sig)) + ')\t'  + str(int(self.buy_bf_med)) + '  (sig:' + str(int(self.buy_bf_sig)) + ')')
 
     def run(self):
 
@@ -271,7 +268,7 @@ class Arbitrage(Thread):
             c = str(int(Arbitrage.BF_ASK - Arbitrage.QN_BID))
             d = str(round(Arbitrage.BUY_BF_AMOUNT, 3) if Arbitrage.BUY_BF_AMOUNT < Arbitrage.SELL_QN_AMOUNT else round(Arbitrage.SELL_QN_AMOUNT, 3))
 
-            self.str.set('History:\t' + a + ' (lot:' + b + ')\t' + c + ' (lot:' + d + ')')
+            self.str.set('Market:\t' + a + ' (lot:' + b + ')\t' + c + ' (lot:' + d + ')')
 
             if len(self.sellBFHist) == self.max_index:
                 self.sellBFHist[self.index] = Arbitrage.BF_BID - Arbitrage.QN_ASK
