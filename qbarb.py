@@ -53,9 +53,9 @@ class Arbitrage(Thread):
     def __init__(self, root):
         Thread.__init__(self)
 
-        self.sell_bf_ave = 0
+        self.sell_bf_med = 0
         self.sell_bf_sig = 0
-        self.buy_bf_ave = 0
+        self.buy_bf_med = 0
         self.buy_bf_sig = 0
         self.max_index = 0
         self.profit = 0
@@ -91,7 +91,7 @@ class Arbitrage(Thread):
 
         Arbitrage.MAXLOTS = 1.0
 
-    def trimQmount(a, b, m):
+    def trimAmount(a, b, m):
 
         t = a if a < b else b
         t = t if t < m else m
@@ -107,7 +107,7 @@ class Arbitrage(Thread):
         order['quantity'] = amount
         order['leverage_level'] = 10
         order['price'] = str(Arbitrage.QN_BID if side == 'sell' else Arbitrage.QN_ASK)
-        order['order_direction'] = 'one_direction'
+        order['order_direction'] = 'netout'
         order['currency_pair_code'] = 'BTCJPY'
         order['product_code'] = 'CASH'
 
@@ -175,7 +175,7 @@ class Arbitrage(Thread):
                     self.orderQuoine('sell', str(a))
                     BitFlyer.api.sendchildorder(product_code = 'FX_BTC_JPY', child_order_type = 'MARKET', side = 'BUY', size = a)
 
-        if 'STRONG BUY' in signal:
+        if 'STRONG BUY' in signal: #for new position
             a = self.trimAmount(Arbitrage.BUY_BF_AMOUNT, Arbitrage.SELL_QN_AMOUNT, Arbitrage.MAXLOTS - totalPosLot)
             if 0.0 < a:
                 self.orderQuoine('sell', str(a))
@@ -226,14 +226,14 @@ class Arbitrage(Thread):
        
         ret = 'STAY'
 
-        if self.buy_bf_ave < self.sellBFHist[self.index]:
+        if self.buy_bf_med < self.sellBFHist[self.index]:
             ret = 'WEAK SELL BF'
-            if self.buy_bf_ave + self.buy_bf_sig < self.sellBFHist[self.index]:
+            if self.buy_bf_med + self.buy_bf_sig < self.sellBFHist[self.index]:
                 ret = 'STRONG SELL BF'
 
-        if self.buyBFHist[self.index] < self.sell_bf_ave:
+        if self.buyBFHist[self.index] < self.sell_bf_med:
             ret = 'WEAK BUY BF'
-            if self.buyBFHist[self.index] < self.sell_bf_ave - self.sell_bf_sig:
+            if self.buyBFHist[self.index] < self.sell_bf_med - self.sell_bf_sig:
                 ret = 'STRONG BUY BF'
 
         self.strSignal.set(ret)
@@ -242,13 +242,17 @@ class Arbitrage(Thread):
     def calc(self):
 
         length = len(self.sellBFHist)
-        self.sell_bf_ave = sum(self.sellBFHist) / length
-        self.buy_bf_ave = sum(self.buyBFHist) / length
+        mi = floor(length / 2.0)
+        self.sell_bf_med = sorted(self.sellBFHist)[mi]
+        self.buy_bf_med = sorted(self.buyBFHist)[mi]
 
-        self.sell_bf_sig = sqrt(sum([(self.sell_bf_ave - v) ** 2 for v in self.sellBFHist]) / length)
-        self.buy_bf_sig = sqrt(sum([(self.buy_bf_ave - v) ** 2 for v in self.buyBFHist]) / length)
+        sell_bf_ave = sum(self.sellBFHist) / length
+        buy_bf_ave = sum(self.buyBFHist) / length
 
-        self.strStat.set('Average:\t' + str(int(self.sell_bf_ave)) + ' (sig:' + str(int(self.sell_bf_sig)) + ')\t'  + str(int(self.buy_bf_ave)) + '  (sig:' + str(int(self.buy_bf_sig)) + ')')
+        self.sell_bf_sig = sqrt(sum([(sell_bf_ave - v) ** 2 for v in self.sellBFHist]) / length)
+        self.buy_bf_sig = sqrt(sum([(buy_bf_ave - v) ** 2 for v in self.buyBFHist]) / length)
+
+        self.strStat.set('Median:\t' + str(int(self.sell_bf_med)) + ' (sig:' + str(int(self.sell_bf_sig)) + ')\t'  + str(int(self.buy_bf_med)) + '  (sig:' + str(int(self.buy_bf_sig)) + ')')
 
     def run(self):
 
@@ -267,7 +271,7 @@ class Arbitrage(Thread):
             c = str(int(Arbitrage.BF_ASK - Arbitrage.QN_BID))
             d = str(round(Arbitrage.BUY_BF_AMOUNT, 3) if Arbitrage.BUY_BF_AMOUNT < Arbitrage.SELL_QN_AMOUNT else round(Arbitrage.SELL_QN_AMOUNT, 3))
 
-            self.str.set('Market:\t' + a + ' (lot:' + b + ')\t' + c + ' (lot:' + d + ')')
+            self.str.set('History:\t' + a + ' (lot:' + b + ')\t' + c + ' (lot:' + d + ')')
 
             if len(self.sellBFHist) == self.max_index:
                 self.sellBFHist[self.index] = Arbitrage.BF_BID - Arbitrage.QN_ASK
