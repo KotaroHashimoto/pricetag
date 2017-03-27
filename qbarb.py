@@ -215,12 +215,12 @@ class Arbitrage(Thread):
         pos = ''
         if self.posType == Arbitrage.BF_BUY:
             fProfit = bfSell - self.entryPrice
-            pos = ' LONG'
+            pos = ' BF LONG'
         elif self.posType == Arbitrage.BF_SELL:
             fProfit = self.entryPrice - bfBuy
-            pos = ' SHORT'
+            pos = ' BF SHORT'
         
-        self.strProfit.set('Profit:\t' + str(self.profit) + ' (' + str(fProfit) + ')\t' + pos)
+        self.strProfit.set('Profit:\t' + str(int(self.profit)) + ' (' + str(int(fProfit)) + ')\t' + pos)
 
     def signal(self):
        
