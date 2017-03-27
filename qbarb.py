@@ -227,14 +227,14 @@ class Arbitrage(Thread):
         ret = 'STAY'
 
         if self.buy_bf_ave < self.sellBFHist[self.index]:
-            ret = 'WEAK SELL FX'
+            ret = 'WEAK SELL BF'
             if self.buy_bf_ave + self.buy_bf_sig < self.sellBFHist[self.index]:
-                ret = 'STRONG SELL FX'
+                ret = 'STRONG SELL BF'
 
         if self.buyBFHist[self.index] < self.sell_bf_ave:
-            ret = 'WEAK BUY FX'
+            ret = 'WEAK BUY BF'
             if self.buyBFHist[self.index] < self.sell_bf_ave - self.sell_bf_sig:
-                ret = 'STRONG BUY FX'
+                ret = 'STRONG BUY BF'
 
         self.strSignal.set(ret)
         return ret
