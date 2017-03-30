@@ -7,6 +7,9 @@
 #property link      "https://www.mql5.com"
 #property version   "1.00"
 #property strict
+
+int handle;
+
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
 //+------------------------------------------------------------------+
@@ -14,10 +17,10 @@ int OnInit()
   {
 //---
 
-  int handle = FileOpen("PalawanLog.csv", FILE_CSV|FILE_WRITE, ',');
+  handle = FileOpen("PalawanLog.csv", FILE_CSV|FILE_WRITE, ',');
   if(handle < 0) {
     Print("File write error. " + string(GetLastError()));
-    return;
+    return 0;
   }
   else {
     FileWrite(handle, "Time", "CurrencyPair", "Buy Signal", "Buy Stop", "Sell Signal", "Sell Stop");
@@ -34,7 +37,7 @@ void OnDeinit(const int reason)
 //---
 
   FileClose(handle);
-  Print(date, " file write succeeded.");   
+  Print("file write succeeded.");   
   }
 
 //+------------------------------------------------------------------+
@@ -56,9 +59,7 @@ void OnTick()
 
   Print("Sell Signal:" + DoubleToStr(Sell_Signal) + "(" + DoubleToStr(Sell_Stoploss) + ") Buy Signal:" + DoubleToStr(Buy_Signal) + "(" + DoubleToStr(Buy_Stoploss) + ")");
 
-  
-  FileWrite(handle, TimeCurrent(), Symbol(), Buy_Signal, Buy_Stop, Sell_Signal, Sell_Stop);
-
+//  FileWrite(handle, TimeCurrent(), Symbol(), Buy_Signal, Buy_Stoploss, Sell_Signal, Sell_Stoploss);
 }
 //+------------------------------------------------------------------+
 
