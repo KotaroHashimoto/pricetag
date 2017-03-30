@@ -12,6 +12,7 @@ input double Stop_Loss_Percentage = 1.0;
 input int Open_Time = 0;
 input int Close_Time = 24;
 input bool EMA_Filter = False;
+input int EMA_Period = 200;
 
 
 double stopLoss;
@@ -20,6 +21,8 @@ double quickProfit;
 double firstTarget;
 double finalTarget;
 int signal;
+
+string thisSymbol;
 
 const string indName = "Market/ACB Breakout Arrows";
 
@@ -47,6 +50,37 @@ void getIndicatorValues() {
   Print("stopLoss: ", stopLoss, " entryPrice: ", entryPrice, " quickProfit: ", quickProfit, " firstTarget:", firstTarget, " finalTarget: ", finalTarget);
 }
 
+bool determineFilter(int signal) {
+
+  if(!EMA_Filter) {
+    return True;
+  }
+
+  double ema = iMA(Symbol(), PERIOD_D1, EMA_Period, 0, MODE_EMA, PRICE_WEIGHTED, 0);
+  if(signal == OP_BUY) {
+    return ema < Ask;
+  }
+  else if(signal == OP_SELL) {
+    return Bid < ema;
+  }
+  else {
+    return False;
+  }
+}
+
+
+void calcLot(double priceDiff) {
+
+  double loss = AccountEquity() * Stop_Loss_Percentage / 100.0;
+  return lot = 0.1 * Point * loss / priceDiff;
+}
+
+double calcLot() {
+
+  
+
+}
+
 
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
@@ -54,7 +88,9 @@ void getIndicatorValues() {
 int OnInit()
   {
 //---
-   
+
+  thisSymbol = Symbol();
+
 //---
    return(INIT_SUCCEEDED);
   }
