@@ -13,6 +13,15 @@
 int OnInit()
   {
 //---
+
+  int handle = FileOpen("PalawanLog.csv", FILE_CSV|FILE_WRITE, ',');
+  if(handle < 0) {
+    Print("File write error. " + string(GetLastError()));
+    return;
+  }
+  else {
+    FileWrite(handle, "Time", "CurrencyPair", "Buy Signal", "Buy Stop", "Sell Signal", "Sell Stop");
+  }
    
 //---
    return(INIT_SUCCEEDED);
@@ -23,8 +32,11 @@ int OnInit()
 void OnDeinit(const int reason)
   {
 //---
-   
+
+  FileClose(handle);
+  Print(date, " file write succeeded.");   
   }
+
 //+------------------------------------------------------------------+
 //| Expert tick function                                             |
 //+------------------------------------------------------------------+
@@ -44,5 +56,10 @@ void OnTick()
 
   Print("Sell Signal:" + DoubleToStr(Sell_Signal) + "(" + DoubleToStr(Sell_Stoploss) + ") Buy Signal:" + DoubleToStr(Buy_Signal) + "(" + DoubleToStr(Buy_Stoploss) + ")");
 
+  
+  FileWrite(handle, TimeCurrent(), Symbol(), Buy_Signal, Buy_Stop, Sell_Signal, Sell_Stop);
+
 }
 //+------------------------------------------------------------------+
+
+
