@@ -42,7 +42,7 @@ void getIndicatorValues() {
   entryPrice = ObjectGetDouble(0, "Entry", OBJPROP_PRICE);
   quickProfit = ObjectGetDouble(0, "FirstTarget", OBJPROP_PRICE);
   firstTarget = ObjectGetDouble(0, "Target1", OBJPROP_PRICE);
-  firstTarget = ObjectGetDouble(0, "Target2", OBJPROP_PRICE);
+  finalTarget = ObjectGetDouble(0, "Target2", OBJPROP_PRICE);
   
   Print("stopLoss: ", stopLoss, " entryPrice: ", entryPrice, " quickProfit: ", quickProfit, " firstTarget:", firstTarget, " finalTarget: ", finalTarget);
 }
