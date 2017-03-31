@@ -52,7 +52,6 @@ bool getIndicatorValues() {
   }
   else {
     signal = -1;
-    stopLoss = 0.0;
   }
 
   return (signal != -1);
