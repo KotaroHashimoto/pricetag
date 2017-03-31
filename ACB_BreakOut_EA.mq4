@@ -10,7 +10,7 @@
 
 input double Stop_Loss_Percentage = 1.0;
 input int Open_Time = 0;
-input int Close_Time = 23;
+input int Close_Time = 24;
 input bool EMA_Filter = False;
 input int EMA_Period = 200;
 input int Friday_Close_Time = 21;
@@ -28,7 +28,6 @@ double minLot;
 double maxLot;
 
 int positionCount;
-bool opening;
 
 const string indName = "Market/ACB Breakout Arrows";
 
@@ -102,7 +101,6 @@ int OnInit()
   orderFailed = False;
 
   thisSymbol = Symbol();
-  opening = False;
 
   minSL = MarketInfo(Symbol(), MODE_STOPLEVEL) * Point);
   minLot = MarketInfo(Symbol(), MODE_MINLOT);
@@ -285,15 +283,7 @@ void OnTick()
   getIndicatorValues();
   scanPositions();
 
-/*
-  if(!opening && Hour() == Open_Time) {
-    opening = True;
-  }
-  else if(opening && Hour() == Close_Time) {
-    opening = False;
-  }
-
-  if(opening) */
+  if(Open_Time <= Hour() && Hour() < Close_Time && !isFridayNight())
     openPositions();
 }
 //+------------------------------------------------------------------+
