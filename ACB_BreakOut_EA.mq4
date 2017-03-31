@@ -14,7 +14,7 @@ input int Open_Time = 0;
 input int Close_Time = 24;
 input bool EMA_Filter = False;
 input int EMA_Period = 200;
-input int Friday_Close_Time = 21;
+input int Friday_Close_Time = 23;
 
 double stopLoss;
 double entryPrice;
