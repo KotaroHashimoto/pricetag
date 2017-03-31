@@ -48,6 +48,8 @@ bool getIndicatorValues() {
     signal = -1;
     stopLoss = 0.0;
   }
+  
+  Print(iCustom(NULL, 0, indName, 0, 1));
 
   stopLoss = ObjectGetDouble(0, "StopLoss", OBJPROP_PRICE);
   entryPrice = ObjectGetDouble(0, "Entry", OBJPROP_PRICE);
