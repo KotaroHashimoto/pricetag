@@ -37,10 +37,12 @@ bool getIndicatorValues() {
   if(iCustom(NULL, 0, indName, 0, 1)) {
     signal = OP_BUY;
     stopLoss = iCustom(NULL, 0, indName, 2, 1);
+    Print("signal: ", signal, " stoploss: ", stopLoss);
   }
   else if(iCustom(NULL, 0, indName, 1, 1)) {
     signal = OP_SELL;
     stopLoss = iCustom(NULL, 0, indName, 3, 1);
+    Print("signal: ", signal, " stoploss: ", stopLoss);
   }
   else {
     signal = -1;
@@ -53,7 +55,7 @@ bool getIndicatorValues() {
   firstTarget = ObjectGetDouble(0, "Target1", OBJPROP_PRICE);
   finalTarget = ObjectGetDouble(0, "Target2", OBJPROP_PRICE);
   
-  Print("stopLoss: ", stopLoss, " entryPrice: ", entryPrice, " quickProfit: ", quickProfit, " firstTarget:", firstTarget, " finalTarget: ", finalTarget);
+//  Print("stopLoss: ", stopLoss, " entryPrice: ", entryPrice, " quickProfit: ", quickProfit, " firstTarget:", firstTarget, " finalTarget: ", finalTarget);
 
   return (signal != -1);
 }
