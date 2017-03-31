@@ -1,10 +1,10 @@
 //+------------------------------------------------------------------+
 //|                                              ACB_BreakOut_EA.mq4 |
-//|                        Copyright 2016, MetaQuotes Software Corp. |
-//|                                             https://www.mql5.com |
+//|                           Copyright 2017, Palawan Software, Ltd. |
+//|                             https://coconala.com/services/204383 |
 //+------------------------------------------------------------------+
-#property copyright "Copyright 2016, MetaQuotes Software Corp."
-#property link      "https://www.mql5.com"
+#property copyright "Copyright 2017, Palawan Software, Ltd."
+#property link      "https://coconala.com/services/204383"
 #property version   "1.00"
 #property strict
 
