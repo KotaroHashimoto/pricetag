@@ -85,6 +85,13 @@ void calcLot(double priceDiff, double& quickLot, double& targetLot) {
 
   targetLot = MathFloor(totalLot / 3.0 * 100.0) / 100.0;
   quickLot = MathFloor((totalLot - (targetLot * 2.0)) * 100.0) / 100.0;
+  
+  if(maxLot < targetLot) {
+    targetLot = maxLot;
+  }
+  if(maxLot < quickLot) {
+    quickLot = maxLot;
+  }
 }
 
 
@@ -201,7 +208,7 @@ bool openPositions() {
       return False;
     }
 
-    if((minLot <= quickLot || quickLot <= maxLot) && positionCount == 0) {
+    if((minLot <= quickLot && quickLot <= maxLot) && positionCount == 0) {
       int quick = OrderSend(thisSymbol, OP_BUY, quickLot, NormalizeDouble(Ask, Digits), 3, NormalizeDouble(stopLoss, Digits), NormalizeDouble(quickProfit, Digits));
       if(quick == -1) {
         return False;
@@ -210,7 +217,7 @@ bool openPositions() {
         positionCount ++;
       }
     }
-    if((minLot <= targetLot || targetLot <= maxLot) && positionCount == 1) {
+    if((minLot <= targetLot && targetLot <= maxLot) && positionCount == 1) {
       int target = OrderSend(thisSymbol, OP_BUY, targetLot, NormalizeDouble(Ask, Digits), 3, NormalizeDouble(stopLoss, Digits), NormalizeDouble(firstTarget, Digits));
       if(target == -1) {
         return False;
@@ -219,7 +226,7 @@ bool openPositions() {
         positionCount ++;
       }
     }      
-    if((minLot <= targetLot || targetLot <= maxLot) && positionCount == 2) {
+    if((minLot <= targetLot && targetLot <= maxLot) && positionCount == 2) {
       int target = OrderSend(thisSymbol, OP_BUY, targetLot, NormalizeDouble(Ask, Digits), 3, NormalizeDouble(stopLoss, Digits), NormalizeDouble(finalTarget, Digits));
       if(target == -1) {
         return False;
@@ -242,7 +249,7 @@ bool openPositions() {
       return False;
     }
 
-    if((minLot <= quickLot || quickLot <= maxLot) && positionCount == 0) {
+    if((minLot <= quickLot && quickLot <= maxLot) && positionCount == 0) {
       int quick = OrderSend(thisSymbol, OP_SELL, quickLot, NormalizeDouble(Bid, Digits), 3, NormalizeDouble(stopLoss, Digits), NormalizeDouble(quickProfit, Digits));
       if(quick == -1) {
         return False;
@@ -251,7 +258,7 @@ bool openPositions() {
         positionCount --;
       }
     }
-    if((minLot <= targetLot || targetLot <= maxLot) && positionCount == -1) {
+    if((minLot <= targetLot && targetLot <= maxLot) && positionCount == -1) {
       int target = OrderSend(thisSymbol, OP_SELL, targetLot, NormalizeDouble(Bid, Digits), 3, NormalizeDouble(stopLoss, Digits), NormalizeDouble(firstTarget, Digits));
       if(target == -1) {
         return False;
@@ -260,7 +267,7 @@ bool openPositions() {
         positionCount --;
       }
     }      
-    if((minLot <= targetLot || targetLot <= maxLot) && positionCount == -2) {
+    if((minLot <= targetLot && targetLot <= maxLot) && positionCount == -2) {
       int target = OrderSend(thisSymbol, OP_SELL, targetLot, NormalizeDouble(Bid, Digits), 3, NormalizeDouble(stopLoss, Digits), NormalizeDouble(finalTarget, Digits));
       if(target == -1) {
         return False;
