@@ -99,11 +99,10 @@ int OnInit()
   firstTarget = 0.0;
   finalTarget = 0.0;
   signal = -1;
-  orderFailed = False;
 
   thisSymbol = Symbol();
 
-  minSL = MarketInfo(Symbol(), MODE_STOPLEVEL) * Point);
+  minSL = MarketInfo(Symbol(), MODE_STOPLEVEL) * Point;
   minLot = MarketInfo(Symbol(), MODE_MINLOT);
   maxLot = MarketInfo(Symbol(), MODE_MAXLOT);
 
@@ -155,14 +154,14 @@ void scanPositions() {
         if(direction == OP_BUY) {
           positionCount ++;
           if(signal == OP_SELL || isFridayNight()) {
-            if(OrderClose(OrderTicket(), lot, NormalizeDouble(Bid, Digits), 3))
+            if(OrderClose(OrderTicket(), OrderLots(), NormalizeDouble(Bid, Digits), 3))
               positionCount --;
           }
         }
         else if(direction == OP_SELL) {
           positionCount --;
           if(signal == OP_BUY || isFridayNight()) {
-            if(OrderClose(OrderTicket(), lot, NormalizeDouble(Ask, Digits), 3))
+            if(OrderClose(OrderTicket(), OrderLots(), NormalizeDouble(Ask, Digits), 3))
               positionCount ++;
           }
         }
@@ -189,7 +188,7 @@ bool openPositions() {
 
   if(signal == OP_BUY) {
 
-    calcLot(Ask - stopLoss, quickLot, target);
+    calcLot(Ask - stopLoss, quickLot, targetLot);
 
     if(Ask - stopLoss < minSL) {
       Print("SL(", stopLoss, ") is too close to entry point(", Ask, ") than minimum stoplevel(", minSL, ")");
@@ -210,7 +209,7 @@ bool openPositions() {
       }
     }
     if((minLot <= targetLot || targetLot <= maxLot) && positionCount == 1) {
-      int target = OrderSend(thisSymbol, OP_BUY, targetLot, NormalizeDouble(Ask, Digits), 3, NormalizeDouble(stopLoss, Digits), NormalizeDouble(firstProfit, Digits));
+      int target = OrderSend(thisSymbol, OP_BUY, targetLot, NormalizeDouble(Ask, Digits), 3, NormalizeDouble(stopLoss, Digits), NormalizeDouble(firstTarget, Digits));
       if(target == -1) {
         return False;
       }
@@ -219,7 +218,7 @@ bool openPositions() {
       }
     }      
     if((minLot <= targetLot || targetLot <= maxLot) && positionCount == 2) {
-      target = OrderSend(thisSymbol, OP_BUY, targetLot, NormalizeDouble(Ask, Digits), 3, NormalizeDouble(stopLoss, Digits), NormalizeDouble(finalProfit, Digits));
+      int target = OrderSend(thisSymbol, OP_BUY, targetLot, NormalizeDouble(Ask, Digits), 3, NormalizeDouble(stopLoss, Digits), NormalizeDouble(finalTarget, Digits));
       if(target == -1) {
         return False;
       }
@@ -230,7 +229,7 @@ bool openPositions() {
   }
   else if(signal == OP_SELL) {
 
-    calcLot(stopLoss - Bid, quickLot, target);
+    calcLot(stopLoss - Bid, quickLot, targetLot);
 
     if(stopLoss - Bid < minSL) {
       Print("SL(", stopLoss, ") is too close to entry point(", Bid, ") than minimum stoplevel(", minSL, ")");
@@ -251,7 +250,7 @@ bool openPositions() {
       }
     }
     if((minLot <= targetLot || targetLot <= maxLot) && positionCount == -1) {
-      int target = OrderSend(thisSymbol, OP_SELL, targetLot, NormalizeDouble(Bid, Digits), 3, NormalizeDouble(stopLoss, Digits), NormalizeDouble(firstProfit, Digits));
+      int target = OrderSend(thisSymbol, OP_SELL, targetLot, NormalizeDouble(Bid, Digits), 3, NormalizeDouble(stopLoss, Digits), NormalizeDouble(firstTarget, Digits));
       if(target == -1) {
         return False;
       }
@@ -260,7 +259,7 @@ bool openPositions() {
       }
     }      
     if((minLot <= targetLot || targetLot <= maxLot) && positionCount == -2) {
-      target = OrderSend(thisSymbol, OP_SELL, targetLot, NormalizeDouble(Bid, Digits), 3, NormalizeDouble(stopLoss, Digits), NormalizeDouble(finalProfit, Digits));
+      int target = OrderSend(thisSymbol, OP_SELL, targetLot, NormalizeDouble(Bid, Digits), 3, NormalizeDouble(stopLoss, Digits), NormalizeDouble(finalTarget, Digits));
       if(target == -1) {
         return False;
       }
