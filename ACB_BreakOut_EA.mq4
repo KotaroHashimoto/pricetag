@@ -10,10 +10,10 @@
 
 input double Stop_Loss_Percentage = 1.0;
 input int Open_Time = 0;
-input int Close_Time = 24;
+input int Close_Time = 23;
 input bool EMA_Filter = False;
 input int EMA_Period = 200;
-
+input int Friday_Close_Time = 21;
 
 double stopLoss;
 double entryPrice;
@@ -141,7 +141,7 @@ void trailPosition(int direction) {
 }
 
 bool isFridayNight() {
-  return (DayOfWeek() == 5 && 21 < Hour());
+  return (DayOfWeek() == 5 && Friday_Close_Time < Hour());
 }
 
 void scanPositions() {
