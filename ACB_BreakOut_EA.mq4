@@ -43,14 +43,12 @@ bool getIndicatorValues() {
   if(iCustom(NULL, 0, indName, 0, 1)) {
     signal = OP_BUY;
     stopLoss = iCustom(NULL, 0, indName, 2, 1);
-    Print("signal: ", signal, " stoploss: ", stopLoss);
-    Print("entryPrice: ", entryPrice, " quickProfit: ", quickProfit, " firstTarget:", firstTarget, " finalTarget: ", finalTarget);
+    Print("Buy Signal, entryPrice: ", entryPrice, " quickProfit: ", quickProfit, " firstTarget:", firstTarget, " finalTarget: ", finalTarget);
   }
   else if(iCustom(NULL, 0, indName, 1, 1)) {
     signal = OP_SELL;
     stopLoss = iCustom(NULL, 0, indName, 3, 1);
-    Print("signal: ", signal, " stoploss: ", stopLoss);
-    Print("entryPrice: ", entryPrice, " quickProfit: ", quickProfit, " firstTarget:", firstTarget, " finalTarget: ", finalTarget);
+    Print("Sell Signal, entryPrice: ", entryPrice, " quickProfit: ", quickProfit, " firstTarget:", firstTarget, " finalTarget: ", finalTarget);
   }
   else {
     signal = -1;
@@ -290,6 +288,11 @@ void OnTick()
 //---
 
   getIndicatorValues();
+
+  if(stopLoss == 0.0 || entryPrice == 0.0 || quickProfit == 0.0 || firstTarget == 0.0 || finalTarget == 0.0) {
+    return;
+  }
+   
   scanPositions();
 
   if(Open_Time <= Hour() && Hour() < Close_Time && !isFridayNight())
