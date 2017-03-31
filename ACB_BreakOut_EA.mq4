@@ -5,6 +5,7 @@
 //+------------------------------------------------------------------+
 #property copyright "Copyright 2017, Palawan Software, Ltd."
 #property link      "https://coconala.com/services/204383"
+#property description "Author: Kotaro Hashimoto <hasimoto.kotaro@gmail.com>"
 #property version   "1.00"
 #property strict
 
