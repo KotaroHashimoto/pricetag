@@ -23,10 +23,16 @@ double finalTarget;
 int signal;
 
 string thisSymbol;
+double minSL;
+double minLot;
+double maxLot;
+
+int positionCount;
+bool opening;
 
 const string indName = "Market/ACB Breakout Arrows";
 
-void getIndicatorValues() {
+bool getIndicatorValues() {
 
   if(iCustom(NULL, 0, indName, 0, 1)) {
     signal = OP_BUY;
@@ -48,9 +54,11 @@ void getIndicatorValues() {
   finalTarget = ObjectGetDouble(0, "Target2", OBJPROP_PRICE);
   
   Print("stopLoss: ", stopLoss, " entryPrice: ", entryPrice, " quickProfit: ", quickProfit, " firstTarget:", firstTarget, " finalTarget: ", finalTarget);
+
+  return (signal != -1);
 }
 
-bool determineFilter(int signal) {
+bool determineFilter() {
 
   if(!EMA_Filter) {
     return True;
@@ -69,16 +77,12 @@ bool determineFilter(int signal) {
 }
 
 
-void calcLot(double priceDiff) {
+void calcLot(double priceDiff, double& quickLot, double& targetLot) {
 
-  double loss = AccountEquity() * Stop_Loss_Percentage / 100.0;
-  return lot = 0.1 * Point * loss / priceDiff;
-}
+  double totalLot = 0.1 * Point * (AccountEquity() * Stop_Loss_Percentage / 100.0) / priceDiff;
 
-double calcLot() {
-
-  
-
+  targetLot = MathFloor(totalLot / 3.0 * 100.0) / 100.0;
+  quickLot = MathFloor((totalLot - (targetLot * 2.0)) * 100.0) / 100.0;
 }
 
 
@@ -89,7 +93,20 @@ int OnInit()
   {
 //---
 
+  stopLoss = 0.0;
+  entryPrice = 0.0;
+  quickProfit = 0.0;
+  firstTarget = 0.0;
+  finalTarget = 0.0;
+  signal = -1;
+  orderFailed = False;
+
   thisSymbol = Symbol();
+  opening = False;
+
+  minSL = MarketInfo(Symbol(), MODE_STOPLEVEL) * Point);
+  minLot = MarketInfo(Symbol(), MODE_MINLOT);
+  maxLot = MarketInfo(Symbol(), MODE_MAXLOT);
 
 //---
    return(INIT_SUCCEEDED);
@@ -103,6 +120,161 @@ void OnDeinit(const int reason)
 
   }
 
+void trailPosition(int direction) {
+
+  if(direction == OP_BUY) {
+    if(firstTarget < Bid && minSL < (Bid - quickProfit)) {
+      bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), NormalizeDouble(quickProfit, Digits), OrderTakeProfit(), 0);
+    }
+    else if(quickProfit < Bid && minSL < (Bid - OrderOpenPrice())) {
+      bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), NormalizeDouble(OrderOpenPrice(), Digits), OrderTakeProfit(), 0);
+    }
+  }
+  else if(direction == OP_SELL) {
+    if(Ask < firstTarget && minSL < (quickProfit - Ask)) {
+      bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), NormalizeDouble(quickProfit, Digits), OrderTakeProfit(), 0);
+    }
+    else if(Ask < quickProfit && minSL < (OrderOpenPrice() - Ask)) {
+      bool modified = OrderModify(OrderTicket(), OrderOpenPrice(), NormalizeDouble(OrderOpenPrice(), Digits), OrderTakeProfit(), 0);
+    }
+  }
+}
+
+bool isFridayNight() {
+  return (DayOfWeek() == 5 && 21 < Hour());
+}
+
+void scanPositions() {
+
+  positionCount = 0;
+
+  for(int i = 0; i < OrdersTotal(); i++) {
+    if(OrderSelect(i, SELECT_BY_POS)) {
+      if(!StringCompare(OrderSymbol(), thisSymbol)) {
+        int direction = OrderType();
+
+        if(direction == OP_BUY) {
+          positionCount ++;
+          if(signal == OP_SELL || isFridayNight()) {
+            if(OrderClose(OrderTicket(), lot, NormalizeDouble(Bid, Digits), 3))
+              positionCount --;
+          }
+        }
+        else if(direction == OP_SELL) {
+          positionCount --;
+          if(signal == OP_BUY || isFridayNight()) {
+            if(OrderClose(OrderTicket(), lot, NormalizeDouble(Ask, Digits), 3))
+              positionCount ++;
+          }
+        }
+
+        trailPosition(direction);
+      }
+    }
+  }
+}
+
+
+bool openPositions() {
+
+  if(signal == -1) {
+    return False;
+  }
+  else if(!determineFilter()) {
+    Print("Signal received, but opposite direction to the major trend.");
+    return False;
+  }
+
+  double quickLot = 0.0;
+  double targetLot = 0.0;
+
+  if(signal == OP_BUY) {
+
+    calcLot(Ask - stopLoss, quickLot, target);
+
+    if(Ask - stopLoss < minSL) {
+      Print("SL(", stopLoss, ") is too close to entry point(", Ask, ") than minimum stoplevel(", minSL, ")");
+      return False;
+    }
+    else if(quickProfit - Ask < minSL) {
+      Print("TP(", quickProfit, ") is too close to entry point(", Ask, ") than minimum stoplevel(", minSL, ")");
+      return False;
+    }
+
+    if((minLot <= quickLot || quickLot <= maxLot) && positionCount == 0) {
+      int quick = OrderSend(thisSymbol, OP_BUY, quickLot, NormalizeDouble(Ask, Digits), 3, NormalizeDouble(stopLoss, Digits), NormalizeDouble(quickProfit, Digits));
+      if(quick == -1) {
+        return False;
+      }
+      else {
+        positionCount ++;
+      }
+    }
+    if((minLot <= targetLot || targetLot <= maxLot) && positionCount == 1) {
+      int target = OrderSend(thisSymbol, OP_BUY, targetLot, NormalizeDouble(Ask, Digits), 3, NormalizeDouble(stopLoss, Digits), NormalizeDouble(firstProfit, Digits));
+      if(target == -1) {
+        return False;
+      }
+      else {
+        positionCount ++;
+      }
+    }      
+    if((minLot <= targetLot || targetLot <= maxLot) && positionCount == 2) {
+      target = OrderSend(thisSymbol, OP_BUY, targetLot, NormalizeDouble(Ask, Digits), 3, NormalizeDouble(stopLoss, Digits), NormalizeDouble(finalProfit, Digits));
+      if(target == -1) {
+        return False;
+      }
+      else {
+        positionCount ++;
+      }
+    }
+  }
+  else if(signal == OP_SELL) {
+
+    calcLot(stopLoss - Bid, quickLot, target);
+
+    if(stopLoss - Bid < minSL) {
+      Print("SL(", stopLoss, ") is too close to entry point(", Bid, ") than minimum stoplevel(", minSL, ")");
+      return False;
+    }
+    else if(stopLoss - Bid < minSL) {
+      Print("TP(", quickProfit, ") is too close to entry point(", Bid, ") than minimum stoplevel(", minSL, ")");
+      return False;
+    }
+
+    if((minLot <= quickLot || quickLot <= maxLot) && positionCount == 0) {
+      int quick = OrderSend(thisSymbol, OP_SELL, quickLot, NormalizeDouble(Bid, Digits), 3, NormalizeDouble(stopLoss, Digits), NormalizeDouble(quickProfit, Digits));
+      if(quick == -1) {
+        return False;
+      }
+      else {
+        positionCount --;
+      }
+    }
+    if((minLot <= targetLot || targetLot <= maxLot) && positionCount == -1) {
+      int target = OrderSend(thisSymbol, OP_SELL, targetLot, NormalizeDouble(Bid, Digits), 3, NormalizeDouble(stopLoss, Digits), NormalizeDouble(firstProfit, Digits));
+      if(target == -1) {
+        return False;
+      }
+      else {
+        positionCount --;
+      }
+    }      
+    if((minLot <= targetLot || targetLot <= maxLot) && positionCount == -2) {
+      target = OrderSend(thisSymbol, OP_SELL, targetLot, NormalizeDouble(Bid, Digits), 3, NormalizeDouble(stopLoss, Digits), NormalizeDouble(finalProfit, Digits));
+      if(target == -1) {
+        return False;
+      }
+      else {
+        positionCount --;
+      }
+    }
+  }
+
+  return True;
+}
+
+
 //+------------------------------------------------------------------+
 //| Expert tick function                                             |
 //+------------------------------------------------------------------+
@@ -111,7 +283,17 @@ void OnTick()
 //---
 
   getIndicatorValues();
+  scanPositions();
+
+/*
+  if(!opening && Hour() == Open_Time) {
+    opening = True;
+  }
+  else if(opening && Hour() == Close_Time) {
+    opening = False;
+  }
+
+  if(opening) */
+    openPositions();
 }
 //+------------------------------------------------------------------+
-
-
