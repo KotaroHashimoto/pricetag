@@ -78,7 +78,7 @@ bool determineFilter() {
 
 void calcLot(double priceDiff, double& quickLot, double& targetLot) {
 
-  double totalLot = 0.1 * Point * (AccountEquity() * Stop_Loss_Percentage / 100.0) / priceDiff;
+  double totalLot = 0.01 * Point * (AccountEquity() * Stop_Loss_Percentage / 100.0) / priceDiff;
 
   targetLot = MathFloor(totalLot / 3.0 * 100.0) / 100.0;
   quickLot = MathFloor((totalLot - (targetLot * 2.0)) * 100.0) / 100.0;
@@ -145,7 +145,7 @@ void trailPosition(int direction) {
 }
 
 bool isFridayNight() {
-  return (DayOfWeek() == 5 && Friday_Close_Time < Hour());
+  return (DayOfWeek() == 5 && Friday_Close_Time <= Hour());
 }
 
 void scanPositions() {
