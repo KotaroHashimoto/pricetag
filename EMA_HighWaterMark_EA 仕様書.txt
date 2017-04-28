@@ -30,8 +30,23 @@ Pool Funds
 Entry Funds
 
 
+＜初期動作＞
 まず、Start Funds を読み込みます。
-一番最初はこれがそのままEntry Fundsになり、このEntry Fundsの資金に対してMMロット数をかけていきます。
+ここが０の場合は現在の口座残高を読み取ってください。
+
+（ａ）Start Funds＝現在の口座残高　なら、
+Pool Fundsは０に、Start Funds＝Entry Fundsにします。
+
+（ｂ）Start Funds＜現在の口座残高　なら、
+（現在の口座残高 - Start Funds）ｘ　Pool Percent Ratio（％）　の金額をPool Fundsに、
+現在の口座残高 - Pool Funds　を Entry Fundsにします。
+
+（ｃ）Start Funds＞現在の口座残高　なら、
+（現在の口座残高 - Start Funds）ｘ　Pool Percent Ratio（％）　の金額をPool Fundsに、（マイナス表示）
+Pool Fundsは０に、Start Funds＝Entry Fundsにします。
+※この場合、計算がどんどん狂ってきてしまうと思いますが、この設定は想定していないので仕様上のバグありでOKです。
+　理論上はStart Funds＝現在の口座残高になった時点で（ａ）（ｂ）に移行するのですが、
+　使わない予定なので、そこまでプログラム入れなくてもいいかなと思っています。
 
 
 ＜資金が減った場合＞
@@ -44,7 +59,7 @@ Entry Fundsはそのままです。つまり資金に対して多少ロット数が高くなります。
 
 
 ※資金が増えれば増えるほどドローダウンもドローアップも減ってきますが、Pool Fundsが増えていきます。
-
+※資金が増えているときは、必ず現在の口座残高＝Pool Funds＋Entry Fundsになります。
 
 
 -----------------------
