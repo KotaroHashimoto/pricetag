@@ -1,0 +1,148 @@
+★HL-Line-Order201703  追加仕様書
+
+従来の下記の機能に加えて、追加していただきたい機能です。
+
+・repeat entry (ture)
+・same entry (ture)
+
+
+ＳＬで決済が行われた場合、注文をくりかえす機能です。
+same entryがtureの場合は、同じ注文を繰り返してください。
+（ＳＬに引っかかった方向だけ再注文を出せばＯＫです。最初の仕様がそうなっています）
+same entryがfalesの場合は、新しくラインを引き直してそれに合わせて予約注文を出してください。
+
+
+repeat entryとsame entryが両方共tureの場合は、手動でラインを調整する事を省いてください。
+これと下記強制決済の機能により、このＥＡもバックテストが可能になると思います。
+
+
+
+・mon to Thurs intend to all exit (ture)
+・mon to Thurs all exit JST time (6)
+・Saturday intend to all exit (ture)
+・Saturday  exit JST time (4)
+
+mon to Thurs intend to all exit は、月、火、水、木の指定時間に全ポジション、予約を
+強制決済します。この場合、６時です。リピートがある場合は、新規予約が入ります。
+
+Saturday intend to all exit は金曜日の指定時間に全ポジション、予約を
+強制決済します。この場合、４時です。リピートがある場合でも週末に向けて予約は入らず
+月曜日に再開します。
+
+
+
+------------------------------------
+★HL-Line-Order201703  仕様書
+
+
+★概要★
+指定した高値・指値を更新したら、エントリーするＥＡです。（ＨＬはハイ・ローの意味です）
+エントリーは同一方向に２つずつで、両方共ＳＬはありますが、ＴＰは１つしか設定しません。
+ＴＰ以上のトレンドで利益を得るためです。クローズは手動です。
+
+稼働すると、高値、底値を見て、buy stopが２つ、sell stopが２つ入ります。
+ロット数、ＳＬ、ＴＰも計算式によって導かれます。
+
+
+
+
+
+
+-----------------------
+エントリーロット設定
+-----------------------
+
+・固定lot設定 (0.01)
+
+・MM　複利設定 (false)
+・MM 設定 per0.01 (100,000)
+指定資金ごとに0.01lot積み増ししてロット数をあげていく。
+例）20万だったら、0.02lot、30万なら0.03lot。
+
+・Auto lot (ture)
+・Auto lot Adjust times（1.0)
+（現在の資金×0.0000001 / Width to launch）x (Auto lot Adjust times)
+0.01lot未満は四捨五入
+
+Width to launchの数値は下記にでてきますので、ご参照ください。
+例えば現在の資金が１０万円で下記の例だとWidth to launch が0.334になりますので、
+100,000 x 0.0000001 / 0.334 x 1.0 =0.02994...
+ですので、0.03lotになります。
+（取引先が１lot＝通貨数によってAuto lot Adjust timeを0.1にしたり10にしたり、ハイレバなら3.0などに変動）
+
+MM設定とAuto lot が両方共tureになってしまったらAuto lot 優先でお願いします。
+
+
+-----------------------
+各種パラメーター
+-----------------------
+
+Candlestick period (14)
+
+Divided by Width to launch  (3.0)
+TP Width to launch times (2.0)
+Buy Entry  adjust pips  (1.5)
+Buy SL adjust pips  (1.0)
+Buy TP adjust pips  (1.0)
+Sell Entry adjust pips  (1.0)
+Sell SL adjust pips  (1.0)
+Sell TP adjust pips  (1.0)
+
+
+
+
+
+まず、Candlestick period の足の数合計での「高値」「底値」のラインを出します。
+そして、可能であれば、このラインをＭＴ４上で手動で動かせるとベストです。
+
+そして下記に従って計４つの逆指値注文を出します。
+
+
+例えば、高値が100.000、安値が99.000だとします。
+そして、その差をdivided by Width to launch  で割った数値が
+仕掛値（Width to launch）になります。割り切れない場合は切り上げです。
+
+チャートの端っこに（左上？）そのレートを表示、Last exitの項目にFridayと表示
+できると嬉しいです。
+High price  100.000
+Low price   99.000
+Width to launch  0.334   ((100.000-99.000)/3.0=0.3333)
+
+
+まずはbuy方向のセットです。
+Monday High price + Buy adjust pips　に２つ逆指値を入れます。
+100.000+1.5pipsなので100.015 にBuyが２つ。
+２つとも逆指値から仕掛値（Width to launch）とSL adjust pipsを引いたところにストップリストを入れます。
+100.015 - 0.334 - 0.01(1.0pips) = 99.671
+
+次にTPは１つだけ入れます。
+TPは逆指値から、仕掛値（Width to launch）のTP Width to launch timesをかけたものと
+Buy TP adjust pipsを足したところに入れます。
+100.015 + (0.334x2.0) + 0.01(1.0pips) = 100.693
+もう１つはTPを入れず放置します。
+
+
+
+次にSell方向のセットです。
+Monday Low price - Sell adjust pips　に２つ逆指値を入れます。
+99.000 - 1.0pops なので 98.990 にsellが２つ。
+２つとも逆指値から仕掛値（Width to launch）とSL adjust pipsを足したところにストップリストを入れます。
+98.990 + 0.334 + 0.01(1.0pips) = 99.334
+次にTPは１つだけ入れます。
+
+TPは逆指値から、仕掛値（Width to launch）のTP Width to launch timesをかけたものと
+Sell TP adjust pipsを引いたところに入れます。
+98.990 - (0.334x2.0) - 0.01(1.0pips) = 98.312
+もう１つはTPを入れず放置します。
+
+
+ＳＬに引っかかった場合、もしくはＴＰと手動で決済した場合、最初に戻ります。
+これを繰り返していきます。
+
+
+
+
+
+
+
+
