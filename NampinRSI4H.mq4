@@ -122,7 +122,7 @@ void OnTimer(){
                + (BEAR ? "bear(" : "bull(") + DoubleToString(rsi1, 1) + "-" + DoubleToString(rsi0, 1) + ")", 
                "buy:" + DoubleToString(buys, 2) + "(" + DoubleToString(bp, 0) + "), sell:" + DoubleToString(sells, 2) + "(" + DoubleToString(sp, 0) + "), " + 
                DoubleToString(AccountEquity() / AccountMargin() * 100.0, 2) + "%, "
-               + (BEAR ? "BEAR (RSI 4H:" : "BULL (RSI 4H:") + DoubleToString(rsi1, 1) + "-" + DoubleToString(rsi0, 1) + "), "
+               + (BEAR ? "bear(RSI 4H:" : "bull(RSI 4H:") + DoubleToString(rsi1, 1) + "-" + DoubleToString(rsi0, 1) + "), "
                "USDJPY: " + DoubleToString(Bid, 3) + " -" + DoubleToString(MarketInfo(Symbol(), MODE_SPREAD), 0) + "- " + DoubleToString(Ask, 3) + ", " + 
                "EURJPY: " + DoubleToString(MarketInfo("EURJPY", MODE_BID), 3) + " -" + DoubleToString(MarketInfo("EURJPY", MODE_SPREAD), 0) + "- " + DoubleToString(MarketInfo("EURJPY", MODE_ASK), 3) + ", " + 
                "GBPJPY: " + DoubleToString(MarketInfo("GBPJPY", MODE_BID), 3) + " -" + DoubleToString(MarketInfo("GBPJPY", MODE_SPREAD), 0) + "- " + DoubleToString(MarketInfo("GBPJPY", MODE_ASK), 3) + ", " + 
