@@ -83,7 +83,7 @@ void determineRSI(double& rsi0, double& rsi1) {
   if(rsi1 > 70 && 70 > rsi0) {
     BEAR = true;
   }
-  else if(30 < rsi1 && 30 < rsi0) {
+  else if(rsi1 < 30 && 30 < rsi0) {
     BEAR = false;
   }
 }
